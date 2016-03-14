@@ -338,6 +338,8 @@ public class SwitchRoute extends Link<OVXPort, PhysicalSwitch> implements
                         .getFlowManager()
                         .storeFlowValues(fm.getMatch().getDataLayerSource(),
                                 fm.getMatch().getDataLayerDestination());
+                
+                //test usecase of flowId
                 System.out.println("FlowID is "+flowId);
                 link.generateLinkFMs(fm.clone(), flowId);
                 outActions.addAll(new OVXLinkUtils(this.getTenantId(), linkId,
