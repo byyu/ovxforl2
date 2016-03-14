@@ -60,8 +60,6 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
         /*
          * Fetching port from the physical switch
          */
-        this.log.info("test log message",this);
-        this.log.warn("test message\n\n\n",this);
         short inport = this.getInPort();
         port = sw.getPort(inport);
         Mappable map = sw.getMap();
@@ -78,8 +76,8 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
             this.tenantId = this.fetchTenantId(match, map, true);
             if (this.tenantId == null) {
                 this.log.warn(
-                        "PacketIn {} does not belong to any virtual network kkk; "
-                                + "dropping and installing a temporary drop rule kkk",
+                        "PacketIn {} does not belong to any virtual network; "
+                                + "dropping and installing a temporary drop rule",
                         this);
                 this.installDropRule(sw, match);
                 return;
@@ -129,7 +127,7 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
                         lUtils.getLinkId());
                 if (srcPort == null) {
                     this.log.error(
-                            "Virtual Src Port Unknown: {}, port {} with this match {}; dropping packet bkkk",
+                            "Virtual Src Port Unknown: {}, port {} with this match {}; dropping packet",
                             sw.getName(), match.getInputPort(), match);
                     return;
                 }
