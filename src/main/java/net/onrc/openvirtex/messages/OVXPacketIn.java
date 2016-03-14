@@ -61,6 +61,7 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
          * Fetching port from the physical switch
          */
         this.log.info("test log message",this);
+        this.log.warn("test message\n\n\n",this);
         short inport = this.getInPort();
         port = sw.getPort(inport);
         Mappable map = sw.getMap();
