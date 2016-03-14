@@ -78,8 +78,8 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
             this.tenantId = this.fetchTenantId(match, map, true);
             if (this.tenantId == null) {
                 this.log.warn(
-                        "PacketIn {} does not belong to any virtual network; "
-                                + "dropping and installing a temporary drop rule",
+                        "PacketIn {} does not belong to any virtual network kkk; "
+                                + "dropping and installing a temporary drop rule kkk",
                         this);
                 this.installDropRule(sw, match);
                 return;
@@ -129,7 +129,7 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
                         lUtils.getLinkId());
                 if (srcPort == null) {
                     this.log.error(
-                            "Virtual Src Port Unknown: {}, port {} with this match {}; dropping packetkkk",
+                            "Virtual Src Port Unknown: {}, port {} with this match {}; dropping packet bkkk",
                             sw.getName(), match.getInputPort(), match);
                     return;
                 }
