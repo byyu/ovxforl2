@@ -182,6 +182,7 @@ public class OVXLinkUtils {
      * @return the flow id
      */
     public Integer getFlowId() {
+    	this.log.info("Called getFlowId");
         return this.flowId;
     }
 

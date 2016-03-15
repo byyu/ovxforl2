@@ -48,6 +48,7 @@ public class OVXFlowManager {
 
     public Integer storeFlowValues(final byte[] srcMac, final byte[] dstMac)
             throws IndexOutOfBoundException {
+    	this.log.info("Call storeFlowValues method");
         // TODO: Optimize flow numbers
         final BigInteger dualMac = new BigInteger(ArrayUtils.addAll(srcMac,
                 dstMac));
@@ -60,6 +61,7 @@ public class OVXFlowManager {
                             .toString(), MACAddress.valueOf(dstMac).toString());
             this.flowValues.put(flowId, dualMac);
         }
+        this.log.info("flow id is "+flowId);
         return flowId;
     }
 
