@@ -84,7 +84,8 @@ public class OVXFlowManager {
                 dstMac));
         final Integer flowId = this.flowValues.inverse().get(dualMac);
         if (flowId != null && flowId != 0) {
-            log.debug(
+            //log.debug(
+        	log.info(
                     "virtual net = {}: retrieving flowId {} that is associated to {} {}",
                     this.tenantId, flowId, MACAddress.valueOf(srcMac)
                             .toString(), MACAddress.valueOf(dstMac).toString());
