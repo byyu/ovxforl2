@@ -92,7 +92,7 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
             this.sendPkt(vSwitch, match, sw);											//버츄얼스위치로 패킷을 보낸다.
             this.learnHostIP(match, map);												//아이피주소를 맵에 저장한다.
             this.learnAddresses(match, map);											//맥주소를 맵에 저장한다.
-            this.log.debug("Edge PacketIn {} sent to virtual network {}", this,
+            this.log.info("Edge PacketIn {} sent to virtual network {}", this,
                     this.tenantId);
             return;
         }
@@ -235,7 +235,7 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
         if (!match.getWildcardObj().isWildcarded(Flag.NW_SRC)) {
 
             try {
-                map.getVirtualNetwork(tenantId).getHost(ovxPort)
+                map.getVirtualNetwork(tenantId).getHost(ovxPort)				//호스트를 불러와 호스트객체의 아이피주소에 셋
                         .setIPAddress(match.getNetworkSource());
             } catch (NetworkMappingException e) {
                 log.warn("Failed to lookup virtual network {}", this.tenantId);
@@ -251,29 +251,29 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
 
     private void sendPkt(final OVXSwitch vSwitch, final OFMatch match,
             final PhysicalSwitch sw) {
-        if (vSwitch == null || !vSwitch.isActive()) {
+        if (vSwitch == null || !vSwitch.isActive()) {								//버츄얼 스위치가 없거나 죽어있을 
             this.log.warn(
                     "Controller for virtual network {} has not yet connected "
                             + "or is down", this.tenantId);
             this.installDropRule(sw, match);
             return;
         }
-        this.setBufferId(vSwitch.addToBufferMap(this));
-        if (this.port != null && this.ovxPort != null
+        this.setBufferId(vSwitch.addToBufferMap(this));								//버퍼아이디를 지정한다.
+        if (this.port != null && this.ovxPort != null								//리얼 포트, 버추얼 포트가 있고 포트가 살아 있을 
                 && this.ovxPort.isActive()) {
-            this.setInPort(this.ovxPort.getPortNumber());
-            if ((this.packetData != null)
-                    && (vSwitch.getMissSendLen() != OVXSetConfig.MSL_FULL)) {
-                this.packetData = Arrays.copyOf(this.packetData,
+            this.setInPort(this.ovxPort.getPortNumber());							//인포트를 셋
+            if ((this.packetData != null)											//패킷데이터가 있고 메시지 길이가 최대가 아닐 때 
+                    && (vSwitch.getMissSendLen() != OVXSetConfig.MSL_FULL)) {		
+                this.packetData = Arrays.copyOf(this.packetData,					//페킷데이터를 카피함 
                         U16.f(vSwitch.getMissSendLen()));
-                this.setLengthU(OFPacketIn.MINIMUM_LENGTH
+                this.setLengthU(OFPacketIn.MINIMUM_LENGTH							//패킷 데이터의 길이를 지정 
                         + this.packetData.length);
             }
-            vSwitch.sendMsg(this, sw);
-        } else if (this.port == null) {
+            vSwitch.sendMsg(this, sw);												//스위치로 패킷을 전송 
+        } else if (this.port == null) {												//리얼 포트가 없을 때 에러 
             log.error("The port {} doesn't belong to the physical switch {}",
                     this.getInPort(), sw.getName());
-        } else if (this.ovxPort == null || !this.ovxPort.isActive()) {
+        } else if (this.ovxPort == null || !this.ovxPort.isActive()) {				//버츄얼포트가 없거나 포트가 죽어있을 때 
             log.error(
                     "Virtual port associated to physical port {} in physical switch {} for "
                             + "virtual network {} is not defined or inactive",
@@ -283,9 +283,9 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
 
     private void learnAddresses(final OFMatch match, final Mappable map) {
         if (match.getDataLayerType() == Ethernet.TYPE_IPV4
-                || match.getDataLayerType() == Ethernet.TYPE_ARP) {
+                || match.getDataLayerType() == Ethernet.TYPE_ARP) {						//데이터레이어 타입이 아이피브이4거나 압일때 
             if (!match.getWildcardObj().isWildcarded(Flag.NW_SRC)) {
-                IPMapper.getPhysicalIp(this.tenantId, match.getNetworkSource());
+                IPMapper.getPhysicalIp(this.tenantId, match.getNetworkSource());		//아이피맵에 없으면 추가 
             }
             if (!match.getWildcardObj().isWildcarded(Flag.NW_DST)) {
                 IPMapper.getPhysicalIp(this.tenantId,
