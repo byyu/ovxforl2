@@ -60,21 +60,21 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
         /*
          * Fetching port from the physical switch
          */
-        short inport = this.getInPort();
-        port = sw.getPort(inport);
-        Mappable map = sw.getMap();
+        short inport = this.getInPort();  //패킷으로부터 포트번호를 받아온다.
+        port = sw.getPort(inport);			//패킷의 포트번호로 스위치의 포트를 찾는다.
+        Mappable map = sw.getMap();		//맵 클래스를 받는다.
 
         final OFMatch match = new OFMatch();
-        match.loadFromPacket(this.getPacketData(), inport);
+        match.loadFromPacket(this.getPacketData(), inport);		//팻킷의 맷치를 받아 온다.
         /*
          * Check whether this packet arrived on an edge port.
          *
          * if it did we do not need to rewrite anything, but just find which
          * controller this should be send to.
          */
-        if (this.port.isEdge()) {
-            this.tenantId = this.fetchTenantId(match, map, true);
-            if (this.tenantId == null) {
+        if (this.port.isEdge()) {														//팻킷의 포트가 엣지 포트일때
+            this.tenantId = this.fetchTenantId(match, map, true);						//테넌트 아이디를 받아온다. - 데스티네이션 맥주소를 통해 받아온다.
+            if (this.tenantId == null) {												//테넌트 아이디가 없으면 패킷을 드랍한다.
                 this.log.warn(
                         "PacketIn {} does not belong to any virtual network; "
                                 + "dropping and installing a temporary drop rule",
@@ -86,11 +86,12 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
             /*
              * Checks on vSwitch and the virtual port done in swndPkt.
              */
-            vSwitch = this.fetchOVXSwitch(sw, vSwitch, map);
-            this.ovxPort = this.port.getOVXPort(this.tenantId, 0);
-            this.sendPkt(vSwitch, match, sw);
-            this.learnHostIP(match, map);
-            this.learnAddresses(match, map);
+            vSwitch = this.fetchOVXSwitch(sw, vSwitch, map);							//해당 테넌트의 버츄얼스위치를 받아온다.
+            this.ovxPort = this.port.getOVXPort(this.tenantId, 0);						//해당 테넌트의 버츄얼포트를 받아온다.
+            this.log.info("ovx portnumber is "+this.ovxPort.getPortNumber());
+            this.sendPkt(vSwitch, match, sw);											//버츄얼스위치로 패킷을 보낸다.
+            this.learnHostIP(match, map);												//아이피주소를 맵에 저장한다.
+            this.learnAddresses(match, map);											//맥주소를 맵에 저장한다.
             this.log.debug("Edge PacketIn {} sent to virtual network {}", this,
                     this.tenantId);
             return;
@@ -293,7 +294,7 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
         }
     }
 
-    private void installDropRule(final PhysicalSwitch sw, final OFMatch match) {
+    private void installDropRule(final PhysicalSwitch sw, final OFMatch match) {	//룰에 해당하는 패킷을 드랍하는 룰을 만들어 보낸다.
         final OVXFlowMod fm = new OVXFlowMod();
         fm.setMatch(match);
         fm.setBufferId(this.getBufferId());
@@ -303,10 +304,10 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
 
     private Integer fetchTenantId(final OFMatch match, final Mappable map,
             final boolean useMAC) {
-        MACAddress mac = MACAddress.valueOf(match.getDataLayerSource());
+        MACAddress mac = MACAddress.valueOf(match.getDataLayerSource());		//목적지의 맥주소를 가져온다.
         if (useMAC && map.hasMAC(mac)) {
             try {
-                return map.getMAC(mac);
+                return map.getMAC(mac);											//맵에서 맥주로를 통해 테넌트 아이디를 받아온다.
             } catch (AddressMappingException e) {
                 log.warn("Tried to return non-mapped MAC address : {}", e);
             }
@@ -314,7 +315,7 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
         return null;
     }
 
-    private OVXSwitch fetchOVXSwitch(PhysicalSwitch psw, OVXSwitch vswitch,
+    private OVXSwitch fetchOVXSwitch(PhysicalSwitch psw, OVXSwitch vswitch,			//해당 테넌트의 버츄얼 스위치를 받아온다.
             Mappable map) {
         if (vswitch == null) {
             try {
