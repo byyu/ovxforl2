@@ -86,7 +86,8 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         ovxMatch.setCookie(ovxCookie);
         this.setCookie(ovxMatch.getCookie());
         
-        this.log.info(ovxMatch.toString());
+        //this.log.info(ovxMatch.toString());
+        
         for (final OFAction act : this.getActions()) {
             try {
                 ((VirtualizableAction) act).virtualize(sw,
