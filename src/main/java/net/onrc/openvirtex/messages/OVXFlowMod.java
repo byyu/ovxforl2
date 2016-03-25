@@ -64,7 +64,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
             return;
         }
         
-        this.log.info("FlowMod message is sented"+this.sw.getSwitchName(),this);
+        //this.log.info("FlowMod message is sented"+this.sw.getSwitchName(),this);
         
         this.sw = sw;
         FlowTable ft = this.sw.getFlowTable();
