@@ -64,7 +64,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
             return;
         }
         
-        //this.log.info("FlowMod message is sented"+this.sw.getSwitchName(),this);
+        this.log.info("FlowMod message is sented"+this.sw.getSwitchName(),this);
         
         this.sw = sw;
         FlowTable ft = this.sw.getFlowTable();
@@ -86,7 +86,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         ovxMatch.setCookie(ovxCookie);
         this.setCookie(ovxMatch.getCookie());
         
-        //this.log.info(ovxMatch.toString());
+        this.log.info(ovxMatch.toString());
         
         for (final OFAction act : this.getActions()) {
             try {
