@@ -91,6 +91,8 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         
         for (final OFAction act : this.getActions()) {
             try {
+            	this.log.info("this actiong of the flowmod is "+act.getType().toString());
+            	
                 ((VirtualizableAction) act).virtualize(sw,
                         this.approvedActions, ovxMatch);
             } catch (final ActionVirtualizationDenied e) {
