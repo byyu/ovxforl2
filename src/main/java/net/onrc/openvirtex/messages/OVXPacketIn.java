@@ -109,7 +109,7 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
          * egress point of a virtual link.
          */
 
-        if (match.getDataLayerType() == Ethernet.TYPE_IPV4
+        if (match.getDataLayerType() == Ethernet.TYPE_IPV4					//코어에서 
                 || match.getDataLayerType() == Ethernet.TYPE_ARP) {
             PhysicalIPAddress srcIP = new PhysicalIPAddress(
                     match.getNetworkSource());
