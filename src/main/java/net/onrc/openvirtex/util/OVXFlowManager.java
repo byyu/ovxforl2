@@ -53,15 +53,14 @@ public class OVXFlowManager {
         final BigInteger dualMac = new BigInteger(ArrayUtils.addAll(srcMac,
                 dstMac));
         Integer flowId = this.flowValues.inverse().get(dualMac);
-        if (flowId == null) {
+        if (flowId == null) {											//소스-데스트 맥에 등록된 플로우아이디가 없으면 새로운 플로우아이디 생성 
             flowId = this.flowCounter.getNewIndex();
-            log.debug(
+            log.info(
                     "virtual net = {}: save flowId = {} that is associated to {} {}",
                     this.tenantId, flowId, MACAddress.valueOf(srcMac)
                             .toString(), MACAddress.valueOf(dstMac).toString());
             this.flowValues.put(flowId, dualMac);
         }
-        this.log.info("flow id is "+flowId);
         return flowId;
     }
 

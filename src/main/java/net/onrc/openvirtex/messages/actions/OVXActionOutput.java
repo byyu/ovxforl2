@@ -53,13 +53,13 @@ public class OVXActionOutput extends OFActionOutput implements
 
     @Override
     public void virtualize(final OVXSwitch sw,
-            final List<OFAction> approvedActions, final OVXMatch match)
+           final List<OFAction> approvedActions, final OVXMatch match)
             throws ActionVirtualizationDenied, DroppedMessageException {
-        final OVXPort inPort = sw.getPort(match.getInputPort());
+        final OVXPort inPort = sw.getPort(match.getInputPort());	//스위치에서 인풋포트를 불러온다.
 
         // TODO: handle TABLE output port here
 
-        final LinkedList<OVXPort> outPortList = this.fillPortList(
+        final LinkedList<OVXPort> outPortList = this.fillPortList(		//아웃풀포트리스트를 생성한다.
                 match.getInputPort(), this.getPort(), sw);
         final OVXNetwork vnet;
         try {
@@ -81,6 +81,7 @@ public class OVXActionOutput extends OFActionOutput implements
             final OVXFlowMod fm;
             try {
                 fm = sw.getFlowMod(match.getCookie());
+                this.log.info("Now Flowmod match is \n"+fm.getMatch().toString());
             } catch (MappingException e) {
                 log.warn("FlowMod not found in our FlowTable");
                 return;
@@ -154,14 +155,14 @@ public class OVXActionOutput extends OFActionOutput implements
                      * SingleSwitch and BigSwitch with inPort & outPort
                      * belonging to the same physical switch
                      */
-                    if (inPort.isEdge()) {
-                        if (outPort.isEdge()) {
+                    if (inPort.isEdge()) {									//인포트가 엣지일때 
+                        if (outPort.isEdge()) {										//아웃포트가 엣지 일때 
                             // TODO: this is logically incorrect, i have to do
                             // this because we always add the rewriting actions
                             // in the flowMod. Change it.
                             approvedActions.addAll(IPMapper
                                     .prependUnRewriteActions(match));
-                        } else {
+                        } else {													//아웃포트가 엣지가 아닐때 
                             /*
                              * If inPort is edge and outPort is link: - retrieve
                              * link - generate the link's FMs - add actions to
@@ -171,7 +172,7 @@ public class OVXActionOutput extends OFActionOutput implements
                             final OVXLink link = outPort.getLink().getOutLink();
                             linkId = link.getLinkId();
                             try {
-                                flowId = vnet.getFlowManager().storeFlowValues(
+                                flowId = vnet.getFlowManager().storeFlowValues(			//플로우아이디를 불러온다. 
                                         match.getDataLayerSource(),
                                         match.getDataLayerDestination());
                                 link.generateLinkFMs(fm.clone(), flowId);
@@ -329,12 +330,14 @@ public class OVXActionOutput extends OFActionOutput implements
         if (U16.f(outPort) < U16.f(OFPort.OFPP_MAX.getValue())) {
             if (sw.getPort(outPort) != null && sw.getPort(outPort).isActive()) {
                 outPortList.add(sw.getPort(outPort));
+               this.log.info("port number is "+outPort.intValue());
             }
         } else if (U16.f(outPort) == U16.f(OFPort.OFPP_FLOOD.getValue())) {
             final Map<Short, OVXPort> ports = sw.getPorts();
             for (final OVXPort port : ports.values()) {
                 if (port.getPortNumber() != inPort && port.isActive()) {
                     outPortList.add(port);
+                    this.log.info("port number is "+outPort.intValue());
                 }
             }
         } else if (U16.f(outPort) == U16.f(OFPort.OFPP_ALL.getValue())) {
@@ -342,6 +345,7 @@ public class OVXActionOutput extends OFActionOutput implements
             for (final OVXPort port : ports.values()) {
                 if (port.isActive()) {
                     outPortList.add(port);
+                    this.log.info("port number is "+outPort.intValue());
                 }
             }
         } else {
@@ -355,6 +359,7 @@ public class OVXActionOutput extends OFActionOutput implements
             throw new DroppedMessageException(
                     "No output ports defined; dropping");
         }
+
         return outPortList;
     }
 
