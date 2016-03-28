@@ -445,6 +445,7 @@ public class OVXNetworkManager {
 
                     // Only configure path if manual routing mode
                     if (alg == RoutingType.NONE.getValue()) {
+                    	this.log.info("this is create OVXNetwrok and set LinkPath");
                         virtualNetwork.setLinkPath(linkId, physicalLinks,
                                 priority);
                     }
