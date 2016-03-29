@@ -93,7 +93,7 @@ public class OVXActionOutput extends OFActionOutput implements
             this.log.info("Get cookie of fm"+fm.getCookie());
             
             for (final OVXPort outPort : outPortList) {
-            	this.log.info("This port is "+outPort.getName());
+            	this.log.info("This port is {} on {}",outPort.getPortNumber(),sw.getName());
             	
                 Integer linkId = 0;
                 Integer flowId = 0;
@@ -325,6 +325,7 @@ public class OVXActionOutput extends OFActionOutput implements
                 throw new DroppedMessageException();
             }
         }
+        this.log.info("This action is {}",this.toString());
 
     }
 
