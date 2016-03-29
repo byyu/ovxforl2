@@ -73,13 +73,13 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
 
         int bufferId = OVXPacketOut.BUFFER_ID_NONE;
         if (sw.getFromBufferMap(this.bufferId) != null) {
-            bufferId = sw.getFromBufferMap(this.bufferId).getBufferId();
+            bufferId = sw.getFromBufferMap(this.bufferId).getBufferId();	//스위치의 버퍼에 있는 패킷인 메시지에서 버퍼아이디를 가져온다.
         }
         
-        final short inport = this.getMatch().getInputPort();
+        final short inport = this.getMatch().getInputPort();			//맷치에서 포트를 얻어옴 
 
         /* let flow table process FlowMod, generate cookie as needed */
-        boolean pflag = ft.handleFlowMods(this.clone());
+        boolean pflag = ft.handleFlowMods(this.clone());				//플로우 테이블에서 플로우모드에 대한 처리를 함 아직 정확히 파악못함				
 
         /* used by OFAction virtualization */
         OVXMatch ovxMatch = new OVXMatch(this.match);
