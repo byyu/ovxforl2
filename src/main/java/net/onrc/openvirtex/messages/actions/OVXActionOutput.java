@@ -122,7 +122,11 @@ public class OVXActionOutput extends OFActionOutput implements
                     // to unset the packet link fields
                     if (inPort.isLink()) {
                         final OVXPort dstPort = vnet.getNeighborPort(inPort);
+                        
+                       this.log.info(inPort.toString());
+                       this.log.info(outPort.toString());
                         final OVXLink link = inPort.getLink().getOutLink();
+                        this.log.info(link.toString());
                         if (link != null
                                 && (!match.getWildcardObj().isWildcarded(
                                         Flag.DL_DST) || !match.getWildcardObj()
