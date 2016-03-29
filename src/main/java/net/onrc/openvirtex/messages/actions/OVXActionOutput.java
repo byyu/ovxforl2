@@ -325,6 +325,9 @@ public class OVXActionOutput extends OFActionOutput implements
                 throw new DroppedMessageException();
             }
         }
+        for(final OFAction logaction : approvedActions){
+        	this.log.info("This approvedActions is {}", logaction.toString());
+        }
         this.log.info("This action is {}",this.toString());
 
     }
