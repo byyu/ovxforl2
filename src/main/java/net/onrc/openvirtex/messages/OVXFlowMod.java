@@ -88,7 +88,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         this.setCookie(ovxMatch.getCookie());
         
         this.log.info(ovxMatch.toString());
-        
+        this.log.info("before add action : {}",this.toString());
         for (final OFAction act : this.getActions()) {
             try {
             	this.log.info("this actiong of the flowmod is "+act.getType().toString());
@@ -108,6 +108,8 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
                 return;
             }
         }
+        
+        this.log.info("after add action : {}",this.toString());
 
         final OVXPort ovxInPort = sw.getPort(inport);
         this.setBufferId(bufferId);

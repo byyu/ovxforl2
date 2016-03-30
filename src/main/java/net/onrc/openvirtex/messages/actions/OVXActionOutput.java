@@ -86,11 +86,11 @@ public class OVXActionOutput extends OFActionOutput implements
                 log.warn("FlowMod not found in our FlowTable");
                 return;
             }
-           this.log.info("Get cookie of fm"+fm.getCookie());
+           this.log.info("Get cookie of fm "+fm.getCookie());
             fm.setCookie(match.getCookie());										//플로우 모드에 쿠키값을 저장해줌.
             // TODO: Check if the FM has been retrieved
             
-            this.log.info("Get cookie of fm"+fm.getCookie());
+            this.log.info("Get cookie of fm "+fm.getCookie());
             
             for (final OVXPort outPort : outPortList) {
             	this.log.info("This port is {} on {}",outPort.getPortNumber(),sw.getName());
