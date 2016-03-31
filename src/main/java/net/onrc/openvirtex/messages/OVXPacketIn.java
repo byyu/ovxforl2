@@ -55,7 +55,8 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
 
     @Override
     public void virtualize(final PhysicalSwitch sw) {
-
+    	this.log.info("Start packetIn virtualization");
+    	
         OVXSwitch vSwitch = OVXMessageUtil.untranslateXid(this, sw);
         /*
          * Fetching port from the physical switch
@@ -66,6 +67,7 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
 
         final OFMatch match = new OFMatch();
         match.loadFromPacket(this.getPacketData(), inport);		//팻킷의 맷치를 받아 온다.
+        this.log.info("srcMAC and destMAC - scr : {}, dst : {}", match.getDataLayerSource().toString(),match.getDataLayerDestination().toString());
         /*
          * Check whether this packet arrived on an edge port.
          *
@@ -124,6 +126,7 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
                     eth.getDestinationMAC());
             // rewrite the OFMatch with the values of the link
             if (lUtils.isValid()) {
+            	
                 OVXPort srcPort = port.getOVXPort(lUtils.getTenantId(),
                         lUtils.getLinkId());
                 if (srcPort == null) {
