@@ -39,11 +39,13 @@ public class OVXFlowManager {
     private final Integer tenantId;
     private Collection<Host> hostList;
 
+
     public OVXFlowManager(Integer tenantId, Collection<Host> hostList) {
         this.flowValues = HashBiMap.create();
         this.flowCounter = new BitSetIndex(IndexType.FLOW_COUNTER);
         this.tenantId = tenantId;
         this.hostList = hostList;
+        
     }
 
     public Integer storeFlowValues(final byte[] srcMac, final byte[] dstMac)

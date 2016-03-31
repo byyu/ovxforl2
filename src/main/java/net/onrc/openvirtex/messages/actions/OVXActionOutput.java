@@ -179,6 +179,7 @@ public class OVXActionOutput extends OFActionOutput implements
                              * link
                              */
                             final OVXLink link = outPort.getLink().getOutLink();	//아웃포트에 있는 링크를 가져온다.
+                            this.log.info("Link information : {}",link.toString());
                             linkId = link.getLinkId();
                             try {
                                 flowId = vnet.getFlowManager().storeFlowValues(			//플로우아이디를 불러온다. 
