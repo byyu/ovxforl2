@@ -67,7 +67,7 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
 
         final OFMatch match = new OFMatch();
         match.loadFromPacket(this.getPacketData(), inport);		//팻킷의 맷치를 받아 온다.
-        this.log.info("srcMAC and destMAC - scr : {}, dst : {}", match.getDataLayerSource().toString(),match.getDataLayerDestination().toString());
+        this.log.info("srcMAC and destMAC - scr : {}, dst : {}", match.getDataLayerSource(),match.getDataLayerDestination());
         /*
          * Check whether this packet arrived on an edge port.
          *

@@ -64,7 +64,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
             return;
         }
         
-        this.log.info("FlowMod devirtualize \n srcMac : {},\n dstMac : {}",this.match.getDataLayerSource().toString(),this.match.getDataLayerDestination().toString());
+        this.log.info("FlowMod devirtualize \n srcMac : {},\n dstMac : {}",this.match.getDataLayerSource(),this.match.getDataLayerDestination());
         
         this.sw = sw;
         FlowTable ft = this.sw.getFlowTable();

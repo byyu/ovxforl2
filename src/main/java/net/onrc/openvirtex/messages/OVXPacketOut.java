@@ -53,7 +53,7 @@ public class OVXPacketOut extends OFPacketOut implements Devirtualizable {
 
         final OVXPort inport = sw.getPort(this.getInPort());
         OVXMatch ovxMatch = null;
-        this.log.info("PacketOut devirtualize \n srcMac : {} \n dstMac : {}", this.match.getDataLayerSource().toString(), this.match.getDataLayerDestination().toString());
+        //this.log.info("PacketOut devirtualize \n srcMac : {} \n dstMac : {}", this.match.getDataLayerSource(), this.match.getDataLayerDestination());
         if (this.getBufferId() == OVXPacketOut.BUFFER_ID_NONE) {
             if (this.getPacketData().length <= 14) {
                 this.log.error("PacketOut has no buffer or data {}; dropping",
