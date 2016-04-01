@@ -92,7 +92,6 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
              */
             vSwitch = this.fetchOVXSwitch(sw, vSwitch, map);							//해당 테넌트의 버츄얼스위치를 받아온다.
             this.ovxPort = this.port.getOVXPort(this.tenantId, 0);						//해당 테넌트의 버츄얼포트를 받아온다.
-            this.log.info("ovx portnumber is "+this.ovxPort.getPortNumber());
             this.sendPkt(vSwitch, match, sw);											//버츄얼스위치로 패킷을 보낸다.
             this.learnHostIP(match, map);												//아이피주소를 맵에 저장한다.
             this.learnAddresses(match, map);											//맥주소를 맵에 저장한다.
