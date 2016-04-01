@@ -127,17 +127,21 @@ public class OVXLinkUtils {
         this.tenantId = tenantId;
         this.linkId = linkId;
         this.flowId = flowId;
-        this.log.info("set flowId "+this.flowId);
+
         final int vNets = OpenVirteXController.getInstance()
                 .getNumberVirtualNets();
+        log.info("tenantId : {}, linkId : {}, flowID : {}",this.tenantId,this.linkId, this.flowId);
         final MACAddress mac = MACAddress
                 .valueOf(tenantId.longValue() << 48 - vNets
                         | linkId.longValue() << (48 - vNets) / 2
                         | flowId.longValue());
+        log.info("mac vlaue : {} - {}", mac.toLong(), mac.toBytes());
         final Long src = mac.toLong() >> 24 & 0xFFFFFF;
         final Long dst = mac.toLong() & 0xFFFFFF;
+        log.info("src value : {} - dst value : {}", src.byteValue(), dst.byteValue());
         this.srcMac = MACAddress.valueOf((long) 0xa42305 << 24 | src);
         this.dstMac = MACAddress.valueOf((long) 0xa42305 << 24 | dst);
+        log.info("final src : {} - final dst : {}", this.srcMac.toBytes(), this.dstMac.toBytes());
         // TODO: encapsulate the values in the vlan too
         this.vlan = 0;
     }
