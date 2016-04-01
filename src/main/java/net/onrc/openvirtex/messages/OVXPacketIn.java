@@ -137,6 +137,8 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
 				this.log.error("We can't find network or other error");
 				e1.printStackTrace();
 				return ;
+			}catch(NullPointerException e2){
+				tenantId = null;
 			};
 
 			OVXLinkUtils lUtils = new OVXLinkUtils(tenantId, flowId, eth.getSourceMAC(), eth.getDestinationMAC());
