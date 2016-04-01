@@ -30,6 +30,8 @@ import net.onrc.openvirtex.elements.link.OVXLinkField;
 import net.onrc.openvirtex.elements.port.OVXPort;
 import net.onrc.openvirtex.elements.port.PhysicalPort;
 import net.onrc.openvirtex.exceptions.AddressMappingException;
+import net.onrc.openvirtex.exceptions.DroppedMessageException;
+import net.onrc.openvirtex.exceptions.IndexOutOfBoundException;
 import net.onrc.openvirtex.exceptions.NetworkMappingException;
 import net.onrc.openvirtex.exceptions.SwitchMappingException;
 import net.onrc.openvirtex.packet.ARP;
@@ -122,8 +124,23 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
             eth.deserialize(this.getPacketData(), 0,
                     this.getPacketData().length);
            this.log.info("Ethernet SrcMAC : {} \n DstMAC : {}",eth.getSourceMAC().toString(), eth.getDestinationMAC().toString());
-            OVXLinkUtils lUtils = new OVXLinkUtils(eth.getSourceMAC(),
-                    eth.getDestinationMAC());
+         //byyu
+           int flowId = 0;
+           try {
+           	tenantId = this.fetchTenantId(match, map, true);
+				flowId = map.getVirtualNetwork(tenantId).getFlowManager().getFlowId(match.getDataLayerSource(), match.getDataLayerDestination());
+				
+				
+           } catch (NetworkMappingException | DroppedMessageException e1) {
+				this.log.error("We can't find network or other error");
+				e1.printStackTrace();
+				return ;
+			};
+
+			OVXLinkUtils lUtils = new OVXLinkUtils(tenantId, flowId, eth.getSourceMAC(), eth.getDestinationMAC());
+//           OVXLinkUtils lUtils = new OVXLinkUtils(eth.getSourceMAC(),
+//                   eth.getDestinationMAC());
+			
             // rewrite the OFMatch with the values of the link
             if (lUtils.isValid()) {
             	

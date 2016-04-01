@@ -21,7 +21,9 @@ import java.util.List;
 
 import net.onrc.openvirtex.core.OpenVirteXController;
 import net.onrc.openvirtex.elements.OVXMap;
+import net.onrc.openvirtex.elements.datapath.OVXSwitch;
 import net.onrc.openvirtex.exceptions.NetworkMappingException;
+import net.onrc.openvirtex.exceptions.SwitchMappingException;
 import net.onrc.openvirtex.util.MACAddress;
 
 import org.apache.logging.log4j.LogManager;
@@ -109,6 +111,16 @@ public class OVXLinkUtils {
         this.vlan = 0;
     }
 
+    //byyu
+    public OVXLinkUtils(final Integer tenantId, final Integer flowId, final MACAddress srcMac, final MACAddress dstMac){
+    	this();
+    	this.tenantId = tenantId;
+    	this.flowId = flowId;
+    	this.srcMac = srcMac;
+    	this.dstMac = dstMac;
+    	this.linkId = (int)(srcMac.toLong()-dstMac.toLong());
+    	this.vlan = 0;
+    }
     /**
      * Instantiates a new link utils from tenantId, linkId and flowId.
      * Automatically encapsulate and set these values in the MAC addresses and
@@ -121,29 +133,57 @@ public class OVXLinkUtils {
      * @param flowId
      *            the flow id
      */
-    public OVXLinkUtils(final Integer tenantId, final Integer linkId,
-            final Integer flowId) {
-        this();
-        this.tenantId = tenantId;
-        this.linkId = linkId;
-        this.flowId = flowId;
+//    public OVXLinkUtils(final Integer tenantId, final Integer linkId,
+//            final Integer flowId) {
+//        this();
+//        this.tenantId = tenantId;
+//        this.linkId = linkId;
+//        this.flowId = flowId;
+//
+//        final int vNets = OpenVirteXController.getInstance()
+//                .getNumberVirtualNets();
+//        log.info("tenantId : {}, linkId : {}, flowID : {}, vNet : {}",this.tenantId,this.linkId, this.flowId, vNets);
+//        final MACAddress mac = MACAddress
+//                .valueOf(tenantId.longValue() << 48 - vNets
+//                        | linkId.longValue() << (48 - vNets) / 2
+//                        | flowId.longValue());
+//        log.info("mac vlaue : {} - {}", mac.toLong(), mac.toBytes());
+//        final Long src = mac.toLong() >> 24 & 0xFFFFFF;
+//        final Long dst = mac.toLong() & 0xFFFFFF;
+//        log.info("src value : {} - dst value : {}", src.byteValue(), dst.byteValue());
+//        this.srcMac = MACAddress.valueOf((long) 0xa42305 << 24 | src);
+//        this.dstMac = MACAddress.valueOf((long) 0xa42305 << 24 | dst);
+//        log.info("final src : {} - final dst : {}", this.srcMac.toBytes(), this.dstMac.toBytes());
+//        // TODO: encapsulate the values in the vlan too
+//        this.vlan = 0;
+//    }
+    
+  //byyu
+    public OVXLinkUtils(final Integer tenantId, final Integer linkId, final Integer flowId){
+    	this();
+    	this.tenantId = tenantId;
+    	this.linkId = linkId;
+    	this.flowId = flowId;
 
-        final int vNets = OpenVirteXController.getInstance()
-                .getNumberVirtualNets();
-        log.info("tenantId : {}, linkId : {}, flowID : {}, vNet : {}",this.tenantId,this.linkId, this.flowId, vNets);
-        final MACAddress mac = MACAddress
-                .valueOf(tenantId.longValue() << 48 - vNets
-                        | linkId.longValue() << (48 - vNets) / 2
-                        | flowId.longValue());
-        log.info("mac vlaue : {} - {}", mac.toLong(), mac.toBytes());
-        final Long src = mac.toLong() >> 24 & 0xFFFFFF;
-        final Long dst = mac.toLong() & 0xFFFFFF;
-        log.info("src value : {} - dst value : {}", src.byteValue(), dst.byteValue());
-        this.srcMac = MACAddress.valueOf((long) 0xa42305 << 24 | src);
-        this.dstMac = MACAddress.valueOf((long) 0xa42305 << 24 | dst);
-        log.info("final src : {} - final dst : {}", this.srcMac.toBytes(), this.dstMac.toBytes());
-        // TODO: encapsulate the values in the vlan too
-        this.vlan = 0;
+    	OVXMap map = OVXMap.getInstance();
+    	OVXSwitch srcSwitch, dstSwitch;
+    	try {
+			LinkedList<MACAddress> dualmac = map.getVirtualNetwork(this.tenantId).getFlowManager().getFlowValues(flowId);
+			srcSwitch = map.getHostbyMAC(dualmac.get(0)).getPort().getParentSwitch();
+			dstSwitch = map.getHostbyMAC(dualmac.get(1)).getPort().getParentSwitch();
+			//todo : big switch proccessing
+			final long src = map.getPhysicalSwitches(srcSwitch).get(0).getSwitchId();
+
+			this.srcMac = MACAddress.valueOf(src);
+			this.dstMac = MACAddress.valueOf(srcMac.toLong()+(linkId.longValue()));
+			
+    	} catch (NetworkMappingException e) {
+			log.error("This tenantId : {} and flowId : {} is wrong,",this.tenantId, this.flowId);
+			e.printStackTrace();
+		} catch (SwitchMappingException e) {
+			log.error("This Switch can't find");
+			e.printStackTrace();
+		}
     }
 
     /**

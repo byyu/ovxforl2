@@ -31,6 +31,7 @@ import net.onrc.openvirtex.elements.address.OVXIPAddress;
 import net.onrc.openvirtex.elements.address.PhysicalIPAddress;
 import net.onrc.openvirtex.elements.datapath.OVXSwitch;
 import net.onrc.openvirtex.elements.datapath.PhysicalSwitch;
+import net.onrc.openvirtex.elements.host.Host;
 import net.onrc.openvirtex.elements.link.OVXLink;
 import net.onrc.openvirtex.elements.link.PhysicalLink;
 import net.onrc.openvirtex.elements.network.OVXNetwork;
@@ -69,6 +70,8 @@ public final class OVXMap implements Mappable {
     private RadixTree<OVXIPAddress> physicalIPMap;
     private RadixTree<ConcurrentHashMap<Integer, PhysicalIPAddress>> virtualIPMap;
     private RadixTree<Integer> macMap;
+  //byyu
+    private ConcurrentHashMap<MACAddress, Host> macHostMap;
 
     /**
      * Creates a new map instance, by initializing all mapping data structures.
@@ -87,6 +90,8 @@ public final class OVXMap implements Mappable {
                 new DefaultCharArrayNodeFactory());
         this.macMap = new ConcurrentRadixTree<Integer>(
                 new DefaultCharArrayNodeFactory());
+      //byyu
+        this.macHostMap = new ConcurrentHashMap<MACAddress, Host>();
     }
 
     /**
@@ -698,6 +703,20 @@ public final class OVXMap implements Mappable {
         this.routetoPhyLinkMap.remove(route);
     }
 
+    //byyu
+    public void addMacHost(MACAddress mac, Host host){
+    	macHostMap.put(mac, host);
+    	log.debug("Host Mac map addition : Host {} , MACAddress {}",host.toString(),mac.toString());
+    }
+    
+    public Host getHostbyMAC(MACAddress mac){
+    	return macHostMap.get(mac);
+    }
+    
+    public void removeMacHost(MACAddress mac){
+    	macHostMap.remove(mac);
+    }
+    
     /**
      * Removes the given route that use the given physical link from the map.
      *

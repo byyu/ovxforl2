@@ -367,6 +367,8 @@ public class OVXNetwork extends Network<OVXSwitch, OVXPort, OVXLink> implements
         final Host host = new Host(mac, port, hostId);
         this.hostMap.put(port, host);
         host.register();
+        //byyu
+        OVXMap.getInstance().addMacHost(mac, host);
         return host;
     }
 
@@ -742,6 +744,8 @@ public class OVXNetwork extends Network<OVXSwitch, OVXPort, OVXLink> implements
 
     public void removeHost(final Host host) {
         this.hostMap.remove(host.getPort());
+        //byyu
+        OVXMap.getInstance().removeMacHost(host.getMac());
     }
 
     public void addControllers(ArrayList<String> ctrlUrls) {
