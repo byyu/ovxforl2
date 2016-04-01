@@ -443,6 +443,7 @@ public class OVXNetwork extends Network<OVXSwitch, OVXPort, OVXLink> implements
         dstPort.setEdge(false);
         srcPort.boot();
         dstPort.boot();
+        OVXMap.getInstance().addLinkTenant((long)linkId, this.tenantId);
         return link;
     }
 

@@ -72,6 +72,7 @@ public final class OVXMap implements Mappable {
     private RadixTree<Integer> macMap;
   //byyu
     private ConcurrentHashMap<MACAddress, Host> macHostMap;
+    private ConcurrentHashMap<Long, Integer> linktenantMap;
 
     /**
      * Creates a new map instance, by initializing all mapping data structures.
@@ -92,6 +93,7 @@ public final class OVXMap implements Mappable {
                 new DefaultCharArrayNodeFactory());
       //byyu
         this.macHostMap = new ConcurrentHashMap<MACAddress, Host>();
+        this.linktenantMap = new ConcurrentHashMap<Long, Integer>();
     }
 
     /**
@@ -715,6 +717,15 @@ public final class OVXMap implements Mappable {
     
     public void removeMacHost(MACAddress mac){
     	macHostMap.remove(mac);
+    }
+    
+    public void addLinkTenant(long linkId, int tenantId){
+    	linktenantMap.put(linkId, tenantId);
+    	
+    }
+    
+    public int gettenantIdbyLinkId(long linkId){
+    	return linktenantMap.get(linkId);
     }
     
     /**

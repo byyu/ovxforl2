@@ -20,6 +20,7 @@ import java.util.LinkedList;
 
 import net.onrc.openvirtex.core.OpenVirteXController;
 import net.onrc.openvirtex.elements.Mappable;
+import net.onrc.openvirtex.elements.OVXMap;
 import net.onrc.openvirtex.elements.address.IPMapper;
 import net.onrc.openvirtex.elements.address.PhysicalIPAddress;
 import net.onrc.openvirtex.elements.datapath.OVXSwitch;
@@ -66,7 +67,7 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
         short inport = this.getInPort();  //패킷으로부터 포트번호를 받아온다.
         port = sw.getPort(inport);			//패킷의 포트번호로 스위치의 포트를 찾는다.
         Mappable map = sw.getMap();		//맵 클래스를 받는다.
-
+        
         final OFMatch match = new OFMatch();
         match.loadFromPacket(this.getPacketData(), inport);		//팻킷의 맷치를 받아 온다.
         this.log.info("srcMAC and destMAC - scr : {}, dst : {}", match.getDataLayerSource(),match.getDataLayerDestination());
@@ -126,7 +127,9 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
          //byyu
            int flowId = 0;
            try {
-           	tenantId = this.fetchTenantId(match, map, true);
+           	//tenantId = this.fetchTenantId(match, map, true);
+        	   long linkId = MACAddress.valueOf(match.getDataLayerDestination()).toLong()-MACAddress.valueOf(match.getDataLayerSource()).toLong();
+        	   tenantId = OVXMap.getInstance().gettenantIdbyLinkId(linkId);
            	if(tenantId!=null)
            		flowId = map.getVirtualNetwork(tenantId).getFlowManager().getFlowId(match.getDataLayerSource(), match.getDataLayerDestination());
 
