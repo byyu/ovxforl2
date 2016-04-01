@@ -121,7 +121,7 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
             Ethernet eth = new Ethernet();
             eth.deserialize(this.getPacketData(), 0,
                     this.getPacketData().length);
-
+           this.log.info("Ethernet SrcMAC : {} \n DstMAC : {}",eth.getSourceMAC().toString(), eth.getDestinationMAC().toString());
             OVXLinkUtils lUtils = new OVXLinkUtils(eth.getSourceMAC(),
                     eth.getDestinationMAC());
             // rewrite the OFMatch with the values of the link
