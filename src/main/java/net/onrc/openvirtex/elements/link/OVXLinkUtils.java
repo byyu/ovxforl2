@@ -130,7 +130,7 @@ public class OVXLinkUtils {
 
         final int vNets = OpenVirteXController.getInstance()
                 .getNumberVirtualNets();
-        log.info("tenantId : {}, linkId : {}, flowID : {}",this.tenantId,this.linkId, this.flowId);
+        log.info("tenantId : {}, linkId : {}, flowID : {}, vNet : {}",this.tenantId,this.linkId, this.flowId, vNets);
         final MACAddress mac = MACAddress
                 .valueOf(tenantId.longValue() << 48 - vNets
                         | linkId.longValue() << (48 - vNets) / 2
