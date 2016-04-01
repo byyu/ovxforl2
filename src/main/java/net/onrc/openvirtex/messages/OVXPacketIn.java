@@ -138,7 +138,8 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
 				e1.printStackTrace();
 				return ;
 			}catch(NullPointerException e2){
-				tenantId = null;
+				e2.printStackTrace();
+				tenantId = 0;
 			};
 
 			OVXLinkUtils lUtils = new OVXLinkUtils(tenantId, flowId, eth.getSourceMAC(), eth.getDestinationMAC());
