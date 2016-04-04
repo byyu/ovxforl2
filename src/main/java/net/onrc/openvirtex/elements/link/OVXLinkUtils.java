@@ -194,6 +194,7 @@ public class OVXLinkUtils {
      * @return true if valid, false otherwise
      */
     public boolean isValid() {
+    	log.info("\ntenantId : {}\nlinkId : {}\nflowId : {}\n",this.tenantId,this.linkId, this.flowId);
         if (this.tenantId != 0 && this.linkId != 0 && this.flowId != 0) {
             if (this.vlan != 0 || this.srcMac != null && this.dstMac != null) {
                 return true;
