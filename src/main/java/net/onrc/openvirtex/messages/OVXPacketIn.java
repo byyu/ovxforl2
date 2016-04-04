@@ -130,7 +130,7 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
            	//tenantId = this.fetchTenantId(match, map, true);
         	   long linkId = MACAddress.valueOf(match.getDataLayerDestination()).toLong()-MACAddress.valueOf(match.getDataLayerSource()).toLong();
         	   tenantId = OVXMap.getInstance().gettenantIdbyLinkId(linkId);
-           	if(tenantId!=null)
+           	if(tenantId!=0)
            		flowId = map.getVirtualNetwork(tenantId).getFlowManager().getFlowId(match.getDataLayerSource(), match.getDataLayerDestination());
 
            } catch (NetworkMappingException | DroppedMessageException e1) {
@@ -139,7 +139,6 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
 				return ;
 			}catch(NullPointerException e2){
 				e2.printStackTrace();
-				tenantId = 0;
 			};
 
 			OVXLinkUtils lUtils = new OVXLinkUtils(tenantId, flowId, eth.getSourceMAC(), eth.getDestinationMAC());
