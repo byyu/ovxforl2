@@ -171,7 +171,7 @@ public class OVXLinkUtils {
 			LinkedList<MACAddress> dualmac = map.getVirtualNetwork(this.tenantId).getFlowManager().getFlowValues(flowId);
 			srcSwitch = map.getHostbyMAC(dualmac.get(0)).getPort().getParentSwitch();
 			dstSwitch = map.getHostbyMAC(dualmac.get(1)).getPort().getParentSwitch();
-			//todo : big switch proccessing
+			//TODO : big switch processing
 			final long src = map.getPhysicalSwitches(srcSwitch).get(0).getSwitchId();
 
 			this.srcMac = MACAddress.valueOf(src);
