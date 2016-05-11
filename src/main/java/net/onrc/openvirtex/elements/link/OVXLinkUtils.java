@@ -118,7 +118,7 @@ public class OVXLinkUtils {
     	this.flowId = flowId;
     	this.srcMac = srcMac;
     	this.dstMac = dstMac;
-    	this.linkId = (int)(srcMac.toLong()-dstMac.toLong());
+    	this.linkId = (int)(dstMac.toLong()-srcMac.toLong());
     	this.vlan = 0;
     }
     /**
@@ -179,10 +179,8 @@ public class OVXLinkUtils {
 			
     	} catch (NetworkMappingException e) {
 			log.error("This tenantId : {} and flowId : {} is wrong,",this.tenantId, this.flowId);
-			e.printStackTrace();
 		} catch (SwitchMappingException e) {
 			log.error("This Switch can't find");
-			e.printStackTrace();
 		}
     }
 
