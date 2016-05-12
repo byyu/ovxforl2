@@ -115,12 +115,13 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
 
         if (match.getDataLayerType() == Ethernet.TYPE_IPV4					//코어에서 
                 || match.getDataLayerType() == Ethernet.TYPE_ARP) {
-        	this.log.info("\n\nThis message type is : {} \n\n", match.getDataLayerType());
+        	this.log.info("\n\nThis message type is : {}\nsrcIP : {}\ndstIP : {} \n\n", match.getDataLayerType(),match.getNetworkSource(),match.getNetworkDestination());
             PhysicalIPAddress srcIP = new PhysicalIPAddress(
                     match.getNetworkSource());
             PhysicalIPAddress dstIP = new PhysicalIPAddress(
                     match.getNetworkDestination());
 
+            this.log.info("\n\n srcIP : {}\ndstIP : {} \n\n",srcIP.toString(),dstIP.toString());
             Ethernet eth = new Ethernet();
             eth.deserialize(this.getPacketData(), 0,
                     this.getPacketData().length);
