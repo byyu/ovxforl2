@@ -727,7 +727,7 @@ public final class OVXMap implements Mappable {
     public Integer gettenantIdbyLinkId(long linkId){
     	if(linktenantMap.contains(linkId))
     		return linktenantMap.get(linkId);
-		return null;
+		return 0;
     }
     
     /**

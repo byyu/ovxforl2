@@ -126,6 +126,7 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
             eth.deserialize(this.getPacketData(), 0,
                     this.getPacketData().length);
            this.log.info("Ethernet SrcMAC : {} \n DstMAC : {}",eth.getSourceMAC().toString(), eth.getDestinationMAC().toString());
+
          //byyu
            Integer flowId = null;
            try {
@@ -149,7 +150,6 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
 			
             // rewrite the OFMatch with the values of the link
             if (lUtils.isValid()) {
-            	
                 OVXPort srcPort = port.getOVXPort(lUtils.getTenantId(),
                         lUtils.getLinkId());
                 if (srcPort == null) {
