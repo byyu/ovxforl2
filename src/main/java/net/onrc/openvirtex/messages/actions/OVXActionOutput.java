@@ -41,6 +41,7 @@ import net.onrc.openvirtex.routing.SwitchRoute;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openflow.protocol.OFPort;
+import org.openflow.protocol.Wildcards;
 import org.openflow.protocol.Wildcards.Flag;
 import org.openflow.protocol.action.OFAction;
 import org.openflow.protocol.action.OFActionOutput;
@@ -205,6 +206,7 @@ public class OVXActionOutput extends OFActionOutput implements
                              * restore original IPs - add actions to current FM
                              * to restore packet fields related to the link
                              */
+                        	match.setWildcards(match.getWildcardObj().wildcard(Wildcards.Flag.NW_DST, Wildcards.Flag.NW_SRC));
                             approvedActions.addAll(IPMapper
                                     .prependUnRewriteActions(match));
                             // rewrite the OFMatch with the values of the link

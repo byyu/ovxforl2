@@ -133,9 +133,9 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
            	//tenantId = this.fetchTenantId(match, map, true);
         	   long linkId = MACAddress.valueOf(match.getDataLayerDestination()).toLong()-MACAddress.valueOf(match.getDataLayerSource()).toLong();
         	   tenantId = OVXMap.getInstance().gettenantIdbyLinkId(linkId);
+
            	if(tenantId!=null)
            		flowId = map.getVirtualNetwork(tenantId).getFlowManager().getFlowId(match.getDataLayerSource(), match.getDataLayerDestination());
-
            } catch (NetworkMappingException | DroppedMessageException e1) {
 				this.log.error("We can't find network or other error");
 				//e1.printStackTrace();

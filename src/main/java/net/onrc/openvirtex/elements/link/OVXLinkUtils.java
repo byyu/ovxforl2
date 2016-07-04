@@ -107,7 +107,7 @@ public class OVXLinkUtils {
         final int mask = OVXLinkUtils.bitSetToInt(bmask);
         this.linkId = (int) (mac.toLong() >> (48 - vNets) / 2) & mask;
         this.flowId = (int) mac.toLong() & mask;
-        this.log.info("set flowId "+this.flowId);
+
         this.vlan = 0;
     }
 
@@ -164,8 +164,9 @@ public class OVXLinkUtils {
     	this.tenantId = tenantId;
     	this.linkId = linkId;
     	this.flowId = flowId;
-
+    	
     	OVXMap map = OVXMap.getInstance();
+    	
     	OVXSwitch srcSwitch, dstSwitch;
     	try {
 			LinkedList<MACAddress> dualmac = map.getVirtualNetwork(this.tenantId).getFlowManager().getFlowValues(flowId);
