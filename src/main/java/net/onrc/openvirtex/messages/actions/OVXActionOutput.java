@@ -206,9 +206,6 @@ public class OVXActionOutput extends OFActionOutput implements
                              * restore original IPs - add actions to current FM
                              * to restore packet fields related to the link
                              */
-                        	log.info("\nThis wildcards : {}",match.getWildcardObj().toString());
-                        	match.setWildcards(match.getWildcardObj().wildcard(Wildcards.Flag.NW_DST, Wildcards.Flag.NW_SRC));
-                        	log.info("\nThis wildcards : {}",match.getWildcardObj().toString());
                         	approvedActions.addAll(IPMapper
                                     .prependUnRewriteActions(match));
                             // rewrite the OFMatch with the values of the link

@@ -143,9 +143,11 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         }
         this.getMatch().setInputPort(inPort.getPhysicalPortNumber());
         OVXMessageUtil.translateXid(this, inPort);
+        log.info("\n\nOutPort is {}", this.outPort);
         try {
             if (inPort.isEdge()) {
                 this.prependRewriteActions();
+                
             } else {
                 IPMapper.rewriteMatch(sw.getTenantId(), this.match);
                 // TODO: Verify why we have two send points... and if this is
