@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import net.onrc.openvirtex.elements.OVXMap;
 import net.onrc.openvirtex.elements.address.IPMapper;
 import net.onrc.openvirtex.elements.datapath.FlowTable;
 import net.onrc.openvirtex.elements.datapath.OVXFlowTable;
@@ -33,6 +34,7 @@ import net.onrc.openvirtex.exceptions.NetworkMappingException;
 import net.onrc.openvirtex.exceptions.UnknownActionException;
 import net.onrc.openvirtex.messages.actions.OVXActionNetworkLayerDestination;
 import net.onrc.openvirtex.messages.actions.OVXActionNetworkLayerSource;
+import net.onrc.openvirtex.messages.actions.OVXActionOutput;
 import net.onrc.openvirtex.messages.actions.VirtualizableAction;
 import net.onrc.openvirtex.packet.Ethernet;
 import net.onrc.openvirtex.protocol.OVXMatch;
@@ -45,6 +47,7 @@ import org.openflow.protocol.OFFlowMod;
 import org.openflow.protocol.OFMatch;
 import org.openflow.protocol.Wildcards.Flag;
 import org.openflow.protocol.action.OFAction;
+import org.openflow.protocol.action.OFActionType;
 
 public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
 
@@ -143,7 +146,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         }
         this.getMatch().setInputPort(inPort.getPhysicalPortNumber());
         OVXMessageUtil.translateXid(this, inPort);
-        log.info("\n\nOutPort is {}", this.outPort);
+
         try {
             if (inPort.isEdge()) {
                 this.prependRewriteActions();
@@ -174,8 +177,11 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
                         OVXLinkUtils lUtils = new OVXLinkUtils(
                                 sw.getTenantId(), link.getLinkId(), flowId);
                         lUtils.rewriteMatch(this.getMatch());
+                        if(isEdgeOutport())
+                        	lUtils.rewriteEdgeMatch(this.getMatch());
                     }
                 }
+
             }
         } catch (NetworkMappingException e) {
             log.warn(
@@ -260,5 +266,27 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         this.cookie = tmp;
     }
 
+    //byyu
+    public boolean isEdgeOutport(){
+
+    	OVXPort outPort;
+
+		short outport = 0;
+		if(this.getActions().size()==0){
+			return false;
+		}
+	    
+		for(final OFAction act : this.getActions()){
+	    	if(act.getType()==OFActionType.OUTPUT){
+	    		OVXActionOutput outact = (OVXActionOutput) act;
+	    		outport = outact.getPort();
+	    	}
+	    }
+		outPort = this.sw.getPort(outport);
+		if(outPort.isEdge())
+			return true;
+		else
+			return false;
+    }
 
 }

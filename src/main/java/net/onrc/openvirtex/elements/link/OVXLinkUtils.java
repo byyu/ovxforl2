@@ -300,6 +300,10 @@ public class OVXLinkUtils {
             match.setDataLayerVirtualLan(this.getVlan());
         }
     }
+    
+    public void rewriteEdgeMatch(final OFMatch match) {
+    	match.setWildcards(match.getWildcards() & OFMatch.OFPFW_ALL);
+    }
 
     /**
      * Gets a list of actions based on the current instance.
