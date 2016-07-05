@@ -121,12 +121,12 @@ public class OVXPacketOut extends OFPacketOut implements Devirtualizable {
             OVXMessageUtil.translateXid(this, inport);
         }
         this.log.debug("Sending packet-out to sw {}: {}", sw.getName(), this);
-        this.log.info("OVXPacketOut action list");
-        for(final OFAction act : this.approvedActions){
-        	this.log.info("Actions : {}", act.toString());
-        }
-        
-        this.log.info("Match : {}", this.match.toString());
+//        this.log.info("OVXPacketOut action list");
+//        for(final OFAction act : this.approvedActions){
+//        	this.log.info("Actions : {}", act.toString());
+//        }
+//        
+//        this.log.info("Match : {}", this.match.toString());
         sw.sendSouth(this, inport);
     }
 

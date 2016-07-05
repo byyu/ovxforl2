@@ -58,7 +58,7 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
 
     @Override
     public void virtualize(final PhysicalSwitch sw) {
-    	this.log.info("Start packetIn virtualization");
+//    	this.log.info("Start packetIn virtualization");
     	
         OVXSwitch vSwitch = OVXMessageUtil.untranslateXid(this, sw);
         /*
@@ -70,7 +70,7 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
         
         final OFMatch match = new OFMatch();
         match.loadFromPacket(this.getPacketData(), inport);		//팻킷의 맷치를 받아 온다.
-        this.log.info("srcMAC and destMAC - scr : {}, dst : {}", match.getDataLayerSource(),match.getDataLayerDestination());
+//        this.log.info("srcMAC and destMAC - scr : {}, dst : {}", match.getDataLayerSource(),match.getDataLayerDestination());
         /*
          * Check whether this packet arrived on an edge port.
          *
@@ -96,8 +96,8 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
             this.sendPkt(vSwitch, match, sw);											//버츄얼스위치로 패킷을 보낸다.
             this.learnHostIP(match, map);												//아이피주소를 맵에 저장한다.
             this.learnAddresses(match, map);											//맥주소를 맵에 저장한다.
-            this.log.info("Edge PacketIn {} sent to virtual network {}", this,
-                    this.tenantId);
+//            this.log.info("Edge PacketIn {} sent to virtual network {}", this,
+//                    this.tenantId);
             return;
         }
 
@@ -115,17 +115,17 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
 
         if (match.getDataLayerType() == Ethernet.TYPE_IPV4					//코어에서 
                 || match.getDataLayerType() == Ethernet.TYPE_ARP) {
-        	this.log.info("\n\nThis message type is : {}\nsrcIP : {}\ndstIP : {} \n\n", match.getDataLayerType(),match.getNetworkSource(),match.getNetworkDestination());
+//        	this.log.info("\n\nThis message type is : {}\nsrcIP : {}\ndstIP : {} \n\n", match.getDataLayerType(),match.getNetworkSource(),match.getNetworkDestination());
             PhysicalIPAddress srcIP = new PhysicalIPAddress(
                     match.getNetworkSource());
             PhysicalIPAddress dstIP = new PhysicalIPAddress(
                     match.getNetworkDestination());
 
-            this.log.info("\n\n srcIP : {}\ndstIP : {} \n\n",srcIP.toString(),dstIP.toString());
+//            this.log.info("\n\n srcIP : {}\ndstIP : {} \n\n",srcIP.toString(),dstIP.toString());
             Ethernet eth = new Ethernet();
             eth.deserialize(this.getPacketData(), 0,
                     this.getPacketData().length);
-           this.log.info("Ethernet SrcMAC : {} \n DstMAC : {}",eth.getSourceMAC().toString(), eth.getDestinationMAC().toString());
+//           this.log.info("Ethernet SrcMAC : {} \n DstMAC : {}",eth.getSourceMAC().toString(), eth.getDestinationMAC().toString());
 
          //byyu
            Integer flowId = null;

@@ -82,7 +82,7 @@ public class OVXActionOutput extends OFActionOutput implements
             final OVXFlowMod fm;
             try {
                 fm = sw.getFlowMod(match.getCookie());								//스위치에 플로우모드를 쿠키별로 저장하고 있음
-                this.log.info("Now Flowmod match is \n"+fm.getMatch().toString());
+//                this.log.info("Now Flowmod match is \n"+fm.getMatch().toString());
             } catch (MappingException e) {
                 log.warn("FlowMod not found in our FlowTable");
                 return;
@@ -91,7 +91,7 @@ public class OVXActionOutput extends OFActionOutput implements
             fm.setCookie(match.getCookie());										//플로우 모드에 쿠키값을 저장해줌.
             // TODO: Check if the FM has been retrieved
             
-            this.log.info("Get cookie of fm "+fm.getCookie());
+//            this.log.info("Get cookie of fm "+fm.getCookie());
             
             for (final OVXPort outPort : outPortList) {
             	this.log.info("This port is {} on {}",outPort.getPortNumber(),sw.getName());
@@ -180,7 +180,7 @@ public class OVXActionOutput extends OFActionOutput implements
                              * link
                              */
                             final OVXLink link = outPort.getLink().getOutLink();	//아웃포트에 있는 링크를 가져온다.
-                            this.log.info("Link information : {}",link.toString());
+//                            this.log.info("Link information : {}",link.toString());
                             linkId = link.getLinkId();
                             try {
                                 flowId = vnet.getFlowManager().storeFlowValues(			//플로우아이디를 불러온다. 
@@ -331,10 +331,10 @@ public class OVXActionOutput extends OFActionOutput implements
                 throw new DroppedMessageException();
             }
         }
-        for(final OFAction logaction : approvedActions){
-        	this.log.info("This approvedActions is {}", logaction.toString());
-        }
-        this.log.info("This action is {}",this.toString());
+//        for(final OFAction logaction : approvedActions){
+//        	this.log.info("This approvedActions is {}", logaction.toString());
+//        }
+//        this.log.info("This action is {}",this.toString());
 
     }
 
@@ -345,14 +345,14 @@ public class OVXActionOutput extends OFActionOutput implements
         if (U16.f(outPort) < U16.f(OFPort.OFPP_MAX.getValue())) {
             if (sw.getPort(outPort) != null && sw.getPort(outPort).isActive()) {
                 outPortList.add(sw.getPort(outPort));
-               this.log.info("port number is "+outPort.intValue());
+//               this.log.info("port number is "+outPort.intValue());
             }
         } else if (U16.f(outPort) == U16.f(OFPort.OFPP_FLOOD.getValue())) {
             final Map<Short, OVXPort> ports = sw.getPorts();
             for (final OVXPort port : ports.values()) {
                 if (port.getPortNumber() != inPort && port.isActive()) {
                     outPortList.add(port);
-                    this.log.info("port number is "+outPort.intValue());
+//                    this.log.info("port number is "+outPort.intValue());
                 }
             }
         } else if (U16.f(outPort) == U16.f(OFPort.OFPP_ALL.getValue())) {
@@ -360,7 +360,7 @@ public class OVXActionOutput extends OFActionOutput implements
             for (final OVXPort port : ports.values()) {
                 if (port.isActive()) {
                     outPortList.add(port);
-                    this.log.info("port number is "+outPort.intValue());
+//                    this.log.info("port number is "+outPort.intValue());
                 }
             }
         } else {
