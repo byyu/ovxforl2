@@ -302,7 +302,9 @@ public class OVXLinkUtils {
     }
     
     public void rewriteEdgeMatch(final OFMatch match) {
+    	log.info("previous wildcard : {}\n\n\n\n\n\n\n",match.getWildcards());
     	match.setWildcards(match.getWildcards() | OFMatch.OFPFW_NW_DST_ALL | OFMatch.OFPFW_NW_SRC_ALL);
+    	log.info("now wildcard : {}\n\n\n\n\n\n\n",match.getWildcards());
     }
 
     /**
