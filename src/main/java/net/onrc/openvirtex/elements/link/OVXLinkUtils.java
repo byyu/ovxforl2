@@ -24,6 +24,7 @@ import net.onrc.openvirtex.elements.OVXMap;
 import net.onrc.openvirtex.elements.datapath.OVXSwitch;
 import net.onrc.openvirtex.exceptions.NetworkMappingException;
 import net.onrc.openvirtex.exceptions.SwitchMappingException;
+import net.onrc.openvirtex.protocol.OVXMatch;
 import net.onrc.openvirtex.util.MACAddress;
 
 import org.apache.logging.log4j.LogManager;
@@ -303,7 +304,7 @@ public class OVXLinkUtils {
     
     public void rewriteEdgeMatch(final OFMatch match) {
     	log.info("previous wildcard : {}\n\n\n\n\n\n\n",match.getWildcards());
-    	match.setWildcards(match.getWildcards() | OFMatch.OFPFW_NW_DST_ALL | OFMatch.OFPFW_NW_SRC_ALL | OFMatch.OFPFW_NW_PROTO | OFMatch.OFPFW_NW_TOS);
+    	match.setWildcards(match.getWildcards() | (~OVXMatch.OFPFW_DL_DST));
     	log.info("now wildcard : {}\n\n\n\n\n\n\n",match.getWildcards());
     }
 
