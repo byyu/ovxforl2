@@ -313,9 +313,11 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
     private void learnAddresses(final OFMatch match, final Mappable map) {
         if (match.getDataLayerType() == Ethernet.TYPE_IPV4
                 || match.getDataLayerType() == Ethernet.TYPE_ARP) {						//데이터레이어 타입이 아이피브이4거나 압일때 
-            if (!match.getWildcardObj().isWildcarded(Flag.NW_SRC)) {
+        	log.info("This learn Address");;
+        	if (!match.getWildcardObj().isWildcarded(Flag.NW_SRC)) {
                 IPMapper.getPhysicalIp(this.tenantId, match.getNetworkSource());		//아이피맵에 없으면 추가 
-            }
+                log.info("This learn Address2");;
+        	}
             if (!match.getWildcardObj().isWildcarded(Flag.NW_DST)) {
                 IPMapper.getPhysicalIp(this.tenantId,
                         match.getNetworkDestination());
