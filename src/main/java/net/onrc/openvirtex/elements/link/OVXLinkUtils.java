@@ -304,7 +304,7 @@ public class OVXLinkUtils {
     
     public void rewriteEdgeMatch(final OFMatch match) {
     	log.info("previous wildcard : {}\n\n\n\n\n\n\n",match.getWildcards());
-    	match.setWildcards(~OFMatch.OFPFW_NW_DST_ALL);//match.getWildcards() & (~OFMatch.OFPFW_TP_DST) & (~OFMatch.OFPFW_TP_SRC) & (~OFMatch.OFPFW_NW_PROTO));
+    	match.setWildcards(match.getWildcards() & (~OFMatch.OFPFW_NW_DST_ALL) & (~OFMatch.OFPFW_NW_SRC_ALL) & (~OFMatch.OFPFW_NW_PROTO));
     	log.info("now wildcard : {}\n\n\n\n\n\n\n",match.getWildcards());
     }
 
