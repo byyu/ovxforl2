@@ -87,7 +87,7 @@ public class OVXActionOutput extends OFActionOutput implements
                 log.warn("FlowMod not found in our FlowTable");
                 return;
             }
-           this.log.info("Get cookie of fm "+fm.getCookie());
+//           this.log.info("Get cookie of fm "+fm.getCookie());
             fm.setCookie(match.getCookie());										//플로우 모드에 쿠키값을 저장해줌.
             // TODO: Check if the FM has been retrieved
             
@@ -274,7 +274,7 @@ public class OVXActionOutput extends OFActionOutput implements
 
             // TODO check how to delete the packetOut and if it's required
             boolean throwException = true;
-
+            log.info("Outport List : {}\n\n\n\n", outPortList.toString());
             for (final OVXPort outPort : outPortList) {
                 /**
                  * If the outPort belongs to a virtual link, generate a packetIn
