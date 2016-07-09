@@ -273,6 +273,7 @@ public class OVXActionOutput extends OFActionOutput implements
              */
 
             // TODO check how to delete the packetOut and if it's required
+        	this.log.info("\n\n\nFirst Action : {}",approvedActions.toString());
             boolean throwException = true;
             log.info("Outport List : {}\n\n\n\n", outPortList.toString());
             for (final OVXPort outPort : outPortList) {
@@ -318,14 +319,16 @@ public class OVXActionOutput extends OFActionOutput implements
                      *
                      */
                     throwException = false;
+                    this.log.info("\n\n\nFirst Action : {}",approvedActions.toString());
                     approvedActions.addAll(IPMapper
                             .prependUnRewriteActions(match));
+                    this.log.info("\n\n\nFirst Action : {}",approvedActions.toString());
                     approvedActions.add(new OFActionOutput(outPort
                             .getPhysicalPortNumber()));
+                    this.log.info("\n\n\nFirst Action : {}",approvedActions.toString());
                     this.log.info(
                             "Physical ports are on the same physical switch, rewrite only outPort to {}",
                             outPort.getPhysicalPortNumber());
-                    return;
                 }
             }
             if (throwException) {
