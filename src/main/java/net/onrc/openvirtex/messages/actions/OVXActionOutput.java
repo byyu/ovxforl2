@@ -325,6 +325,7 @@ public class OVXActionOutput extends OFActionOutput implements
                     this.log.info(
                             "Physical ports are on the same physical switch, rewrite only outPort to {}",
                             outPort.getPhysicalPortNumber());
+                    return;
                 }
             }
             if (throwException) {
