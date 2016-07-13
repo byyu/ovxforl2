@@ -321,6 +321,7 @@ public class OVXActionOutput extends OFActionOutput implements
                      */
                     throwException = false;
                     if(match.getDataLayerType()==(short)0x806){
+                    	
                     	match.setWildcards(match.getWildcards() 
                     			& (OFMatch.OFPFW_NW_DST_ALL) 
                     			& (OFMatch.OFPFW_NW_SRC_ALL) 
