@@ -106,11 +106,11 @@ public class OVXPacketOut extends OFPacketOut implements Devirtualizable {
             this.setInPort(inport.getPhysicalPortNumber());
         }
         log.info("\n\nThis DataLayer Type is : {}", ovxMatch.getDataLayerType());
-        if(ovxMatch.getDataLayerType() != (short)0x806){
-            log.info("\n\nThis action is : {}", this.approvedActions.toString());
-            this.prependRewriteActions(sw);
-            log.info("\n\nThis action is : {}", this.approvedActions.toString());
-        }
+        
+        log.info("\n\nThis action is : {}", this.approvedActions.toString());
+        this.prependRewriteActions(sw);
+        log.info("\n\nThis action is : {}", this.approvedActions.toString());
+
 
         this.setActions(this.approvedActions);
         this.setActionsLength((short) 0);
@@ -137,6 +137,7 @@ public class OVXPacketOut extends OFPacketOut implements Devirtualizable {
     }
 
     private void prependRewriteActions(final OVXSwitch sw) {
+    	
         if (!this.match.getWildcardObj().isWildcarded(Flag.NW_SRC)) {
             final OVXActionNetworkLayerSource srcAct = new OVXActionNetworkLayerSource();
             srcAct.setNetworkAddress(IPMapper.getPhysicalIp(sw.getTenantId(),
