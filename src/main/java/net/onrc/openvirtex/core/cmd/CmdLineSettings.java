@@ -33,7 +33,7 @@ public class CmdLineSettings {
     /**
      * Default OVX port.
      */
-    public static final Integer DEFAULT_OF_PORT = 10000;
+    public static final Integer DEFAULT_OF_PORT = 6633;
     /**
      * Default number of virtual networks to support.
      */
