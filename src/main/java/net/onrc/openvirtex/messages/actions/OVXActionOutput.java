@@ -321,11 +321,19 @@ public class OVXActionOutput extends OFActionOutput implements
                      */
                     throwException = false;
                     if(match.getDataLayerType()==(short)0x806){
-                    	
-                    	match.setWildcards(match.getWildcards() 
-                    			& (OFMatch.OFPFW_NW_DST_ALL) 
-                    			& (OFMatch.OFPFW_NW_SRC_ALL) 
-                    			& (OFMatch.OFPFW_DL_TYPE));
+                    	if (!match.getWildcardObj().isWildcarded(Flag.NW_SRC)) {
+                    		match.setWildcards(match.getWildcards() & (~OFMatch.OFPFW_NW_SRC_ALL));
+                    	}
+                    	if (!match.getWildcardObj().isWildcarded(Flag.NW_DST)) {
+                    		match.setWildcards(match.getWildcards() & (~OFMatch.OFPFW_NW_DST_ALL));
+                    	}
+                    	if (match.getWildcardObj().isWildcarded(Flag.NW_SRC) ||
+                    			match.getWildcardObj().isWildcarded(Flag.NW_DST)){
+                    		match.setWildcards(match.getWildcards() 
+                        			& (OFMatch.OFPFW_NW_DST_ALL) 
+                        			& (OFMatch.OFPFW_NW_SRC_ALL) 
+                        			& (OFMatch.OFPFW_DL_TYPE));
+                    	}
                     }else{
                     this.log.info("\n\n\nFirst Action : {}",approvedActions.toString());
                     approvedActions.addAll(IPMapper

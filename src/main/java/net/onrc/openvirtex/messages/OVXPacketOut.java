@@ -137,7 +137,6 @@ public class OVXPacketOut extends OFPacketOut implements Devirtualizable {
     }
 
     private void prependRewriteActions(final OVXSwitch sw) {
-    	log.info("This wildcard : {}\n\n\n",this.match.getWildcardObj().toString());
         if (!this.match.getWildcardObj().isWildcarded(Flag.NW_SRC)) {
             final OVXActionNetworkLayerSource srcAct = new OVXActionNetworkLayerSource();
             srcAct.setNetworkAddress(IPMapper.getPhysicalIp(sw.getTenantId(),
