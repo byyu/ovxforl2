@@ -40,6 +40,7 @@ import net.onrc.openvirtex.routing.SwitchRoute;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openflow.protocol.OFMatch;
 import org.openflow.protocol.OFPort;
 import org.openflow.protocol.Wildcards;
 import org.openflow.protocol.Wildcards.Flag;
@@ -319,9 +320,16 @@ public class OVXActionOutput extends OFActionOutput implements
                      *
                      */
                     throwException = false;
+                    if(match.getDataLayerType()==(short)0x806){
+                    	match.setWildcards(match.getWildcards() 
+                    			& (~OFMatch.OFPFW_NW_DST_ALL) 
+                    			& (~OFMatch.OFPFW_NW_SRC_ALL) 
+                    			& (~OFMatch.OFPFW_DL_TYPE));
+                    }else{
                     this.log.info("\n\n\nFirst Action : {}",approvedActions.toString());
                     approvedActions.addAll(IPMapper
                             .prependUnRewriteActions(match));
+                    }
                     this.log.info("\n\n\nFirst Action : {}",approvedActions.toString());
                     approvedActions.add(new OFActionOutput(outPort
                             .getPhysicalPortNumber()));
@@ -329,6 +337,7 @@ public class OVXActionOutput extends OFActionOutput implements
                     this.log.info(
                             "Physical ports are on the same physical switch, rewrite only outPort to {}",
                             outPort.getPhysicalPortNumber());
+                    
                 }
             }
             if (throwException) {
