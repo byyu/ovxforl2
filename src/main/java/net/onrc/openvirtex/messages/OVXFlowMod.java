@@ -273,7 +273,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
     public boolean isEdgeOutport(){
     	log.info("in EdgeOutport");
     	OVXPort outPort;
-
+    	
 		short outport = 0;
 		if(this.getActions().size()==0){
 			return false;
