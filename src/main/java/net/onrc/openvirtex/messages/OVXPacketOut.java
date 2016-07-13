@@ -105,6 +105,7 @@ public class OVXPacketOut extends OFPacketOut implements Devirtualizable {
         if (U16.f(this.getInPort()) < U16.f(OFPort.OFPP_MAX.getValue())) {
             this.setInPort(inport.getPhysicalPortNumber());
         }
+        log.info("\n\nThis DataLayer Type is : {}", ovxMatch.getDataLayerType());
         if(ovxMatch.getDataLayerType() != (short)0x806){
             log.info("\n\nThis action is : {}", this.approvedActions.toString());
             this.prependRewriteActions(sw);
