@@ -83,7 +83,7 @@ public class OVXPacketOut extends OFPacketOut implements Devirtualizable {
             ovxMatch = new OVXMatch(match);
             ovxMatch.setPktData(cause.getPacketData());
             this.log.info("This match of packet out : {}\n\n\n\nOvxMatch : {}\n\n\n",this.match.toString(), ovxMatch);
-            
+            this.log.info("This wildcard : {}\n\n\n\n{}\n\n",this.match.getWildcards(),ovxMatch.getWildcards());
             
             if (cause.getBufferId() == OVXPacketOut.BUFFER_ID_NONE) {
                 this.setPacketData(cause.getPacketData());
