@@ -66,6 +66,8 @@ public class OVXPacketOut extends OFPacketOut implements Devirtualizable {
                     this.inPort);
             ovxMatch = new OVXMatch(match);
             ovxMatch.setPktData(this.packetData);
+            
+            
         } else {
             final OVXPacketIn cause = sw.getFromBufferMap(this.bufferId);
             if (cause == null) {
@@ -80,6 +82,9 @@ public class OVXPacketOut extends OFPacketOut implements Devirtualizable {
             this.setBufferId(cause.getBufferId());
             ovxMatch = new OVXMatch(match);
             ovxMatch.setPktData(cause.getPacketData());
+            this.log.info("This match of packet out : {}\n\n\n\nOvxMatch : {}\n\n\n",this.match.toString(), ovxMatch);
+            
+            
             if (cause.getBufferId() == OVXPacketOut.BUFFER_ID_NONE) {
                 this.setPacketData(cause.getPacketData());
                 this.setLengthU(this.getLengthU() + this.packetData.length);
