@@ -274,7 +274,6 @@ public class OVXActionOutput extends OFActionOutput implements
              */
 
             // TODO check how to delete the packetOut and if it's required
-
             boolean throwException = true;
 
             for (final OVXPort outPort : outPortList) {
@@ -320,25 +319,25 @@ public class OVXActionOutput extends OFActionOutput implements
                      *
                      */
                     throwException = false;
-                    if(match.getDataLayerType()==(short)0x806){
-                    	if (!match.getWildcardObj().isWildcarded(Flag.NW_SRC)) {
-                    		match.setWildcards(match.getWildcards() & (~OFMatch.OFPFW_NW_SRC_ALL));
-                    	}
-                    	if (!match.getWildcardObj().isWildcarded(Flag.NW_DST)) {
-                    		match.setWildcards(match.getWildcards() & (~OFMatch.OFPFW_NW_DST_ALL));
-                    	}
-                    	if (match.getWildcardObj().isWildcarded(Flag.NW_SRC) ||
-                    			match.getWildcardObj().isWildcarded(Flag.NW_DST)){
-                    		match.setWildcards(match.getWildcards() 
-                        			& (OFMatch.OFPFW_NW_DST_ALL) 
-                        			& (OFMatch.OFPFW_NW_SRC_ALL) 
-                        			& (OFMatch.OFPFW_DL_TYPE));
-                    	}
-                    }else{
+//                    if(match.getDataLayerType()==(short)0x806){
+//                    	if (!match.getWildcardObj().isWildcarded(Flag.NW_SRC)) {
+//                    		match.setWildcards(match.getWildcards() & (~OFMatch.OFPFW_NW_SRC_ALL));
+//                    	}
+//                    	if (!match.getWildcardObj().isWildcarded(Flag.NW_DST)) {
+//                    		match.setWildcards(match.getWildcards() & (~OFMatch.OFPFW_NW_DST_ALL));
+//                    	}
+//                    	if (match.getWildcardObj().isWildcarded(Flag.NW_SRC) ||
+//                    			match.getWildcardObj().isWildcarded(Flag.NW_DST)){
+//                    		match.setWildcards(match.getWildcards() 
+//                        			& (OFMatch.OFPFW_NW_DST_ALL) 
+//                        			& (OFMatch.OFPFW_NW_SRC_ALL) 
+//                        			& (OFMatch.OFPFW_DL_TYPE));
+//                    	}
+//                    }else{
                     this.log.info("\n\n\nFirst Action : {}",approvedActions.toString());
                     approvedActions.addAll(IPMapper
                             .prependUnRewriteActions(match));
-                    }
+//                    }
                     this.log.info("\n\n\nFirst Action : {}",approvedActions.toString());
                     approvedActions.add(new OFActionOutput(outPort
                             .getPhysicalPortNumber()));
