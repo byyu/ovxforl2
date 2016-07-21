@@ -121,6 +121,9 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
             PhysicalIPAddress dstIP = new PhysicalIPAddress(
                     match.getNetworkDestination());
 
+            if(match.getDataLayerType()==Ethernet.TYPE_ARP){
+            	this.log.info("srcIP and dstIP : {}, {}", match.getNetworkSource(), match.getNetworkDestination());
+            }
 //            this.log.info("\n\n srcIP : {}\ndstIP : {} \n\n",srcIP.toString(),dstIP.toString());
             Ethernet eth = new Ethernet();
             eth.deserialize(this.getPacketData(), 0,
@@ -138,7 +141,8 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
            		flowId = map.getVirtualNetwork(tenantId).getFlowManager().getFlowId(match.getDataLayerSource(), match.getDataLayerDestination());
            } catch (NetworkMappingException e1) {
         	   
-				this.log.error("We can't find network or other error this tenantId : {}\n Packet : {}",tenantId, this.getPacketData().toString());
+				this.log.error("We can't find network or other error this tenantId : {}\n Packet : {}",tenantId, this.toString());
+				this.log.info("This ethernet type : {}", match.getDataLayerType());
 				//e1.printStackTrace();
 				return ;
 			}catch(NullPointerException e2){
