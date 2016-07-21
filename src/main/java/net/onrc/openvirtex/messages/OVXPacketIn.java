@@ -143,7 +143,7 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
         	   
 				this.log.error("We can't find network or other error this tenantId : {}\n Packet : {}\n\nThis ethernet type : {}",tenantId, this.getBufferId(), match.getDataLayerType());
 				//e1.printStackTrace();
-				//return ;
+				return ;
 			}catch(NullPointerException e2){
 				//e2.printStackTrace();
 			} catch (DroppedMessageException e) {
@@ -242,7 +242,7 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
             this.setPacketData(eth.serialize());
 
             vSwitch = this.fetchOVXSwitch(sw, vSwitch, map);
-            this.log.info("This vSwitch is : {} ", vSwitch.toString());
+            
             this.sendPkt(vSwitch, match, sw);
             this.log.debug("IPv4 PacketIn {} sent to virtual network {}", this,
                     this.tenantId);
