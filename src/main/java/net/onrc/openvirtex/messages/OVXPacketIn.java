@@ -154,12 +154,13 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
            
            }else{
             	final ARP arp = (ARP) eth.getPayload();
-            	MACAddress arpSrc;
+            	MACAddress arpSrc, arpDst;
             	arpSrc = new MACAddress(arp.getSenderHardwareAddress());
+            	arpDst = new MACAddress(arp.getTargetHardwareAddress());
             	if (map.hasMAC(arpSrc)) {
                     try {
                         tenantId =  map.getMAC(arpSrc);											//맵에서 맥주로를 통해 테넌트 아이디를 받아온다.
-                        flowId = map.getVirtualNetwork(tenantId).getFlowManager().getFlowId(match.getDataLayerSource(), match.getDataLayerDestination());
+                        flowId = map.getVirtualNetwork(tenantId).getFlowManager().getFlowId(arpSrc.getAddress(), arpDst.getAddress());
                     } catch (AddressMappingException e) {
                         log.warn("Unvalid 1");
                     } catch (NetworkMappingException e) {
