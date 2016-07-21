@@ -141,8 +141,7 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
            		flowId = map.getVirtualNetwork(tenantId).getFlowManager().getFlowId(match.getDataLayerSource(), match.getDataLayerDestination());
            } catch (NetworkMappingException e1) {
         	   
-				this.log.error("We can't find network or other error this tenantId : {}\n Packet : {}",tenantId, this.toString());
-				this.log.info("This ethernet type : {}", match.getDataLayerType());
+				this.log.error("We can't find network or other error this tenantId : {}\n Packet : {}\n\nThis ethernet type : {}",tenantId, this.getBufferId(), match.getDataLayerType());
 				//e1.printStackTrace();
 				return ;
 			}catch(NullPointerException e2){
