@@ -203,6 +203,7 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
 
             if (match.getDataLayerType() == Ethernet.TYPE_ARP) {
                 // ARP packet
+            	this.log.info("This is Packet in Type arp : {}", this.toString());
                 final ARP arp = (ARP) eth.getPayload();
                 this.tenantId = this.fetchTenantId(match, map, true);
                 try {
