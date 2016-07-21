@@ -208,6 +208,7 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
                 // ARP packet
                 final ARP arp = (ARP) eth.getPayload();
                 this.tenantId = this.fetchTenantId(match, map, true);
+                this.log.info("This tenantId of arp : {}", this.tenantId);
                 try {
                     if (map.hasVirtualIP(srcIP)) {
                         arp.setSenderProtocolAddress(map.getVirtualIP(srcIP)
@@ -241,7 +242,7 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
             this.setPacketData(eth.serialize());
 
             vSwitch = this.fetchOVXSwitch(sw, vSwitch, map);
-
+            this.log.info("This vSwitch is : {} ", vSwitch.toString());
             this.sendPkt(vSwitch, match, sw);
             this.log.debug("IPv4 PacketIn {} sent to virtual network {}", this,
                     this.tenantId);
