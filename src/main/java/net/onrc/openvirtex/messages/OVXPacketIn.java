@@ -143,7 +143,7 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
         	   
 				this.log.error("We can't find network or other error this tenantId : {}\n Packet : {}\n\nThis ethernet type : {}",tenantId, this.getBufferId(), match.getDataLayerType());
 				//e1.printStackTrace();
-				return ;
+				//return ;
 			}catch(NullPointerException e2){
 				//e2.printStackTrace();
 			} catch (DroppedMessageException e) {
@@ -206,7 +206,7 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
 
             if (match.getDataLayerType() == Ethernet.TYPE_ARP) {
                 // ARP packet
-            	this.log.info("This is Packet in Type arp : {}", this.toString());
+            	this.log.info("This is Packet in Type arp");
                 final ARP arp = (ARP) eth.getPayload();
                 this.tenantId = this.fetchTenantId(match, map, true);
                 try {
