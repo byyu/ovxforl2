@@ -121,15 +121,15 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
             PhysicalIPAddress dstIP = new PhysicalIPAddress(
                     match.getNetworkDestination());
 
-            if(match.getDataLayerType()==Ethernet.TYPE_ARP){
-            	this.log.info("srcIP and dstIP : {}, {}", match.getNetworkSource(), match.getNetworkDestination());
-            }
+            
+            	
+            
 //            this.log.info("\n\n srcIP : {}\ndstIP : {} \n\n",srcIP.toString(),dstIP.toString());
             Ethernet eth = new Ethernet();
             eth.deserialize(this.getPacketData(), 0,
                     this.getPacketData().length);
 //           this.log.info("Ethernet SrcMAC : {} \n DstMAC : {}",eth.getSourceMAC().toString(), eth.getDestinationMAC().toString());
-
+            if(match.getDataLayerType()!=Ethernet.TYPE_ARP){
          //byyu
            Integer flowId = null;
            try {
@@ -203,10 +203,9 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
                 }
 
             }
-
+            }
             if (match.getDataLayerType() == Ethernet.TYPE_ARP) {
                 // ARP packet
-            	this.log.info("This is Packet in Type arp");
                 final ARP arp = (ARP) eth.getPayload();
                 this.tenantId = this.fetchTenantId(match, map, true);
                 try {
