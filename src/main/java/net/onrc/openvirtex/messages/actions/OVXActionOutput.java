@@ -319,29 +319,12 @@ public class OVXActionOutput extends OFActionOutput implements
                      *
                      */
                     throwException = false;
-//                    if(match.getDataLayerType()==(short)0x806){
-//                    	if (!match.getWildcardObj().isWildcarded(Flag.NW_SRC)) {
-//                    		match.setWildcards(match.getWildcards() & (~OFMatch.OFPFW_NW_SRC_ALL));
-//                    	}
-//                    	if (!match.getWildcardObj().isWildcarded(Flag.NW_DST)) {
-//                    		match.setWildcards(match.getWildcards() & (~OFMatch.OFPFW_NW_DST_ALL));
-//                    	}
-//                    	if (match.getWildcardObj().isWildcarded(Flag.NW_SRC) ||
-//                    			match.getWildcardObj().isWildcarded(Flag.NW_DST)){
-//                    		match.setWildcards(match.getWildcards() 
-//                        			& (OFMatch.OFPFW_NW_DST_ALL) 
-//                        			& (OFMatch.OFPFW_NW_SRC_ALL) 
-//                        			& (OFMatch.OFPFW_DL_TYPE));
-//                    	}
-//                    }else{
-                    this.log.info("\n\n\nFirst Action : {}",approvedActions.toString());
+
                     approvedActions.addAll(IPMapper
                             .prependUnRewriteActions(match));
-//                    }
-                    this.log.info("\n\n\nFirst Action : {}",approvedActions.toString());
                     approvedActions.add(new OFActionOutput(outPort
                             .getPhysicalPortNumber()));
-                    this.log.info("\n\n\nFirst Action : {}",approvedActions.toString());
+
                     this.log.info(
                             "Physical ports are on the same physical switch, rewrite only outPort to {}",
                             outPort.getPhysicalPortNumber());
@@ -352,10 +335,6 @@ public class OVXActionOutput extends OFActionOutput implements
                 throw new DroppedMessageException();
             }
         }
-//        for(final OFAction logaction : approvedActions){
-//        	this.log.info("This approvedActions is {}", logaction.toString());
-//        }
-//        this.log.info("This action is {}",this.toString());
 
     }
 
@@ -366,14 +345,12 @@ public class OVXActionOutput extends OFActionOutput implements
         if (U16.f(outPort) < U16.f(OFPort.OFPP_MAX.getValue())) {
             if (sw.getPort(outPort) != null && sw.getPort(outPort).isActive()) {
                 outPortList.add(sw.getPort(outPort));
-//               this.log.info("port number is "+outPort.intValue());
             }
         } else if (U16.f(outPort) == U16.f(OFPort.OFPP_FLOOD.getValue())) {
             final Map<Short, OVXPort> ports = sw.getPorts();
             for (final OVXPort port : ports.values()) {
                 if (port.getPortNumber() != inPort && port.isActive()) {
                     outPortList.add(port);
-//                    this.log.info("port number is "+outPort.intValue());
                 }
             }
         } else if (U16.f(outPort) == U16.f(OFPort.OFPP_ALL.getValue())) {
@@ -381,7 +358,6 @@ public class OVXActionOutput extends OFActionOutput implements
             for (final OVXPort port : ports.values()) {
                 if (port.isActive()) {
                     outPortList.add(port);
-//                    this.log.info("port number is "+outPort.intValue());
                 }
             }
         } else {

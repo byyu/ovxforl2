@@ -82,9 +82,7 @@ public class OVXPacketOut extends OFPacketOut implements Devirtualizable {
             this.setBufferId(cause.getBufferId());
             ovxMatch = new OVXMatch(match);
             ovxMatch.setPktData(cause.getPacketData());
-            this.log.info("This match of packet out : {}\n\n\n\nOvxMatch : {}\n\n\n",this.match.toString(), ovxMatch);
-            this.log.info("This wildcard : {}\n\n\n\n{}\n\n",this.match.getWildcards(),ovxMatch.getWildcards());
-            
+
             if (cause.getBufferId() == OVXPacketOut.BUFFER_ID_NONE) {
                 this.setPacketData(cause.getPacketData());
                 this.setLengthU(this.getLengthU() + this.packetData.length);
@@ -110,12 +108,8 @@ public class OVXPacketOut extends OFPacketOut implements Devirtualizable {
         if (U16.f(this.getInPort()) < U16.f(OFPort.OFPP_MAX.getValue())) {
             this.setInPort(inport.getPhysicalPortNumber());
         }
-        log.info("\n\nThis DataLayer Type is : {}", ovxMatch.getDataLayerType());
-        
-        log.info("\n\nThis action is : {}", this.approvedActions.toString());
-        this.prependRewriteActions(sw);
-        log.info("\n\nThis action is : {}", this.approvedActions.toString());
 
+        this.prependRewriteActions(sw);
 
         this.setActions(this.approvedActions);
         this.setActionsLength((short) 0);
@@ -132,12 +126,7 @@ public class OVXPacketOut extends OFPacketOut implements Devirtualizable {
             OVXMessageUtil.translateXid(this, inport);
         }
         this.log.info("Sending packet-out to sw {}: {}", sw.getName(), this);
-//        this.log.info("OVXPacketOut action list");
-//        for(final OFAction act : this.approvedActions){
-//        	this.log.info("Actions : {}", act.toString());
-//        }
-//        
-//        this.log.info("Match : {}", this.match.toString());
+
         sw.sendSouth(this, inport);
     }
 
