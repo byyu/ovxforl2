@@ -129,9 +129,10 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
             eth.deserialize(this.getPacketData(), 0,
                     this.getPacketData().length);
 //           this.log.info("Ethernet SrcMAC : {} \n DstMAC : {}",eth.getSourceMAC().toString(), eth.getDestinationMAC().toString());
-            if(match.getDataLayerType()!=Ethernet.TYPE_ARP){
+            
          //byyu
            Integer flowId = null;
+           if(match.getDataLayerType()!=Ethernet.TYPE_ARP){
            try {
            	//tenantId = this.fetchTenantId(match, map, true);
         	   long linkId = MACAddress.valueOf(match.getDataLayerDestination()).toLong()-MACAddress.valueOf(match.getDataLayerSource()).toLong();
@@ -149,6 +150,29 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
 			} catch (DroppedMessageException e) {
 				//e.printStackTrace();
 			};
+            
+           
+           }else{
+            	final ARP arp = (ARP) eth.getPayload();
+            	MACAddress arpSrc;
+            	arpSrc = new MACAddress(arp.getSenderHardwareAddress());
+            	if (map.hasMAC(arpSrc)) {
+                    try {
+                        tenantId =  map.getMAC(arpSrc);											//맵에서 맥주로를 통해 테넌트 아이디를 받아온다.
+                        flowId = map.getVirtualNetwork(tenantId).getFlowManager().getFlowId(match.getDataLayerSource(), match.getDataLayerDestination());
+                    } catch (AddressMappingException e) {
+                        log.warn("Unvalid 1");
+                    } catch (NetworkMappingException e) {
+						// TODO Auto-generated catch block
+						//e.printStackTrace();
+                    	log.warn("Unvalid 2");
+					} catch (DroppedMessageException e) {
+						// TODO Auto-generated catch block
+						//e.printStackTrace();
+						log.warn("Unvalid 3");
+					}
+                }
+            }
 
 			OVXLinkUtils lUtils = new OVXLinkUtils(tenantId, flowId, eth.getSourceMAC(), eth.getDestinationMAC());
 //           OVXLinkUtils lUtils = new OVXLinkUtils(eth.getSourceMAC(),
@@ -203,7 +227,7 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
                 }
 
             }
-            }
+            
             if (match.getDataLayerType() == Ethernet.TYPE_ARP) {
                 // ARP packet
                 final ARP arp = (ARP) eth.getPayload();
