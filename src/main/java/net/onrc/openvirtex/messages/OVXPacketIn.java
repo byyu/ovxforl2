@@ -131,7 +131,7 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
 //           this.log.info("Ethernet SrcMAC : {} \n DstMAC : {}",eth.getSourceMAC().toString(), eth.getDestinationMAC().toString());
             
          //byyu
-           Integer flowId = null;
+           Integer flowId = 0;
            if(match.getDataLayerType()!=Ethernet.TYPE_ARP){
            try {
            	//tenantId = this.fetchTenantId(match, map, true);
