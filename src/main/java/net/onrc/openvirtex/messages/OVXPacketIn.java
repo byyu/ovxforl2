@@ -132,17 +132,22 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
             
          //byyu
            Integer flowId = 0;
+           long linkId = 0;
            if(match.getDataLayerType()!=Ethernet.TYPE_ARP){
            try {
            	//tenantId = this.fetchTenantId(match, map, true);
-        	   long linkId = MACAddress.valueOf(match.getDataLayerDestination()).toLong()-MACAddress.valueOf(match.getDataLayerSource()).toLong();
+        	   linkId = MACAddress.valueOf(match.getDataLayerDestination()).toLong()-MACAddress.valueOf(match.getDataLayerSource()).toLong();
         	   tenantId = OVXMap.getInstance().gettenantIdbyLinkId(linkId);
 
            	if(tenantId!=null)
            		flowId = map.getVirtualNetwork(tenantId).getFlowManager().getFlowId(match.getDataLayerSource(), match.getDataLayerDestination());
            } catch (NetworkMappingException e1) {
         	   
-				this.log.error("We can't find network or other error this tenantId : {}\n Packet : {}\n\nThis ethernet type : {}",tenantId, this.getBufferId(), match.getDataLayerType());
+				this.log.error("We can't find network or other error this tenantId : {}\n "
+						+ "Packet : {}\n\n"
+						+ "This ethernet type : {}\n\n"
+						+ "LinkId : {}\n\n"
+						+ "flowId : {}",tenantId, this.getBufferId(), match.getDataLayerType(), linkId, flowId);
 				//e1.printStackTrace();
 				return ;
 			}catch(NullPointerException e2){
