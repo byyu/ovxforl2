@@ -63,7 +63,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
     public void devirtualize(final OVXSwitch sw) {
     	
         /* Drop LLDP-matching messages sent by some applications */
-        if (this.match.getDataLayerType() == Ethernet.TYPE_LLDP) {
+        if (this.match.getDataLayerType() == Ethernet.TYPE_LLDP || this.match.getDataLayerType() == Ethernet.TYPE_ARP) {
             return;
         }
         
