@@ -182,6 +182,10 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
                         	lUtils.rewriteEdgeMatch(this.getMatch());
                         	log.info("\n\n\nThis wildcards : {}",this.getMatch().getWildcards());
                         }
+                        if(inPort.isEdge()){
+                        	int wrcd = this.getMatch().getWildcards() & (~OFMatch.OFPFW_DL_TYPE);
+                        	this.getMatch().setWildcards(wrcd);
+                        }
                     }
                 }
 
