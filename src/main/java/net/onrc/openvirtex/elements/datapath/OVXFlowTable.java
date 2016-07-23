@@ -382,5 +382,24 @@ public class OVXFlowTable implements FlowTable {
     public Collection<OVXFlowMod> getFlowTable() {
         return Collections.unmodifiableCollection(this.flowmodMap.values());
     }
+    
+    public boolean checkDuplicate(OVXFlowMod fm) {
+    	boolean duFlag=false;
+    	
+    	OVXFlowEntry newfe = new OVXFlowEntry(fm, fm.getCookie());
+    	newfe.toString();
+    	OVXFlowEntry oldfe = new OVXFlowEntry();
+    	oldfe.toString();
+    	int check;
+    	for(final Map.Entry<Long, OVXFlowMod> fe : this.flowmodMap.entrySet()){
+    		oldfe.setFlowMod(fe.getValue());
+    		check = newfe.compareTo(oldfe);
+    		if(check==OVXFlowEntry.EQUAL){
+    			duFlag=true;
+    		}
+    	}
+    	
+    	return duFlag;
+    }
 
 }

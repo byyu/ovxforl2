@@ -72,6 +72,8 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         this.sw = sw;
         FlowTable ft = this.sw.getFlowTable();
         ((OVXFlowTable) ft).dump();
+        ((OVXFlowTable) ft).checkDuplicate(this.clone());
+        
         this.log.info("FlowMod message is sented"+this.sw.getSwitchName(),this);
 
         int bufferId = OVXPacketOut.BUFFER_ID_NONE;
