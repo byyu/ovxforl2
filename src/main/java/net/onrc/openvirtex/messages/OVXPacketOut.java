@@ -126,7 +126,7 @@ public class OVXPacketOut extends OFPacketOut implements Devirtualizable {
         if (U16.f(this.getInPort()) < U16.f(OFPort.OFPP_MAX.getValue())) {
             OVXMessageUtil.translateXid(this, inport);
         }
-        this.log.info("Sending packet-out to sw {}: {}", sw.getName(), this);
+//        this.log.info("Sending packet-out to sw {}: {}", sw.getName(), this);
 
         sw.sendSouth(this, inport);
     }
