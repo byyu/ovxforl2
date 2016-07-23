@@ -90,6 +90,7 @@ public abstract class OVXSwitch extends Switch<OVXPort> implements Persistable {
     private AtomicInteger bufferId = null;
     private final BitSetIndex portCounter;
     protected FlowTable flowTable;
+    protected OVXFlowTable pysflowTable;
     // Used to save which channel the message came in on
     private final XidTranslator<Channel> channelMux;
     /**
@@ -468,6 +469,10 @@ public abstract class OVXSwitch extends Switch<OVXPort> implements Persistable {
         return this.flowTable;
     }
 
+    public OVXFlowTable getpysFlowTable(){
+    	return this.pysflowTable;
+    }
+    
     @Override
     public int hashCode() {
         final int prime = 31;

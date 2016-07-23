@@ -71,9 +71,6 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         
         this.sw = sw;
         FlowTable ft = this.sw.getFlowTable();
-        this.log.info("FlowTable dump in FlowMod");
-        ((OVXFlowTable) ft).dump();
-        this.log.info("This Flowmod is : {}", this.toString());
         
 //        this.log.info("FlowMod message is sented"+this.sw.getSwitchName(),this);
 
@@ -201,6 +198,11 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
                     this.sw.getTenantId(), this);
         }
         this.computeLength();
+        
+        OVXFlowTable pysft = this.sw.getpysFlowTable();
+        pysft.handleFlowMods(this);
+        pysft.dump();
+        pysft.checkDuplicate(this);
         if (pflag) {
             this.flags |= OFFlowMod.OFPFF_SEND_FLOW_REM;
             sw.sendSouth(this, inPort);
