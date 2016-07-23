@@ -51,7 +51,7 @@ public class OVXPacketOut extends OFPacketOut implements Devirtualizable {
     @Override
     public void devirtualize(final OVXSwitch sw) {
 
-    	this.log.info("{}", this);
+//    	this.log.info("{}", this);
         final OVXPort inport = sw.getPort(this.getInPort());
         OVXMatch ovxMatch = null;
         //this.log.info("PacketOut devirtualize \n srcMac : {} \n dstMac : {}", this.match.getDataLayerSource(), this.match.getDataLayerDestination());

@@ -67,14 +67,13 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
             return;
         }
         
-        this.log.info("FlowMod devirtualize \n srcMac : {},\n dstMac : {}",this.match.getDataLayerSource(),this.match.getDataLayerDestination());
+//        this.log.info("FlowMod devirtualize \n srcMac : {},\n dstMac : {}",this.match.getDataLayerSource(),this.match.getDataLayerDestination());
         
         this.sw = sw;
         FlowTable ft = this.sw.getFlowTable();
         ((OVXFlowTable) ft).dump();
         ((OVXFlowTable) ft).checkDuplicate(this.clone());
-        
-        this.log.info("FlowMod message is sented"+this.sw.getSwitchName(),this);
+//        this.log.info("FlowMod message is sented"+this.sw.getSwitchName(),this);
 
         int bufferId = OVXPacketOut.BUFFER_ID_NONE;
         if (sw.getFromBufferMap(this.bufferId) != null) {
@@ -94,7 +93,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         
         for (final OFAction act : this.getActions()) {
             try {
-            	this.log.info("this actiong of the flowmod is "+act.getType().toString());
+//            	this.log.info("this actiong of the flowmod is "+act.getType().toString());
             	
                 ((VirtualizableAction) act).virtualize(sw,
                         this.approvedActions, ovxMatch);
@@ -112,7 +111,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
             }
         }
         
-        this.log.info("after add action : {}",this.toString());
+//        this.log.info("after add action : {}",this.toString());
 
         final OVXPort ovxInPort = sw.getPort(inport);
         this.setBufferId(bufferId);
@@ -181,9 +180,9 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
                                 sw.getTenantId(), link.getLinkId(), flowId);
                         lUtils.rewriteMatch(this.getMatch());
                         if(isEdgeOutport()){
-                        	log.info("\n\n\nThis wildcards : {}",this.getMatch().getWildcards());
+//                        	log.info("\n\n\nThis wildcards : {}",this.getMatch().getWildcards());
                         	lUtils.rewriteEdgeMatch(this.getMatch());
-                        	log.info("\n\n\nThis wildcards : {}",this.getMatch().getWildcards());
+//                        	log.info("\n\n\nThis wildcards : {}",this.getMatch().getWildcards());
                         }
 
                     }

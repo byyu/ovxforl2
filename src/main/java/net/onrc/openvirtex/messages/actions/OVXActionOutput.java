@@ -95,7 +95,7 @@ public class OVXActionOutput extends OFActionOutput implements
 //            this.log.info("Get cookie of fm "+fm.getCookie());
             
             for (final OVXPort outPort : outPortList) {
-            	this.log.info("This port is {} on {}",outPort.getPortNumber(),sw.getName());
+//            	this.log.info("This port is {} on {}",outPort.getPortNumber(),sw.getName());
             	
                 Integer linkId = 0;
                 Integer flowId = 0;
@@ -125,10 +125,10 @@ public class OVXActionOutput extends OFActionOutput implements
                     if (inPort.isLink()) {
                         final OVXPort dstPort = vnet.getNeighborPort(inPort);
                         
-                       this.log.info(inPort.toString());
-                       this.log.info(outPort.toString());
+//                       this.log.info(inPort.toString());
+//                       this.log.info(outPort.toString());
                         final OVXLink link = inPort.getLink().getOutLink();
-                        this.log.info(link.toString());
+//                        this.log.info(link.toString());
                         if (link != null
                                 && (!match.getWildcardObj().isWildcarded(
                                         Flag.DL_DST) || !match.getWildcardObj()

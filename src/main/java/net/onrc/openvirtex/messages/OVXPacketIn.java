@@ -143,12 +143,12 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
            		flowId = map.getVirtualNetwork(tenantId).getFlowManager().getFlowId(match.getDataLayerSource(), match.getDataLayerDestination());
            } catch (NetworkMappingException e1) {
         	   
-				this.log.error("We can't find network or other error this tenantId : {}\n "
-						+ "Packet : {}\n\n"
-						+ "This ethernet type : {}\n\n"
-						+ "LinkId : {}\n\n"
-						+ "flowId : {}",tenantId, this.getBufferId(), match.getDataLayerType(), linkId, flowId);
-				//e1.printStackTrace();
+//				this.log.error("We can't find network or other error this tenantId : {}\n "
+//						+ "Packet : {}\n\n"
+//						+ "This ethernet type : {}\n\n"
+//						+ "LinkId : {}\n\n"
+//						+ "flowId : {}",tenantId, this.getBufferId(), match.getDataLayerType(), linkId, flowId);
+//				//e1.printStackTrace();
 				return ;
 			}catch(NullPointerException e2){
 				//e2.printStackTrace();
@@ -238,7 +238,7 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
                 // ARP packet
                 final ARP arp = (ARP) eth.getPayload();
                 this.tenantId = this.fetchTenantId(match, map, true);
-                this.log.info("This tenantId of arp : {}", this.tenantId);
+//                this.log.info("This tenantId of arp : {}", this.tenantId);
                 try {
                     if (map.hasVirtualIP(srcIP)) {
                         arp.setSenderProtocolAddress(map.getVirtualIP(srcIP)
