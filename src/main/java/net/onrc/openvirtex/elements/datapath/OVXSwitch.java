@@ -119,6 +119,7 @@ public abstract class OVXSwitch extends Switch<OVXPort> implements Persistable {
         this.portCounter = new BitSetIndex(IndexType.PORT_ID);
         this.bufferId = new AtomicInteger(1);
         this.flowTable = new OVXFlowTable(this);
+        this.pysflowTable = new OVXFlowTable(this);
         this.roleMan = new RoleManager();
         this.channelMux = new XidTranslator<Channel>();
 
