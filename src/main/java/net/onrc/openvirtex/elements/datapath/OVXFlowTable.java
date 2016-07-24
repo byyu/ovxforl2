@@ -385,11 +385,13 @@ public class OVXFlowTable implements FlowTable {
     
     public boolean checkDuplicate(OVXFlowMod fm) {
     	boolean duFlag=false;
-    	
+    	if(this.isEmpty()){
+    		return duFlag;
+    	}
     	OVXFlowEntry newfe = new OVXFlowEntry(fm, fm.getCookie());
-    	newfe.toString();
+    	log.info(newfe.toString());
     	OVXFlowEntry oldfe = new OVXFlowEntry();
-    	oldfe.toString();
+    	log.info(oldfe.toString());
     	int check;
     	for(final Map.Entry<Long, OVXFlowMod> fe : this.flowmodMap.entrySet()){
     		oldfe.setFlowMod(fe.getValue());
