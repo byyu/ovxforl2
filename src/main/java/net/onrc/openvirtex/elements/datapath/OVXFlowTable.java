@@ -30,6 +30,7 @@ import org.apache.logging.log4j.Logger;
 import org.openflow.protocol.OFFlowMod;
 import org.openflow.protocol.OFMatch;
 import org.openflow.protocol.OFPort;
+import org.openflow.protocol.Wildcards.Flag;
 import org.openflow.protocol.OFError.OFFlowModFailedCode;
 
 import net.onrc.openvirtex.exceptions.MappingException;
@@ -391,14 +392,18 @@ public class OVXFlowTable implements FlowTable {
     	OVXFlowEntry newfe = new OVXFlowEntry(fm, fm.getCookie());
     	log.info(newfe.toString());
     	OVXFlowEntry oldfe = new OVXFlowEntry();
-    	log.info(oldfe.toString());
+    	
     	int check;
     	for(final Map.Entry<Long, OVXFlowMod> fe : this.flowmodMap.entrySet()){
     		oldfe.setFlowMod(fe.getValue());
+    		log.info("\n\n{}",oldfe.toString());
+    		log.info("\n\n{}",fe.toString());
     		check = newfe.compareTo(oldfe);
+    		log.info("\n\n{}", check);
     		if(check==OVXFlowEntry.EQUAL){
     			duFlag=true;
     		}
+    		newfe.getMatch().getWildcardObj().isWildcarded(Flag.DL_SRC);
     	}
     	
     	return duFlag;
