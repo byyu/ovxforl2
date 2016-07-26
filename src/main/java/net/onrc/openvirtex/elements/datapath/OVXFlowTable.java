@@ -31,6 +31,7 @@ import org.openflow.protocol.OFFlowMod;
 import org.openflow.protocol.OFMatch;
 import org.openflow.protocol.OFPort;
 import org.openflow.protocol.Wildcards.Flag;
+import org.openflow.protocol.action.OFAction;
 import org.openflow.protocol.OFError.OFFlowModFailedCode;
 
 import net.onrc.openvirtex.exceptions.MappingException;
@@ -396,12 +397,13 @@ public class OVXFlowTable implements FlowTable {
     	int check;
     	for(final Map.Entry<Long, OVXFlowMod> fe : this.flowmodMap.entrySet()){
     		oldfe.setFlowMod(fe.getValue());
-    		log.info("\n\n{}",oldfe.toString());
-    		log.info("\n\n{}",fe.toString());
-    		check = newfe.compareTo(oldfe);
-    		log.info("\n\n{}", check);
-    		if(check==OVXFlowEntry.EQUAL){
-    			duFlag=true;
+    		for(final OFAction act : oldfe.getActionsList()){
+    			log.info("\nFlow Entry {} \n Action : {} \n",oldfe.toString(), act.toString());
+    		}
+
+			log.info("\noldfe Match : {}\nnewfe Match : {}\n", oldfe.getMatch(), newfe.getMatch());
+    		if(oldfe.getMatch() == newfe.getMatch()){
+    			log.info("\n New and old Match is same");
     		}
     		newfe.getMatch().getWildcardObj().isWildcarded(Flag.DL_SRC);
     	}
