@@ -405,6 +405,7 @@ public class OVXFlowTable implements FlowTable {
 	    	if(act.getType()==OFActionType.OUTPUT){
 	    		OVXActionOutput outact = (OVXActionOutput) act;
 	    		newoutport = outact.getPort();
+	    		this.log.info("New Output port of Flowmod : {}", newoutport);
 	    	}
 	    }
     	
@@ -416,9 +417,11 @@ public class OVXFlowTable implements FlowTable {
     			if(act.getType()==OFActionType.OUTPUT){
     				OVXActionOutput outact = (OVXActionOutput) act;
     				oldoutport = outact.getPort();
+    				this.log.info("Old Output port of Flowmod : {}", oldoutport);
     			}
     		}
     		if(newMatch.getWildcards()==oldMatch.getWildcards())
+    			this.log.info("Wildcard is same : {}" , newMatch.getWildcards());
     		{
     			if(newMatch.getDataLayerDestination().equals(oldMatch.getDataLayerDestination()) 
     					&& newMatch.getDataLayerSource().equals(oldMatch.getDataLayerSource())){
@@ -430,7 +433,7 @@ public class OVXFlowTable implements FlowTable {
     			}
     		}
     	}
-    	
+    	this.log.info("return value : {}", duFlag);
     	return duFlag;
     }
 
