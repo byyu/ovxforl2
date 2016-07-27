@@ -32,12 +32,15 @@ import org.openflow.protocol.OFMatch;
 import org.openflow.protocol.OFPort;
 import org.openflow.protocol.Wildcards.Flag;
 import org.openflow.protocol.action.OFAction;
+import org.openflow.protocol.action.OFActionType;
 import org.openflow.protocol.OFError.OFFlowModFailedCode;
 
 import net.onrc.openvirtex.exceptions.MappingException;
 import net.onrc.openvirtex.exceptions.SwitchMappingException;
 import net.onrc.openvirtex.messages.OVXFlowMod;
 import net.onrc.openvirtex.messages.OVXMessageUtil;
+import net.onrc.openvirtex.messages.actions.OVXActionOutput;
+import net.onrc.openvirtex.protocol.OVXMatch;
 
 /**
  * Virtualized version of the switch flow table.
@@ -385,8 +388,8 @@ public class OVXFlowTable implements FlowTable {
         return Collections.unmodifiableCollection(this.flowmodMap.values());
     }
     
-    public boolean checkDuplicate(OVXFlowMod fm) {
-    	boolean duFlag=false;
+    public int checkDuplicate(OVXFlowMod fm) {
+    	int duFlag=0;
     	if(this.isEmpty()){
     		return duFlag;
     	}
@@ -395,17 +398,37 @@ public class OVXFlowTable implements FlowTable {
     	OVXFlowEntry oldfe = new OVXFlowEntry();
     	
     	int check;
+    	OVXMatch newMatch = (OVXMatch) newfe.getMatch();
+    	
+    	short newoutport = 0, oldoutport = 0;
+    	for(final OFAction act : newfe.getActionsList()){
+	    	if(act.getType()==OFActionType.OUTPUT){
+	    		OVXActionOutput outact = (OVXActionOutput) act;
+	    		newoutport = outact.getPort();
+	    	}
+	    }
+    	
+    	OVXMatch oldMatch;
     	for(final Map.Entry<Long, OVXFlowMod> fe : this.flowmodMap.entrySet()){
     		oldfe.setFlowMod(fe.getValue());
+    		oldMatch = (OVXMatch)oldfe.getFlowMod().getMatch();
     		for(final OFAction act : oldfe.getActionsList()){
-    			log.info("\nFlow Entry {} \n Action : {} \n",oldfe.toString(), act.toString());
+    			if(act.getType()==OFActionType.OUTPUT){
+    				OVXActionOutput outact = (OVXActionOutput) act;
+    				oldoutport = outact.getPort();
+    			}
     		}
-
-			log.info("\noldfe Match : {}\nnewfe Match : {}\n", oldfe.getMatch(), newfe.getMatch());
-    		if(oldfe.getMatch() == newfe.getMatch()){
-    			log.info("\n New and old Match is same");
+    		if(newMatch.getWildcards()==oldMatch.getWildcards())
+    		{
+    			if(newMatch.getDataLayerDestination().equals(oldMatch.getDataLayerDestination()) 
+    					&& newMatch.getDataLayerSource().equals(oldMatch.getDataLayerSource())){
+    				if((newoutport==oldoutport) && (newoutport != 0) && (oldoutport != 0)){
+    					duFlag=1;
+    				}else{
+    					duFlag=2;
+    				}
+    			}
     		}
-    		newfe.getMatch().getWildcardObj().isWildcarded(Flag.DL_SRC);
     	}
     	
     	return duFlag;
