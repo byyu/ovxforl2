@@ -389,17 +389,21 @@ public class OVXFlowTable implements FlowTable {
     }
     
     public int checkDuplicate(OVXFlowMod fm) {
+    	//duFlag = 0; 내려보낸다.
+    	//duFlag = 1; 와일드카드 변경
+    	//duFlag = 2; 안내려보낸다.
     	int duFlag=0;
     	if(this.isEmpty()){
     		return duFlag;
     	}
+    	
     	OVXFlowEntry newfe = new OVXFlowEntry(fm, fm.getCookie());
     	log.info(newfe.toString());
     	OVXFlowEntry oldfe = new OVXFlowEntry();
     	
     	int check;
     	OVXMatch newMatch = (OVXMatch) newfe.getMatch();
-    	
+    	//newoutport => 새로운 플로우모드의 아웃액션의 포트번호
     	short newoutport = 0, oldoutport = 0;
     	for(final OFAction act : newfe.getActionsList()){
 	    	if(act.getType()==OFActionType.OUTPUT){
@@ -420,15 +424,19 @@ public class OVXFlowTable implements FlowTable {
     				this.log.info("Old Output port of Flowmod : {}", oldoutport);
     			}
     		}
+    		//와일드카드가 같을 때 
     		if(newMatch.getWildcards()==oldMatch.getWildcards())
     			this.log.info("Wildcard is same : {}" , newMatch.getWildcards());
     		{
+    			//매치의 맥주소가 같을 때
     			if(newMatch.getDataLayerDestination().equals(oldMatch.getDataLayerDestination()) 
     					&& newMatch.getDataLayerSource().equals(oldMatch.getDataLayerSource())){
+    				//아웃포트가 서로 같은데 0이 아닐 때
     				if((newoutport==oldoutport) && (newoutport != 0) && (oldoutport != 0)){
-    					duFlag=1;
-    				}else{
     					duFlag=2;
+    				}else{
+    					//아웃포트가 서로 다를 때
+    					duFlag=1;
     				}
     			}
     		}
