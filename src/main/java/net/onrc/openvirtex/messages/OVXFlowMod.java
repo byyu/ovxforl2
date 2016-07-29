@@ -200,7 +200,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         this.computeLength();
         
         OVXFlowTable pysft = this.sw.getpysFlowTable();
-        pysft.handleFlowMods(this);
+        pysft.handleFlowMods(this.clone());
         pysft.dump();
         int cflag;
         cflag = pysft.checkDuplicate(this);
