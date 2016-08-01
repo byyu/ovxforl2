@@ -58,8 +58,9 @@ public class PhysicalFlowEntry {
 		for(EntryPair entity : entry){
 			oldMatch = entity.getMatch();
 			oldoutport = entity.getAction().getPort();
-			
+			log.info("Compare two wildcard \n{}\n", oldMatch.getWildcards(), newWcd);
 			if(oldMatch.getWildcards() == newWcd){
+				log.info("Compare two Mac\n{}\t{}\n{}\t{}\n", oldMatch.getDataLayerDestination(), oldMatch.getDataLayerSource(),match.getDataLayerDestination(), match.getDataLayerSource());
 				if(oldMatch.getDataLayerDestination() == match.getDataLayerDestination()
 						&& oldMatch.getDataLayerSource() == match.getDataLayerSource()){
 					if(outport == oldoutport){
