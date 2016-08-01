@@ -61,8 +61,8 @@ public class PhysicalFlowEntry {
 			log.info("Compare two wildcard \n{}\n", oldMatch.getWildcards(), newWcd);
 			if(oldMatch.getWildcards() == newWcd){
 				log.info("Compare two Mac\n{}\t{}\n{}\t{}\n", oldMatch.getDataLayerDestination(), oldMatch.getDataLayerSource(),match.getDataLayerDestination(), match.getDataLayerSource());
-				if(oldMatch.getDataLayerDestination() == match.getDataLayerDestination()
-						&& oldMatch.getDataLayerSource() == match.getDataLayerSource()){
+				if(oldMatch.getDataLayerDestination().equals(match.getDataLayerDestination())
+						&& oldMatch.getDataLayerSource().equals(match.getDataLayerSource())){
 					if(outport == oldoutport){
 						log.info("All condition is equal\n{}\n{}\t{}\n{}",newWcd, match.getDataLayerSource(),match.getDataLayerDestination(), outport);
 						return true;
