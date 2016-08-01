@@ -34,10 +34,8 @@ public class PhysicalFlowEntry {
 	public void removeEntry(OVXMatch match, OVXActionOutput action){
 		EntryPair newEntity = new EntryPair(match, action);
 		for(EntryPair entity : entry){
-			this.log.info("entity information is {}\n{}\nEntity count is {}",match.toString(), action.toString(),entity.getCount());
-			this.log.info("entity info {}\n\n{}", entity.getMatch().toString(), entity.getAction().toString());
 			if(entity.equals(newEntity)){
-				this.log.info("This entity is removed");
+//				this.log.info("This entity is removed");
 				entry.remove(entity);
 			}
 		}
@@ -68,15 +66,15 @@ public class PhysicalFlowEntry {
 		for(EntryPair entity : entry){
 			oldMatch = entity.getMatch();
 			oldoutport = entity.getAction().getPort();
-			log.info("Compare two wildcard \n{}\n", oldMatch.getWildcards(), newWcd);
+//			log.info("Compare two wildcard \n{}\n", oldMatch.getWildcards(), newWcd);
 			if(Arrays.equals(oldMatch.getDataLayerDestination(), match.getDataLayerDestination())
 					&& Arrays.equals(oldMatch.getDataLayerSource(), match.getDataLayerSource())){
-				log.info("Compare two Mac\n{}\t{}\n{}\t{}\n", oldMatch.getDataLayerDestination(), oldMatch.getDataLayerSource(),match.getDataLayerDestination(), match.getDataLayerSource());
-				log.info("\n{}\n{}",Arrays.equals(oldMatch.getDataLayerDestination(), match.getDataLayerDestination()),Arrays.equals(oldMatch.getDataLayerSource(), match.getDataLayerSource()));
+//				log.info("Compare two Mac\n{}\t{}\n{}\t{}\n", oldMatch.getDataLayerDestination(), oldMatch.getDataLayerSource(),match.getDataLayerDestination(), match.getDataLayerSource());
+//				log.info("\n{}\n{}",Arrays.equals(oldMatch.getDataLayerDestination(), match.getDataLayerDestination()),Arrays.equals(oldMatch.getDataLayerSource(), match.getDataLayerSource()));
 				if(outport == oldoutport){
 					if(oldMatch.getWildcards() == newWcd){
 						log.info("All condition is equal\n{}\n{}\t{}\n{}",newWcd, match.getDataLayerSource(),match.getDataLayerDestination(), outport);
-						entity.incCount();
+//						entity.incCount();
 						return true;
 					}else{
 						match.setWildcards(newWcd & (~OFMatch.OFPFW_NW_DST_ALL) 
@@ -84,7 +82,7 @@ public class PhysicalFlowEntry {
 													& (~OFMatch.OFPFW_DL_TYPE));
 						fm.setMatch(match);
 						entry.add(new EntryPair(match, outaction));
-						log.info("All condition is equal but action is't equal\n{}\n{}\t{}\n{}\t{}",newWcd, match.getDataLayerSource(),match.getDataLayerDestination(), outport, oldoutport);
+//						log.info("All condition is equal but action is't equal\n{}\n{}\t{}\n{}\t{}",newWcd, match.getDataLayerSource(),match.getDataLayerDestination(), outport, oldoutport);
 						return false;
 					}
 				}
