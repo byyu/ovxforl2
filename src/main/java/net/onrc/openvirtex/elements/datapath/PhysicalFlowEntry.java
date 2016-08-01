@@ -34,8 +34,10 @@ public class PhysicalFlowEntry {
 		for(EntryPair entity : entry){
 			if(entity.getMatch().equals(match) && entity.getAction().equals(action)){
 				if(entity.getCount()>1){
+					this.log.info("removeMod, entity count is {}, so reduce 1", entity.getCount());
 					entity.decCount();
 				}else{
+					this.log.info("all entity is removed");
 					entry.remove(entity);
 					return;
 				}
