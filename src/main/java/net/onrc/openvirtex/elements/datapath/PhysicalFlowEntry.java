@@ -31,16 +31,18 @@ public class PhysicalFlowEntry {
 	}
 	
 	public void removeEntry(OVXMatch match, OVXActionOutput action){
+		EntryPair newEntity = new EntryPair(match, action);
 		for(EntryPair entity : entry){
 			this.log.info("entity information is {}\n{}\nEntity count is {}",match.toString(), action.toString(),entity.getCount());
 			this.log.info("entity info {}\n\n{}", entity.getMatch().toString(), entity.getAction().toString());
-			if(entity.getMatch().equals(match) && entity.getAction().equals(action)){
-				if(entity.getCount()>1){
-					this.log.info("removeMod, entity count is {}, so reduce 1", entity.getCount());
-					entity.decCount();
-				}else{
+			if(entity.equals(newEntity)){
+				if(entity.getCount()==1){
 					this.log.info("all entity is removed");
 					entry.remove(entity);
+					return;
+				}else{
+					this.log.info("removeMod, entity count is {}, so reduce 1", entity.getCount());
+					entity.decCount();
 					return;
 				}
 			}

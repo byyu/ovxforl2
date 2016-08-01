@@ -1,5 +1,7 @@
 package net.onrc.openvirtex.elements.datapath;
 
+import java.util.Arrays;
+
 import net.onrc.openvirtex.messages.actions.OVXActionOutput;
 import net.onrc.openvirtex.protocol.OVXMatch;
 
@@ -33,6 +35,16 @@ public class EntryPair {
 	
 	public int getCount(){
 		return count;
+	}
+	
+	public boolean equals(EntryPair entity){
+		if(Arrays.equals(this.ovxmatch.getDataLayerDestination(), entity.ovxmatch.getDataLayerDestination())
+				&& Arrays.equals(this.ovxmatch.getDataLayerSource(), entity.ovxmatch.getDataLayerSource())
+				&& this.ovxaction.equals(entity.getAction())){
+			return true;
+		}else
+			return false;
+		
 	}
 	
 }
