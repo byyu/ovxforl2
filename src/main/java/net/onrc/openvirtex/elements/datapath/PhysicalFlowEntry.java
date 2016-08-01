@@ -37,7 +37,7 @@ public class PhysicalFlowEntry {
 	public boolean checkduplicate(OVXFlowMod fm){
 		log.info("Start checking duplicate");
 		
-		OVXMatch match = (OVXMatch) fm.getMatch();
+		OVXMatch match = new OVXMatch(fm.getMatch());
 		int newWcd = match.getWildcards();
 		log.info("this match is : {}",match.toString());
 		OVXActionOutput outaction = null;
@@ -48,7 +48,6 @@ public class PhysicalFlowEntry {
 	    		outport = outaction.getPort();
 			}
 		}
-		
 		log.info("This flowmod output is {}\n\n", outport);
 		
 		if(outport==0){

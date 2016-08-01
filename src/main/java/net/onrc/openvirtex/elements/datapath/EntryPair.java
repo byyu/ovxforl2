@@ -21,6 +21,4 @@ public class EntryPair {
 		return this.ovxaction;
 	}
 	
-	
-	
 }
