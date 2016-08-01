@@ -3,6 +3,8 @@ package net.onrc.openvirtex.elements.datapath;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openflow.protocol.OFMatch;
 import org.openflow.protocol.action.OFAction;
 import org.openflow.protocol.action.OFActionType;
@@ -13,6 +15,8 @@ import net.onrc.openvirtex.protocol.OVXMatch;
 
 public class PhysicalFlowEntry {
 	
+	private static Logger log = LogManager.getLogger(PhysicalFlowEntry.class
+            .getName());
 	private Set<EntryPair> entry = new HashSet<EntryPair>();
 	OVXSwitch sw;
 	
@@ -39,6 +43,7 @@ public class PhysicalFlowEntry {
 	    		outport = outaction.getPort();
 			}
 		}
+		log.info("This flowmod output is {}\n\n", outport);
 		
 		if(outport==0){
 			return false;
@@ -53,12 +58,15 @@ public class PhysicalFlowEntry {
 				if(oldMatch.getDataLayerDestination() == match.getDataLayerDestination()
 						&& oldMatch.getDataLayerSource() == match.getDataLayerSource()){
 					if(outport == oldoutport){
+						log.info("All condition is equal\n{}\n{}\t{}\n{}",newWcd, match.getDataLayerSource(),match.getDataLayerDestination(), outport);
 						return true;
 					}else{
 						match.setWildcards(newWcd & (~OFMatch.OFPFW_NW_DST_ALL) 
 													& (~OFMatch.OFPFW_NW_SRC_ALL) 
 													& (~OFMatch.OFPFW_DL_TYPE));
 						fm.setMatch(match);
+						entry.add(new EntryPair(match, outaction));
+						log.info("All condition is equal but action is't equal\n{}\n{}\t{}\n{}\t{}",newWcd, match.getDataLayerSource(),match.getDataLayerDestination(), outport, oldoutport);
 						return false;
 					}
 				}
