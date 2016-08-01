@@ -30,9 +30,13 @@ public class PhysicalFlowEntry {
 	}
 	
 	public void removeEntry(OVXMatch match, OVXActionOutput action){
-		
+		EntryPair entity = new EntryPair(match,action);
+		entry.remove(entity);
 	}
+	
 	public boolean checkduplicate(OVXFlowMod fm){
+		log.info("Start checking duplicate");
+		
 		OVXMatch match = (OVXMatch) fm.getMatch();
 		int newWcd = match.getWildcards();
 		OVXActionOutput outaction = null;
