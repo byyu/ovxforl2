@@ -148,6 +148,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         OVXMessageUtil.translateXid(this, inPort);
         PhysicalFlowEntry phyFlowEntry = this.sw.getPhysicalFlowEntry();
         boolean edgeOut=true;
+        boolean duflag=false;
         try {
             if (inPort.isEdge()) {
             	match.setWildcards(match.getWildcards() & (~OFMatch.OFPFW_DL_TYPE));
@@ -182,6 +183,11 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
                         edgeOut = isEdgeOutport();
                         if(edgeOut){
                         	lUtils.rewriteEdgeMatch(this.getMatch());
+                        }else{
+                        	this.log.info("\n{}\n", this.match.getWildcards());
+                        	duflag = phyFlowEntry.checkduplicate(this);
+                        	this.log.info("\n{}\n", this.match.getWildcards());
+                        	this.log.info("DuFlag is {}\n\n", duflag);
                         }
                     }
                 }
@@ -196,13 +202,6 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
                     this.sw.getTenantId(), this);
         }
         
-        boolean duflag=false;
-        if(!inPort.isEdge() || !edgeOut){
-        	this.log.info("\n{}\n", this.match.getWildcards());
-        	duflag = phyFlowEntry.checkduplicate(this);
-        	this.log.info("\n{}\n", this.match.getWildcards());
-        	this.log.info("DuFlag is {}\n\n", duflag);
-        }
         if(!duflag){
         	
         	this.computeLength();
@@ -284,7 +283,6 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
 
     //byyu
     public boolean isEdgeOutport(){
-    	log.info("in EdgeOutport");
     	OVXPort outPort;
     	
 		short outport = 0;
