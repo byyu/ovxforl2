@@ -20,11 +20,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import net.onrc.openvirtex.elements.OVXMap;
 import net.onrc.openvirtex.elements.address.IPMapper;
 import net.onrc.openvirtex.elements.datapath.FlowTable;
 import net.onrc.openvirtex.elements.datapath.OVXFlowTable;
 import net.onrc.openvirtex.elements.datapath.OVXSwitch;
+import net.onrc.openvirtex.elements.datapath.PhysicalFlowEntry;
 import net.onrc.openvirtex.elements.link.OVXLink;
 import net.onrc.openvirtex.elements.link.OVXLinkUtils;
 import net.onrc.openvirtex.elements.port.OVXPort;
@@ -146,7 +146,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         }
         this.getMatch().setInputPort(inPort.getPhysicalPortNumber());
         OVXMessageUtil.translateXid(this, inPort);
-
+        PhysicalFlowEntry phyFlowEntry = this.sw.getPhysicalFlowEntry();
         try {
             if (inPort.isEdge()) {
             	match.setWildcards(match.getWildcards() & (~OFMatch.OFPFW_DL_TYPE));
@@ -183,7 +183,6 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
                         	lUtils.rewriteEdgeMatch(this.getMatch());
 //                        	log.info("\n\n\nThis wildcards : {}",this.getMatch().getWildcards());
                         }
-
                     }
                 }
 
@@ -199,22 +198,14 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         }
         this.computeLength();
         
-        OVXFlowTable pysft = this.sw.getpysFlowTable();
-        pysft.handleFlowMods(this.clone());
-        pysft.dump();
-        int cflag;
-        cflag = pysft.checkDuplicate(this);
-        if(cflag==0){
-        	if (pflag) {
-                this.flags |= OFFlowMod.OFPFF_SEND_FLOW_REM;
-                sw.sendSouth(this, inPort);
-        	}
-        }else if(cflag == 1){
-        		this.match.setWildcards(this.match.getWildcards() 
-        			& (~OFMatch.OFPFW_NW_DST_ALL) 
-        			& (~OFMatch.OFPFW_NW_SRC_ALL) 
-        			& (~OFMatch.OFPFW_DL_TYPE));
-       	}
+        boolean duflag;
+        duflag = phyFlowEntry.checkduplicate(this);
+        if(!duflag){
+        if (pflag) {
+        	this.flags |= OFFlowMod.OFPFF_SEND_FLOW_REM;
+        	sw.sendSouth(this, inPort);
+        }
+        }
         	
      }
     

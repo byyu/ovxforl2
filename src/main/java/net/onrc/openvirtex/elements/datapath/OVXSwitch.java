@@ -93,6 +93,7 @@ public abstract class OVXSwitch extends Switch<OVXPort> implements Persistable {
     protected OVXFlowTable pysflowTable;
     // Used to save which channel the message came in on
     private final XidTranslator<Channel> channelMux;
+    private PhysicalFlowEntry phyFlowentry;
     /**
      * Role Manager. Saves all role requests coming from each controller. It is
      * also responsible for permitting or denying certain operations based on
@@ -122,6 +123,7 @@ public abstract class OVXSwitch extends Switch<OVXPort> implements Persistable {
         this.pysflowTable = new OVXFlowTable(this);
         this.roleMan = new RoleManager();
         this.channelMux = new XidTranslator<Channel>();
+        this.phyFlowentry = new PhysicalFlowEntry(this);
 
     }
 
@@ -615,6 +617,10 @@ public abstract class OVXSwitch extends Switch<OVXPort> implements Persistable {
     public OVXFlowMod deleteFlowMod(final Long cookie) {
         return this.flowTable.deleteFlowMod(cookie);
     }
+    
+    public PhysicalFlowEntry getPhysicalFlowEntry(){
+    	return this.phyFlowentry;
+    }
 
     /**
      * Extracts the vendor-specific (Nicira) role.
@@ -676,6 +682,8 @@ public abstract class OVXSwitch extends Switch<OVXPort> implements Persistable {
         vendor.setLengthU(OFVendor.MINIMUM_LENGTH + reply.getLength());
         channel.write(Collections.singletonList(vendor));
     }
+    
+   
 
     /**
      * Generates a new XID for messages destined for the physical network.

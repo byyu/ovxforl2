@@ -30,7 +30,6 @@ import org.apache.logging.log4j.Logger;
 import org.openflow.protocol.OFFlowMod;
 import org.openflow.protocol.OFMatch;
 import org.openflow.protocol.OFPort;
-import org.openflow.protocol.Wildcards.Flag;
 import org.openflow.protocol.action.OFAction;
 import org.openflow.protocol.action.OFActionType;
 import org.openflow.protocol.OFError.OFFlowModFailedCode;
@@ -401,7 +400,7 @@ public class OVXFlowTable implements FlowTable {
     	log.info(newfe.toString());
     	OVXFlowEntry oldfe = new OVXFlowEntry();
     	
-    	int check;
+    	//int check;
     	OVXMatch newMatch = (OVXMatch) newfe.getMatch();
     	//newoutport => 새로운 플로우모드의 아웃액션의 포트번호
     	short newoutport = 0, oldoutport = 0;

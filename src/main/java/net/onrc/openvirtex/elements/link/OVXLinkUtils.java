@@ -24,7 +24,6 @@ import net.onrc.openvirtex.elements.OVXMap;
 import net.onrc.openvirtex.elements.datapath.OVXSwitch;
 import net.onrc.openvirtex.exceptions.NetworkMappingException;
 import net.onrc.openvirtex.exceptions.SwitchMappingException;
-import net.onrc.openvirtex.protocol.OVXMatch;
 import net.onrc.openvirtex.util.MACAddress;
 
 import org.apache.logging.log4j.LogManager;
@@ -168,11 +167,11 @@ public class OVXLinkUtils {
     	
     	OVXMap map = OVXMap.getInstance();
     	
-    	OVXSwitch srcSwitch, dstSwitch;
+    	OVXSwitch srcSwitch;
     	try {
 			LinkedList<MACAddress> dualmac = map.getVirtualNetwork(this.tenantId).getFlowManager().getFlowValues(flowId);
 			srcSwitch = map.getHostbyMAC(dualmac.get(0)).getPort().getParentSwitch();
-			dstSwitch = map.getHostbyMAC(dualmac.get(1)).getPort().getParentSwitch();
+			//dstSwitch = map.getHostbyMAC(dualmac.get(1)).getPort().getParentSwitch();
 			//TODO : big switch processing
 			final long src = map.getPhysicalSwitches(srcSwitch).get(0).getSwitchId();
 
