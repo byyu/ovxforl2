@@ -37,18 +37,12 @@ public class PhysicalFlowEntry {
 			this.log.info("entity information is {}\n{}\nEntity count is {}",match.toString(), action.toString(),entity.getCount());
 			this.log.info("entity info {}\n\n{}", entity.getMatch().toString(), entity.getAction().toString());
 			if(entity.equals(newEntity)){
-				if(entity.getCount()==1){
-					this.log.info("This entity is removed");
-					entry.remove(entity);
-					return;
-				}else{
-					this.log.info("removeMod, entity count is {}, so reduce 1", entity.getCount());
-					entity.decCount();
-					return;
-				}
+				this.log.info("This entity is removed");
+				entry.remove(entity);
 			}
 		}
 	}
+
 	
 	public boolean checkduplicate(OVXFlowMod fm){
 		log.info("Start checking duplicate");
