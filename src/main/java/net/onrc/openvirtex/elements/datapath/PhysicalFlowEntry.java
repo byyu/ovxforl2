@@ -39,6 +39,7 @@ public class PhysicalFlowEntry {
 		
 		OVXMatch match = (OVXMatch) fm.getMatch();
 		int newWcd = match.getWildcards();
+		log.info("this match is : {}",match.toString());
 		OVXActionOutput outaction = null;
 		short outport=0;
 		for(OFAction action : fm.getActions()){
@@ -47,6 +48,7 @@ public class PhysicalFlowEntry {
 	    		outport = outaction.getPort();
 			}
 		}
+		
 		log.info("This flowmod output is {}\n\n", outport);
 		
 		if(outport==0){
