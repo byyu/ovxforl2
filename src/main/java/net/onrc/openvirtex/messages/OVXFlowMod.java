@@ -199,7 +199,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         this.computeLength();
         
         boolean duflag;
-        duflag = phyFlowEntry.checkduplicate(this);
+        duflag = false;//phyFlowEntry.checkduplicate(this);
         if(!duflag){
         if (pflag) {
         	this.flags |= OFFlowMod.OFPFF_SEND_FLOW_REM;
