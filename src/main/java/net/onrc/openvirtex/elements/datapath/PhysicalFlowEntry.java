@@ -32,7 +32,8 @@ public class PhysicalFlowEntry {
 	
 	public void removeEntry(OVXMatch match, OVXActionOutput action){
 		for(EntryPair entity : entry){
-			this.log.info("entity information is {}\n{}",match.toString(), action.toString());
+			this.log.info("entity information is {}\n{}\nEntity count is {}",match.toString(), action.toString(),entity.getCount());
+			this.log.info("entity info {}\n\n{}", entity.getMatch().toString(), entity.getAction().toString());
 			if(entity.getMatch().equals(match) && entity.getAction().equals(action)){
 				if(entity.getCount()>1){
 					this.log.info("removeMod, entity count is {}, so reduce 1", entity.getCount());
