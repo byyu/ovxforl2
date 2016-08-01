@@ -77,15 +77,17 @@ public class PhysicalFlowEntry {
 //						entity.incCount();
 						return true;
 					}else{
-						log.info("Need to change wcd");
-						match.setWildcards(newWcd & (~OFMatch.OFPFW_NW_DST_ALL) 
-													& (~OFMatch.OFPFW_NW_SRC_ALL) 
-													& (~OFMatch.OFPFW_DL_TYPE));
-						fm.setMatch(match);
-						entry.add(new EntryPair(match, outaction));
-//						log.info("All condition is equal but action is't equal\n{}\n{}\t{}\n{}\t{}",newWcd, match.getDataLayerSource(),match.getDataLayerDestination(), outport, oldoutport);
 						return false;
 					}
+				}else{
+					log.info("Need to change wcd");
+					match.setWildcards(newWcd & (~OFMatch.OFPFW_NW_DST_ALL) 
+												& (~OFMatch.OFPFW_NW_SRC_ALL) 
+												& (~OFMatch.OFPFW_DL_TYPE));
+					fm.setMatch(match);
+					entry.add(new EntryPair(match, outaction));
+//					log.info("All condition is equal but action is't equal\n{}\n{}\t{}\n{}\t{}",newWcd, match.getDataLayerSource(),match.getDataLayerDestination(), outport, oldoutport);
+					return false;
 				}
 			}
 		}
