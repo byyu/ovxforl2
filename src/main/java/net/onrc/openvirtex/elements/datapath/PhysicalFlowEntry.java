@@ -31,8 +31,16 @@ public class PhysicalFlowEntry {
 	}
 	
 	public void removeEntry(OVXMatch match, OVXActionOutput action){
-		EntryPair entity = new EntryPair(match,action);
-		entry.remove(entity);
+		for(EntryPair entity : entry){
+			if(entity.getMatch().equals(match) && entity.getAction().equals(action)){
+				if(entity.getCount()>1){
+					entity.decCount();
+				}else{
+					entry.remove(entity);
+					return;
+				}
+			}
+		}
 	}
 	
 	public boolean checkduplicate(OVXFlowMod fm){
@@ -67,6 +75,7 @@ public class PhysicalFlowEntry {
 						&& Arrays.equals(oldMatch.getDataLayerSource(), match.getDataLayerSource())){
 					if(outport == oldoutport){
 						log.info("All condition is equal\n{}\n{}\t{}\n{}",newWcd, match.getDataLayerSource(),match.getDataLayerDestination(), outport);
+						entity.incCount();
 						return true;
 					}else{
 						match.setWildcards(newWcd & (~OFMatch.OFPFW_NW_DST_ALL) 
