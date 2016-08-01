@@ -147,6 +147,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         this.getMatch().setInputPort(inPort.getPhysicalPortNumber());
         OVXMessageUtil.translateXid(this, inPort);
         PhysicalFlowEntry phyFlowEntry = this.sw.getPhysicalFlowEntry();
+        boolean edgeOut=true;
         try {
             if (inPort.isEdge()) {
             	match.setWildcards(match.getWildcards() & (~OFMatch.OFPFW_DL_TYPE));
@@ -178,7 +179,8 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
                         OVXLinkUtils lUtils = new OVXLinkUtils(
                                 sw.getTenantId(), link.getLinkId(), flowId);
                         lUtils.rewriteMatch(this.getMatch());
-                        if(isEdgeOutport()){
+                        edgeOut = isEdgeOutport();
+                        if(edgeOut){
                         	lUtils.rewriteEdgeMatch(this.getMatch());
                         }
                     }
@@ -194,11 +196,13 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
                     this.sw.getTenantId(), this);
         }
         
-        boolean duflag;
-        this.log.info("\n{}\n", this.match.getWildcards());
-        duflag = phyFlowEntry.checkduplicate(this);
-        this.log.info("\n{}\n", this.match.getWildcards());
-        this.log.info("DuFlag is {}\n\n", duflag);
+        boolean duflag=false;
+        if(!inPort.isEdge() || !edgeOut){
+        	this.log.info("\n{}\n", this.match.getWildcards());
+        	duflag = phyFlowEntry.checkduplicate(this);
+        	this.log.info("\n{}\n", this.match.getWildcards());
+        	this.log.info("DuFlag is {}\n\n", duflag);
+        }
         if(!duflag){
         	
         	this.computeLength();

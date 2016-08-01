@@ -75,12 +75,12 @@ public class PhysicalFlowEntry {
 			oldMatch = entity.getMatch();
 			oldoutport = entity.getAction().getPort();
 			log.info("Compare two wildcard \n{}\n", oldMatch.getWildcards(), newWcd);
-			if(oldMatch.getWildcards() == newWcd){
+			if(Arrays.equals(oldMatch.getDataLayerDestination(), match.getDataLayerDestination())
+					&& Arrays.equals(oldMatch.getDataLayerSource(), match.getDataLayerSource())){
 				log.info("Compare two Mac\n{}\t{}\n{}\t{}\n", oldMatch.getDataLayerDestination(), oldMatch.getDataLayerSource(),match.getDataLayerDestination(), match.getDataLayerSource());
 				log.info("\n{}\n{}",Arrays.equals(oldMatch.getDataLayerDestination(), match.getDataLayerDestination()),Arrays.equals(oldMatch.getDataLayerSource(), match.getDataLayerSource()));
-				if(Arrays.equals(oldMatch.getDataLayerDestination(), match.getDataLayerDestination())
-						&& Arrays.equals(oldMatch.getDataLayerSource(), match.getDataLayerSource())){
-					if(outport == oldoutport){
+				if(outport == oldoutport){
+					if(oldMatch.getWildcards() == newWcd){
 						log.info("All condition is equal\n{}\n{}\t{}\n{}",newWcd, match.getDataLayerSource(),match.getDataLayerDestination(), outport);
 						entity.incCount();
 						return true;
