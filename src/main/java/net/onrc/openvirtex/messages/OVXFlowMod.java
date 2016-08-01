@@ -179,13 +179,10 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
                                 sw.getTenantId(), link.getLinkId(), flowId);
                         lUtils.rewriteMatch(this.getMatch());
                         if(isEdgeOutport()){
-//                        	log.info("\n\n\nThis wildcards : {}",this.getMatch().getWildcards());
                         	lUtils.rewriteEdgeMatch(this.getMatch());
-//                        	log.info("\n\n\nThis wildcards : {}",this.getMatch().getWildcards());
                         }
                     }
                 }
-
             }
         } catch (NetworkMappingException e) {
             log.warn(
@@ -196,18 +193,20 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
                     "OVXFlowMod. Error retrieving flowId in network with id {} for flowMod {}. Dropping packet...",
                     this.sw.getTenantId(), this);
         }
-        this.computeLength();
         
+        this.log.info("testesttest\n\n\n");
         boolean duflag;
         duflag = phyFlowEntry.checkduplicate(this);
         this.log.info("DuFlag is {}\n\n", duflag);
         if(!duflag){
-        if (pflag) {
-        	this.flags |= OFFlowMod.OFPFF_SEND_FLOW_REM;
-        	sw.sendSouth(this, inPort);
-        }
-        }
         	
+        	this.computeLength();
+        	if (pflag) {
+        		this.flags |= OFFlowMod.OFPFF_SEND_FLOW_REM;
+        		sw.sendSouth(this, inPort);
+        	}
+        }
+
      }
     
 
