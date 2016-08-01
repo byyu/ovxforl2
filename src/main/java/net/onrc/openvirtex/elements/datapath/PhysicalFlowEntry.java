@@ -28,6 +28,7 @@ public class PhysicalFlowEntry {
 	public void addEntry(OVXMatch match, OVXActionOutput action){
 		EntryPair entity = new EntryPair(match, action);
 		entry.add(entity);
+		this.log.info("Entry size is {}", entry.size());
 	}
 	
 	public void removeEntry(OVXMatch match, OVXActionOutput action){
@@ -37,7 +38,7 @@ public class PhysicalFlowEntry {
 			this.log.info("entity info {}\n\n{}", entity.getMatch().toString(), entity.getAction().toString());
 			if(entity.equals(newEntity)){
 				if(entity.getCount()==1){
-					this.log.info("all entity is removed");
+					this.log.info("This entity is removed");
 					entry.remove(entity);
 					return;
 				}else{
