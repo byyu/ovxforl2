@@ -1,5 +1,6 @@
 package net.onrc.openvirtex.elements.datapath;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -61,8 +62,9 @@ public class PhysicalFlowEntry {
 			log.info("Compare two wildcard \n{}\n", oldMatch.getWildcards(), newWcd);
 			if(oldMatch.getWildcards() == newWcd){
 				log.info("Compare two Mac\n{}\t{}\n{}\t{}\n", oldMatch.getDataLayerDestination(), oldMatch.getDataLayerSource(),match.getDataLayerDestination(), match.getDataLayerSource());
-				if(oldMatch.getDataLayerDestination().equals(match.getDataLayerDestination())
-						&& oldMatch.getDataLayerSource().equals(match.getDataLayerSource())){
+				log.info("\n{}\n{}",Arrays.equals(oldMatch.getDataLayerDestination(), match.getDataLayerDestination()),Arrays.equals(oldMatch.getDataLayerSource(), match.getDataLayerSource()));
+				if(Arrays.equals(oldMatch.getDataLayerDestination(), match.getDataLayerDestination())
+						&& Arrays.equals(oldMatch.getDataLayerSource(), match.getDataLayerSource())){
 					if(outport == oldoutport){
 						log.info("All condition is equal\n{}\n{}\t{}\n{}",newWcd, match.getDataLayerSource(),match.getDataLayerDestination(), outport);
 						return true;
