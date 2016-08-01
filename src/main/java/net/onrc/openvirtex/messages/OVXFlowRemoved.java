@@ -45,6 +45,7 @@ public class OVXFlowRemoved extends OFFlowRemoved implements Virtualizable {
         try {
             OVXSwitch vsw = sw.getMap().getVirtualSwitch(sw, tid);
             PhysicalFlowEntry phyFlowEntry = vsw.getPhysicalFlowEntry();
+            
             /*
              * If we are a Big Switch we might receive multiple same-cookie FR's
              * from multiple PhysicalSwitches. Only handle if the FR's newly
@@ -62,8 +63,8 @@ public class OVXFlowRemoved extends OFFlowRemoved implements Virtualizable {
         	    		outact = (OVXActionOutput) act;
         	    	}
         	    }
-                
-                phyFlowEntry.removeEntry(new OVXMatch(fm.getMatch()), outact);
+                this.log.info("compare match : {},{}",this.getMatch().toString(),fm.getMatch().toString());
+                phyFlowEntry.removeEntry(new OVXMatch(this.getMatch()), outact);
                 
                 vsw.deleteFlowMod(this.cookie);
                 if (fm.hasFlag(OFFlowMod.OFPFF_SEND_FLOW_REM)) {
