@@ -159,7 +159,7 @@ public class OVXLinkUtils {
 //    }
     
   //byyu
-    public OVXLinkUtils(final Integer tenantId, final Integer linkId, final Integer flowId, final long swId){
+    public OVXLinkUtils(final Integer tenantId, final Integer linkId, final Integer flowId, final OVXSwitch sw){
     	this();
     	this.tenantId = tenantId;
     	this.linkId = linkId;
@@ -167,22 +167,23 @@ public class OVXLinkUtils {
     	
     	OVXMap map = OVXMap.getInstance();
     	
-    	OVXSwitch srcSwitch;
+//    	OVXSwitch srcSwitch;
     	try {
-			LinkedList<MACAddress> dualmac = map.getVirtualNetwork(this.tenantId).getFlowManager().getFlowValues(flowId);
-			srcSwitch = map.getHostbyMAC(dualmac.get(0)).getPort().getParentSwitch();
+    		//srcSwitch = map.getPhysicalSwitches(sw).get(0).getSwitchId();
+//			LinkedList<MACAddress> dualmac = map.getVirtualNetwork(this.tenantId).getFlowManager().getFlowValues(flowId);
+//			srcSwitch = map.getHostbyMAC(dualmac.get(0)).getPort().getParentSwitch();
 			//dstSwitch = map.getHostbyMAC(dualmac.get(1)).getPort().getParentSwitch();
 			//TODO : big switch processing
-			final long src = swId;//map.getPhysicalSwitches(srcSwitch).get(0).getSwitchId();
+			final long src = map.getPhysicalSwitches(sw).get(0).getSwitchId();
 
 			this.srcMac = MACAddress.valueOf(src);
 			this.dstMac = MACAddress.valueOf(srcMac.toLong()+(linkId.longValue()));
 			
-    	} catch (NetworkMappingException e) {
-			log.error("This tenantId : {} and flowId : {} is wrong,",this.tenantId, this.flowId);
-		} //catch (SwitchMappingException e) {
-//			log.error("This Switch can't find");
-//		}
+//    	} catch (NetworkMappingException e) {
+//			log.error("This tenantId : {} and flowId : {} is wrong,",this.tenantId, this.flowId);
+		} catch (SwitchMappingException e) {
+			log.error("This Switch can't find");
+		}
     }
 
     /**

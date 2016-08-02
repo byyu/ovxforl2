@@ -343,7 +343,7 @@ public class SwitchRoute extends Link<OVXPort, PhysicalSwitch> implements
                 System.out.println("FlowID is "+flowId);
                 link.generateLinkFMs(fm.clone(), flowId);
                 outActions.addAll(new OVXLinkUtils(this.getTenantId(), linkId,
-                        flowId,sw.getSwitchId()).setLinkFields());
+                        flowId,sw).setLinkFields());
             } catch (IndexOutOfBoundException e) {
                 SwitchRoute.log.error(
                         "Too many host to generate the flow pairs in this virtual network {}. "
@@ -477,7 +477,7 @@ public class SwitchRoute extends Link<OVXPort, PhysicalSwitch> implements
                     return;
                 }
                 OVXLinkUtils lUtils = new OVXLinkUtils(this.getTenantId(),
-                        link.getLinkId(), flowId,sw.getSwitchId());
+                        link.getLinkId(), flowId, sw);
                 lUtils.rewriteMatch(fm.getMatch());
                 IPMapper.rewriteMatch(this.getTenantId(), fm.getMatch());
                 approvedActions.addAll(lUtils.unsetLinkFields());
