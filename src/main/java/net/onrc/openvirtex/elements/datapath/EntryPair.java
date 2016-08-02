@@ -1,6 +1,8 @@
 package net.onrc.openvirtex.elements.datapath;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,10 +17,12 @@ public class EntryPair {
 	private OVXMatch ovxmatch;
 	private OVXActionOutput ovxaction;
 	private int count;
+	private List<Long> cookieSet = new ArrayList<Long>();
 	
-	public EntryPair(OVXMatch match,OVXActionOutput action){
+	public EntryPair(OVXMatch match,OVXActionOutput action, long cookie){
 		this.ovxmatch = match;
 		this.ovxaction = action;
+		this.cookieSet.add(cookie);
 		count=1;
 	}
 	
@@ -40,6 +44,14 @@ public class EntryPair {
 	
 	public int getCount(){
 		return count;
+	}
+	
+	public void addCookie(long cookie){
+		this.cookieSet.add(cookie);
+	}
+	
+	public List<Long> getCookieSet(){
+		return this.cookieSet;
 	}
 	
 	public boolean equals(EntryPair entity){

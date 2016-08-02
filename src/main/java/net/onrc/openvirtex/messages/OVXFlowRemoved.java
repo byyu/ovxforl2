@@ -22,6 +22,8 @@ import net.onrc.openvirtex.exceptions.MappingException;
 import net.onrc.openvirtex.messages.actions.OVXActionOutput;
 import net.onrc.openvirtex.protocol.OVXMatch;
 
+import java.util.List;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openflow.protocol.OFFlowMod;
@@ -64,14 +66,27 @@ public class OVXFlowRemoved extends OFFlowRemoved implements Virtualizable {
         	    	}
         	    }
                 this.log.info("compare match : {},{}",this.getMatch().toString(),fm.getMatch().toString());
-                phyFlowEntry.removeEntry(new OVXMatch(this.getMatch()), outact);
-                
-                vsw.deleteFlowMod(this.cookie);
-                if (fm.hasFlag(OFFlowMod.OFPFF_SEND_FLOW_REM)) {
-                    writeFields(fm);
-                    
-                    vsw.sendMsg(this, sw);
+                List<Long> cookieSet = phyFlowEntry.removeEntry(new OVXMatch(this.getMatch()), outact);
+                if(cookieSet.isEmpty()){
+                	vsw.deleteFlowMod(this.cookie);
+                	
+                	if (fm.hasFlag(OFFlowMod.OFPFF_SEND_FLOW_REM)) {
+                        writeFields(fm);
+                        
+                        vsw.sendMsg(this, sw);
+                    }
+                }else{
+                	for(Long cookies : cookieSet){
+                		vsw.deleteFlowMod(cookies);
+                		
+                		if (fm.hasFlag(OFFlowMod.OFPFF_SEND_FLOW_REM)) {
+                            writeFields(fm);
+                            
+                            vsw.sendMsg(this, sw);
+                        }
+                	}
                 }
+                
             }
         } catch (MappingException e) {
             log.warn("Exception fetching FlowMod from FlowTable: {}", e);

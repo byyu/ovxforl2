@@ -2,6 +2,7 @@ package net.onrc.openvirtex.elements.datapath;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
@@ -26,20 +27,23 @@ public class PhysicalFlowEntry {
 	}
 	
 	public void addEntry(OVXMatch match, OVXActionOutput action){
-		EntryPair entity = new EntryPair(match, action);
+		EntryPair entity = new EntryPair(match, action, match.getCookie());
 		entry.add(entity);
 		this.log.info("Entry size is {}", entry.size());
 	}
 	
-	public void removeEntry(OVXMatch match, OVXActionOutput action){
-		EntryPair newEntity = new EntryPair(match, action);
+	public List<Long> removeEntry(OVXMatch match, OVXActionOutput action){
+		EntryPair newEntity = new EntryPair(match, action, match.getCookie());
 		for(EntryPair entity : entry){
 			if(entity.equals(newEntity)){
 //				this.log.info("This entity is removed");
+				
 				entry.remove(entity);
-				return;
+				return entity.getCookieSet();
 			}
 		}
+		
+		return null;
 	}
 
 	
@@ -76,6 +80,7 @@ public class PhysicalFlowEntry {
 					if(oldMatch.getWildcards() == newWcd){
 						log.info("All condition is equal\n{}\n{}\t{}\n{}",newWcd, match.getDataLayerSource(),match.getDataLayerDestination(), outport);
 //						entity.incCount();
+						entity.addCookie(match.getCookie());
 						return true;
 					}else{
 						return false;
@@ -86,14 +91,14 @@ public class PhysicalFlowEntry {
 												& (~OFMatch.OFPFW_NW_SRC_ALL) 
 												& (~OFMatch.OFPFW_DL_TYPE));
 					fm.setMatch(match);
-					entry.add(new EntryPair(match, outaction));
+					entry.add(new EntryPair(match, outaction,match.getCookie()));
 //					log.info("All condition is equal but action is't equal\n{}\n{}\t{}\n{}\t{}",newWcd, match.getDataLayerSource(),match.getDataLayerDestination(), outport, oldoutport);
 					return false;
 				}
 			}
 		}
 		
-		entry.add(new EntryPair(match, outaction));
+		entry.add(new EntryPair(match, outaction,match.getCookie()));
 		return false;
 	}
 }
