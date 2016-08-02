@@ -175,7 +175,7 @@ public class OVXLinkUtils {
 			//dstSwitch = map.getHostbyMAC(dualmac.get(1)).getPort().getParentSwitch();
 			//TODO : big switch processing
 			final long src = map.getPhysicalSwitches(sw).get(0).getSwitchId();
-			log.info("This ovxsw id is : {}, physw id : {}", sw.getSwitchId(), src);
+			
 			this.srcMac = MACAddress.valueOf(src);
 			this.dstMac = MACAddress.valueOf(srcMac.toLong()+(linkId.longValue()));
 			

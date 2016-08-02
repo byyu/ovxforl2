@@ -32,7 +32,6 @@ import net.onrc.openvirtex.elements.port.OVXPort;
 import net.onrc.openvirtex.elements.port.PhysicalPort;
 import net.onrc.openvirtex.exceptions.AddressMappingException;
 import net.onrc.openvirtex.exceptions.DroppedMessageException;
-import net.onrc.openvirtex.exceptions.IndexOutOfBoundException;
 import net.onrc.openvirtex.exceptions.NetworkMappingException;
 import net.onrc.openvirtex.exceptions.SwitchMappingException;
 import net.onrc.openvirtex.packet.ARP;
@@ -133,6 +132,7 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
          //byyu
            Integer flowId = 0;
            long linkId = 0;
+           
            if(match.getDataLayerType()!=Ethernet.TYPE_ARP){
            try {
            	//tenantId = this.fetchTenantId(match, map, true);

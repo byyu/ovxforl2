@@ -170,6 +170,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
                     OVXLink link = sw.getMap()
                             .getVirtualNetwork(sw.getTenantId())
                             .getLink(dstPort, inPort);
+                    
                     if (inPort != null && link != null) {
                         Integer flowId = sw
                                 .getMap()
@@ -178,7 +179,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
                                 .getFlowId(this.match.getDataLayerSource(),
                                         this.match.getDataLayerDestination());
                         OVXLinkUtils lUtils = new OVXLinkUtils(
-                                sw.getTenantId(), link.getLinkId(), flowId, this.sw);
+                                sw.getTenantId(), link.getLinkId(), flowId, link.getSrcSwitch());
                         lUtils.rewriteMatch(this.getMatch());
                         edgeOut = isEdgeOutport();
                         if(edgeOut){
