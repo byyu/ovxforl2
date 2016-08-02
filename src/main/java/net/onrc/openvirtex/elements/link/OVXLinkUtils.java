@@ -173,16 +173,16 @@ public class OVXLinkUtils {
 			srcSwitch = map.getHostbyMAC(dualmac.get(0)).getPort().getParentSwitch();
 			//dstSwitch = map.getHostbyMAC(dualmac.get(1)).getPort().getParentSwitch();
 			//TODO : big switch processing
-			final long src = map.getPhysicalSwitches(srcSwitch).get(0).getSwitchId();
+			final long src = swId;//map.getPhysicalSwitches(srcSwitch).get(0).getSwitchId();
 
 			this.srcMac = MACAddress.valueOf(src);
 			this.dstMac = MACAddress.valueOf(srcMac.toLong()+(linkId.longValue()));
 			
     	} catch (NetworkMappingException e) {
 			log.error("This tenantId : {} and flowId : {} is wrong,",this.tenantId, this.flowId);
-		} catch (SwitchMappingException e) {
-			log.error("This Switch can't find");
-		}
+		} //catch (SwitchMappingException e) {
+//			log.error("This Switch can't find");
+//		}
     }
 
     /**
