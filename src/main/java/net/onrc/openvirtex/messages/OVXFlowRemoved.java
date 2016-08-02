@@ -67,27 +67,17 @@ public class OVXFlowRemoved extends OFFlowRemoved implements Virtualizable {
         	    }
                 this.log.info("compare match : {},{}",this.getMatch().toString(),fm.getMatch().toString());
                 List<Long> cookieSet = phyFlowEntry.removeEntry(new OVXMatch(this.getMatch()), outact);
-                if(cookieSet.isEmpty()){
-                	vsw.deleteFlowMod(this.cookie);
-                	
-                	if (fm.hasFlag(OFFlowMod.OFPFF_SEND_FLOW_REM)) {
-                        writeFields(fm);
-                        
-                        vsw.sendMsg(this, sw);
-                    }
-                }else{
-                	for(Long cookies : cookieSet){
-                		vsw.deleteFlowMod(cookies);
-                		
-                		if (fm.hasFlag(OFFlowMod.OFPFF_SEND_FLOW_REM)) {
-                            writeFields(fm);
+
+                for(Long cookies : cookieSet){
+               		vsw.deleteFlowMod(cookies); 		
+               		if (fm.hasFlag(OFFlowMod.OFPFF_SEND_FLOW_REM)) {
+               			writeFields(fm);
                             
-                            vsw.sendMsg(this, sw);
-                        }
-                	}
+               			vsw.sendMsg(this, sw);
+               		}
                 }
-                
             }
+
         } catch (MappingException e) {
             log.warn("Exception fetching FlowMod from FlowTable: {}", e);
         }
