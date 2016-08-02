@@ -37,6 +37,7 @@ public class PhysicalFlowEntry {
 			if(entity.equals(newEntity)){
 //				this.log.info("This entity is removed");
 				entry.remove(entity);
+				return;
 			}
 		}
 	}
