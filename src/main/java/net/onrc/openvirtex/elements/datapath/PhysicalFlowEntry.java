@@ -29,17 +29,15 @@ public class PhysicalFlowEntry {
 	public void addEntry(OVXMatch match, OVXActionOutput action){
 		EntryPair entity = new EntryPair(match, action, match.getCookie());
 		entry.add(entity);
-		this.log.info("Entry size is {}", entry.size());
 	}
 	
 	public List<Long> removeEntry(OVXMatch match, OVXActionOutput action){
 		EntryPair newEntity = new EntryPair(match, action, match.getCookie());
 		for(EntryPair entity : entry){
 			if(entity.equals(newEntity)){
-//				this.log.info("This entity is removed");
-				
+				List<Long> cookieList = entity.getCookieSet();
 				entry.remove(entity);
-				return entity.getCookieSet();
+				return cookieList;
 			}
 		}
 		
@@ -48,11 +46,10 @@ public class PhysicalFlowEntry {
 
 	
 	public boolean checkduplicate(OVXFlowMod fm){
-		log.info("Start checking duplicate");
+		log.debug("Start checking duplicate");
 		
 		OVXMatch match = new OVXMatch(fm.getMatch());
 		int newWcd = match.getWildcards();
-		log.info("this match is : {}",match.toString());
 		OVXActionOutput outaction = null;
 		short outport=0;
 		for(OFAction action : fm.getActions()){
@@ -71,15 +68,13 @@ public class PhysicalFlowEntry {
 		for(EntryPair entity : entry){
 			oldMatch = entity.getMatch();
 			oldoutport = entity.getAction().getPort();
-//			log.info("Compare two wildcard \n{}\n", oldMatch.getWildcards(), newWcd);
+
 			if(Arrays.equals(oldMatch.getDataLayerDestination(), match.getDataLayerDestination())
 					&& Arrays.equals(oldMatch.getDataLayerSource(), match.getDataLayerSource())){
-//				log.info("Compare two Mac\n{}\t{}\n{}\t{}\n", oldMatch.getDataLayerDestination(), oldMatch.getDataLayerSource(),match.getDataLayerDestination(), match.getDataLayerSource());
-//				log.info("\n{}\n{}",Arrays.equals(oldMatch.getDataLayerDestination(), match.getDataLayerDestination()),Arrays.equals(oldMatch.getDataLayerSource(), match.getDataLayerSource()));
+
 				if(outport == oldoutport){
 					if(oldMatch.getWildcards() == newWcd){
 						log.info("All condition is equal\n{}\n{}\t{}\n{}",newWcd, match.getDataLayerSource(),match.getDataLayerDestination(), outport);
-//						entity.incCount();
 						entity.addCookie(match.getCookie());
 						return true;
 					}else{
@@ -91,14 +86,15 @@ public class PhysicalFlowEntry {
 												& (~OFMatch.OFPFW_NW_SRC_ALL) 
 												& (~OFMatch.OFPFW_DL_TYPE));
 					fm.setMatch(match);
-					entry.add(new EntryPair(match, outaction,match.getCookie()));
+
+					addEntry(match,outaction);
 //					log.info("All condition is equal but action is't equal\n{}\n{}\t{}\n{}\t{}",newWcd, match.getDataLayerSource(),match.getDataLayerDestination(), outport, oldoutport);
 					return false;
 				}
 			}
 		}
 		
-		entry.add(new EntryPair(match, outaction,match.getCookie()));
+		addEntry(match,outaction);
 		return false;
 	}
 }

@@ -4,16 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import net.onrc.openvirtex.messages.actions.OVXActionOutput;
 import net.onrc.openvirtex.protocol.OVXMatch;
 
 public class EntryPair {
-	
-	private static Logger log = LogManager.getLogger(EntryPair.class
-            .getName());
+
 	private OVXMatch ovxmatch;
 	private OVXActionOutput ovxaction;
 	private int count;
@@ -55,9 +50,6 @@ public class EntryPair {
 	}
 	
 	public boolean equals(EntryPair entity){
-		this.log.info("Compare DL_Dst : {}, {}",this.ovxmatch.getDataLayerDestination(),entity.ovxmatch.getDataLayerDestination());
-		this.log.info("Compare DL_Srt : {}, {}", this.ovxmatch.getDataLayerSource(), entity.ovxmatch.getDataLayerSource());
-		this.log.info("Compare output : {}, {}", this.ovxaction.getPort(),this.ovxaction.getPort());
 		if(Arrays.equals(this.ovxmatch.getDataLayerDestination(), entity.ovxmatch.getDataLayerDestination())
 				&& Arrays.equals(this.ovxmatch.getDataLayerSource(), entity.ovxmatch.getDataLayerSource())
 				&& (this.ovxaction.getPort() == entity.ovxaction.getPort())){
