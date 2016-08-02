@@ -77,7 +77,6 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
          * controller this should be send to.
          */
         if (this.port.isEdge()) {														//팻킷의 포트가 엣지 포트일때
-            this.log.info("This packet is {}", match.getDataLayerType());
         	this.tenantId = this.fetchTenantId(match, map, true);						//테넌트 아이디를 받아온다. - 데스티네이션 맥주소를 통해 받아온다.
             if (this.tenantId == null) {												//테넌트 아이디가 없으면 패킷을 드랍한다.
                 this.log.warn(
