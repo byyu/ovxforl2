@@ -184,6 +184,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
                         if(edgeOut){
                         	lUtils.rewriteEdgeMatch(this.getMatch());
                         }else{
+                        	this.match.setWildcards(coreForceSetWcd());
                         	this.log.info("\n{}\n", this.match.getWildcards());
                         	duflag = phyFlowEntry.checkduplicate(this);
                         	this.log.info("\n{}\n", this.match.getWildcards());
@@ -302,6 +303,11 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
 			return true;
 		else
 			return false;
+    }
+    
+    public int coreForceSetWcd(){
+    	int newWildcard = 3145968;
+    	return newWildcard;
     }
 
 }
