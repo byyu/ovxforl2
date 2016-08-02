@@ -178,7 +178,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
                                 .getFlowId(this.match.getDataLayerSource(),
                                         this.match.getDataLayerDestination());
                         OVXLinkUtils lUtils = new OVXLinkUtils(
-                                sw.getTenantId(), link.getLinkId(), flowId);
+                                sw.getTenantId(), link.getLinkId(), flowId, this.sw.getSwitchId());
                         lUtils.rewriteMatch(this.getMatch());
                         edgeOut = isEdgeOutport();
                         if(edgeOut){

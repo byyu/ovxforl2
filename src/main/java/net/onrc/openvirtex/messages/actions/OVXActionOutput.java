@@ -137,7 +137,7 @@ public class OVXActionOutput extends OFActionOutput implements
                                     match.getDataLayerSource(),
                                     match.getDataLayerDestination());
                             OVXLinkUtils lUtils = new OVXLinkUtils(
-                                    sw.getTenantId(), link.getLinkId(), flowId);
+                                    sw.getTenantId(), link.getLinkId(), flowId, sw.getSwitchId());
                             approvedActions.addAll(lUtils.unsetLinkFields());
                         } else {
                             this.log.error(
@@ -189,7 +189,7 @@ public class OVXActionOutput extends OFActionOutput implements
                                         match.getDataLayerDestination());
                                 link.generateLinkFMs(fm.clone(), flowId);				
                                 approvedActions.addAll(new OVXLinkUtils(sw
-                                        .getTenantId(), linkId, flowId)
+                                        .getTenantId(), linkId, flowId,sw.getSwitchId())
                                         .setLinkFields());
                             } catch (IndexOutOfBoundException e) {
                                 log.error(
@@ -219,7 +219,7 @@ public class OVXActionOutput extends OFActionOutput implements
                                         match.getDataLayerDestination());
                                 OVXLinkUtils lUtils = new OVXLinkUtils(
                                         sw.getTenantId(), link.getLinkId(),
-                                        flowId);
+                                        flowId, sw.getSwitchId());
                                 approvedActions
                                         .addAll(lUtils.unsetLinkFields());
                             } else {
@@ -239,7 +239,7 @@ public class OVXActionOutput extends OFActionOutput implements
                                         match.getDataLayerDestination());
                                 link.generateLinkFMs(fm.clone(), flowId);
                                 approvedActions.addAll(new OVXLinkUtils(sw
-                                        .getTenantId(), linkId, flowId)
+                                        .getTenantId(), linkId, flowId, sw.getSwitchId())
                                         .setLinkFields());
                             } catch (IndexOutOfBoundException e) {
                                 log.error(

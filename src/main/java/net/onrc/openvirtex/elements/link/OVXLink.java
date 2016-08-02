@@ -354,7 +354,7 @@ public class OVXLink extends Link<OVXPort, OVXSwitch> {
          * stored
          */
         final OVXLinkUtils lUtils = new OVXLinkUtils(this.tenantId,
-                this.linkId, flowId);
+                this.linkId, flowId,this.getSrcSwitch().getSwitchId());
         lUtils.rewriteMatch(fm.getMatch());								//맷치에 있는 맥주소로 다시 업데이트 함.
         long cookie = tenantId;											//쿠키를 테넌트 아이디에 32비트 옮겨서 설정함.
         fm.setCookie(cookie << 32);

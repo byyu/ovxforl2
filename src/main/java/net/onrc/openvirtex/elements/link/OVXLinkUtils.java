@@ -159,7 +159,7 @@ public class OVXLinkUtils {
 //    }
     
   //byyu
-    public OVXLinkUtils(final Integer tenantId, final Integer linkId, final Integer flowId){
+    public OVXLinkUtils(final Integer tenantId, final Integer linkId, final Integer flowId, final long swId){
     	this();
     	this.tenantId = tenantId;
     	this.linkId = linkId;
