@@ -307,7 +307,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
     }
     
     public int coreForceSetWcd(){
-    	int newWildcard = 3145968;
+    	int newWildcard = 3145970;
     	return newWildcard;
     }
 
