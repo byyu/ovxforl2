@@ -66,7 +66,9 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         if (this.match.getDataLayerType() == Ethernet.TYPE_LLDP || this.match.getDataLayerType() == Ethernet.TYPE_ARP) {
             return;
         }
-        
+        if(this.idleTimeout==0){
+        	this.idleTimeout=5;
+        }
 //        this.log.info("FlowMod devirtualize \n srcMac : {},\n dstMac : {}",this.match.getDataLayerSource(),this.match.getDataLayerDestination());
         
         this.sw = sw;

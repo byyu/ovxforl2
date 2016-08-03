@@ -48,7 +48,6 @@ public class EntryPair {
 	}
 	
 	public void addCookie(long cookie){
-		this.log.info("This Cookie is saved : {}", cookie);
 		this.cookieSet.add(cookie);
 	}
 	
