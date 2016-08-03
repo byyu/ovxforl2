@@ -62,6 +62,7 @@ public class OVXActionOutput extends OFActionOutput implements
         final LinkedList<OVXPort> outPortList = this.fillPortList(		//아웃풀포트리스트를 생성한다.
                 match.getInputPort(), this.getPort(), sw);
         final OVXNetwork vnet;
+        this.log.info("outPortList size : {}", outPortList.size());
         try {
             vnet = sw.getMap().getVirtualNetwork(sw.getTenantId());
         } catch (NetworkMappingException e) {
