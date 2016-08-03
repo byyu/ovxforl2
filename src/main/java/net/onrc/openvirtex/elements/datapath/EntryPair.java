@@ -4,11 +4,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import net.onrc.openvirtex.messages.actions.OVXActionOutput;
 import net.onrc.openvirtex.protocol.OVXMatch;
 
 public class EntryPair {
-
+	
+	private static Logger log = LogManager.getLogger(EntryPair.class
+            .getName());
 	private OVXMatch ovxmatch;
 	private OVXActionOutput ovxaction;
 	private int count;
@@ -18,6 +23,7 @@ public class EntryPair {
 		this.ovxmatch = match;
 		this.ovxaction = action;
 		this.cookieSet.add(cookie);
+		log.info("This cookie is : {} ", cookie);
 		count=1;
 	}
 	
@@ -42,6 +48,7 @@ public class EntryPair {
 	}
 	
 	public void addCookie(long cookie){
+		this.log.info("This Cookie is saved : {}", cookie);
 		this.cookieSet.add(cookie);
 	}
 	
