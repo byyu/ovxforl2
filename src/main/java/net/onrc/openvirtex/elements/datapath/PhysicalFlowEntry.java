@@ -47,10 +47,8 @@ public class PhysicalFlowEntry {
 	
 	public boolean checkduplicate(OVXFlowMod fm){
 		log.debug("Start checking duplicate");
-		this.log.info("This cookie of fm : {}", fm.getCookie());
 		OVXMatch match = new OVXMatch(fm.getMatch());
 		match.setCookie(fm.getCookie());
-		this.log.info("This cookie of match : {}", match.getCookie());
 		int newWcd = match.getWildcards();
 		OVXActionOutput outaction = null;
 		short outport=0;
