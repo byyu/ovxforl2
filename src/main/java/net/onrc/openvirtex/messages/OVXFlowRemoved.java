@@ -67,7 +67,7 @@ public class OVXFlowRemoved extends OFFlowRemoved implements Virtualizable {
         	    }
 //                this.log.info("compare match : {},{}",this.getMatch().toString(),fm.getMatch().toString());
                 List<Long> cookieSet = phyFlowEntry.removeEntry(new OVXMatch(this.getMatch()), outact);
-
+                if(cookieSet!=null){
                 for(Long cookies : cookieSet){
                		vsw.deleteFlowMod(cookies); 		
                		if (fm.hasFlag(OFFlowMod.OFPFF_SEND_FLOW_REM)) {
@@ -75,6 +75,7 @@ public class OVXFlowRemoved extends OFFlowRemoved implements Virtualizable {
                             
                			vsw.sendMsg(this, sw);
                		}
+                }
                 }
             }
 
