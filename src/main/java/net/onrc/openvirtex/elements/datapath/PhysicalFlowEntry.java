@@ -35,6 +35,7 @@ public class PhysicalFlowEntry {
 		EntryPair newEntity = new EntryPair(match, action, match.getCookie());
 		for(EntryPair entity : entry){
 			if(entity.equals(newEntity)){
+				this.log.info("cookie set size : {}", entity.getCookieSet().size());
 				List<Long> cookieList = entity.getCookieSet();
 				entry.remove(entity);
 				return cookieList;
