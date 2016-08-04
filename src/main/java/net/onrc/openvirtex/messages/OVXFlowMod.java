@@ -194,6 +194,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
                         edgeOut = isEdgeOutport();
                         if(edgeOut){
                         	lUtils.rewriteEdgeMatch(this.getMatch());
+                        	duflag = false;
                         }else{
                         	this.log.info("\n{}\n", this.match.getWildcards());
                         	duflag = phyFlowEntry.checkduplicate(this);
