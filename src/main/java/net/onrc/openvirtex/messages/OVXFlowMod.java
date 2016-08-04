@@ -59,16 +59,17 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
 
     private long ovxCookie = -1;
 
+    long startTime, endTime;
+    
     @Override
     public void devirtualize(final OVXSwitch sw) {
     	
+    	startTime = System.nanoTime();
         /* Drop LLDP-matching messages sent by some applications */
         if (this.match.getDataLayerType() == Ethernet.TYPE_LLDP || this.match.getDataLayerType() == Ethernet.TYPE_ARP) {
             return;
         }
-        if(this.idleTimeout==0){
-        	this.idleTimeout=5;
-        }
+
 //        this.log.info("FlowMod devirtualize \n srcMac : {},\n dstMac : {}",this.match.getDataLayerSource(),this.match.getDataLayerDestination());
         
         this.sw = sw;
@@ -137,6 +138,10 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         } else {
             prepAndSendSouth(ovxInPort, pflag);
         }
+        
+        endTime = System.nanoTime();
+        long elapseTime = endTime - startTime;
+        this.log.info("FlowMod processing Time : {}", elapseTime);
     }
 
     private void prepAndSendSouth(OVXPort inPort, boolean pflag) {
