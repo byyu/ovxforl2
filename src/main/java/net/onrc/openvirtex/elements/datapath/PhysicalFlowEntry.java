@@ -82,7 +82,6 @@ public class PhysicalFlowEntry {
 				}else{
 					log.info("Need to change wcd");
 					match.setWildcards(newWcd & (~OFMatch.OFPFW_NW_DST_ALL) 
-												& (~OFMatch.OFPFW_NW_SRC_ALL) 
 												& (~OFMatch.OFPFW_DL_TYPE));
 					fm.setMatch(match);
 
