@@ -138,12 +138,13 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         } else {
             prepAndSendSouth(ovxInPort, pflag);
         }
-        
+        if(match.getDataLayerType()==Ethernet.TYPE_IPV4){
         endTime = System.nanoTime();
         long elapseTime = endTime - startTime;
         this.log.info("FlowMod processing Time : {}", elapseTime);
+ 
+        }
     }
-
     private void prepAndSendSouth(OVXPort inPort, boolean pflag) {
         if (!inPort.isActive()) {
             log.warn("Virtual network {}: port {} on switch {} is down.",
