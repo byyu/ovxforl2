@@ -8,6 +8,7 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openflow.protocol.OFMatch;
+import org.openflow.protocol.Wildcards.Flag;
 import org.openflow.protocol.action.OFAction;
 import org.openflow.protocol.action.OFActionType;
 
@@ -73,9 +74,18 @@ public class PhysicalFlowEntry {
 
 				if(outport == oldoutport){
 					if(oldMatch.getWildcards() == newWcd){
-						log.info("All condition is equal\n{}\n{}\t{}\n{}",newWcd, match.getDataLayerSource(),match.getDataLayerDestination(), outport);
-						entity.addCookie(match.getCookie());
-						return true;
+						if(oldMatch.getWildcardObj().isWildcarded(Flag.NW_DST)){
+							if(oldMatch.getNetworkDestination()==match.getNetworkDestination()){
+								entity.addCookie(match.getCookie());
+								return true;
+							}else{
+								return false;
+							}
+						}else{
+							log.info("All condition is equal\n{}\n{}\t{}\n{}",newWcd, match.getDataLayerSource(),match.getDataLayerDestination(), outport);
+							entity.addCookie(match.getCookie());
+							return true;
+						}
 					}else{
 						return false;
 					}
