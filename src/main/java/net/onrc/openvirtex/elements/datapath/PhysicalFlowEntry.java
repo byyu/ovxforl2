@@ -84,7 +84,7 @@ public class PhysicalFlowEntry {
 					match.setWildcards(newWcd & (~OFMatch.OFPFW_NW_DST_ALL) 
 												& (~OFMatch.OFPFW_DL_TYPE));
 					short prio = fm.getPriority();
-					fm.setPriority(prio++);
+					fm.setPriority(++prio);
 					fm.setMatch(match);
 
 					addEntry(match,outaction);
