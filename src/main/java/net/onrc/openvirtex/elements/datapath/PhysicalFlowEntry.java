@@ -22,7 +22,13 @@ public class PhysicalFlowEntry {
             .getName());
 	private Set<EntryPair> entry = new HashSet<EntryPair>();
 	OVXSwitch sw;
-	
+	PhysicalSwitch physw;
+	public PhysicalFlowEntry(){
+		
+	}
+	public PhysicalFlowEntry(PhysicalSwitch sw){
+		this.physw = sw;
+	}
 	public PhysicalFlowEntry(OVXSwitch sw){
 		this.sw = sw;
 	}

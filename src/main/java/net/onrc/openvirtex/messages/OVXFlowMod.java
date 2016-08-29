@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import net.onrc.openvirtex.elements.OVXMap;
 import net.onrc.openvirtex.elements.address.IPMapper;
 import net.onrc.openvirtex.elements.datapath.FlowTable;
 import net.onrc.openvirtex.elements.datapath.OVXFlowTable;
@@ -31,6 +32,7 @@ import net.onrc.openvirtex.elements.port.OVXPort;
 import net.onrc.openvirtex.exceptions.ActionVirtualizationDenied;
 import net.onrc.openvirtex.exceptions.DroppedMessageException;
 import net.onrc.openvirtex.exceptions.NetworkMappingException;
+import net.onrc.openvirtex.exceptions.SwitchMappingException;
 import net.onrc.openvirtex.exceptions.UnknownActionException;
 import net.onrc.openvirtex.messages.actions.OVXActionNetworkLayerDestination;
 import net.onrc.openvirtex.messages.actions.OVXActionNetworkLayerSource;
@@ -154,12 +156,18 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         }
         this.getMatch().setInputPort(inPort.getPhysicalPortNumber());
         OVXMessageUtil.translateXid(this, inPort);
-        PhysicalFlowEntry phyFlowEntry = this.sw.getPhysicalFlowEntry();
+        PhysicalFlowEntry phyFlowEntry = null;
+		try {
+			phyFlowEntry = OVXMap.getInstance().getPhysicalSwitches(sw).get(0).getEntrytabe();
+		} catch (SwitchMappingException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
         boolean edgeOut=true;
         boolean duflag=false;
         this.match.setWildcards(coreForceSetWcd());
         
-        this.hardTimeout = 1000;
+//        this.hardTimeout = 1000;
         
         try {
             if (inPort.isEdge()) {
