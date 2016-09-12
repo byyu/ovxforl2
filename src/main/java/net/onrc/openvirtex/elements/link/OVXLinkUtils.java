@@ -180,7 +180,7 @@ public class OVXLinkUtils {
 			//TODO : big switch processing
 			final long src = map.getPhysicalSwitches(sw).get(0).getSwitchId();
 			
-			this.srcMac = MACAddress.valueOf(Ints.toByteArray(this.tenantId));
+			this.srcMac = MACAddress.valueOf(this.tenantId);
 			this.dstMac = MACAddress.valueOf(src+(linkId.longValue()));
 			
 //    	} catch (NetworkMappingException e) {
