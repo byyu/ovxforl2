@@ -228,6 +228,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         	
         	this.computeLength();
         	if (pflag) {
+        		this.match.setWildcards(OFMatch.OFPFW_DL_DST);
         		this.flags |= OFFlowMod.OFPFF_SEND_FLOW_REM;
         		sw.sendSouth(this, inPort);
         	}
