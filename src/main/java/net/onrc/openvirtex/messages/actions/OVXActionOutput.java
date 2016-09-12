@@ -59,7 +59,7 @@ public class OVXActionOutput extends OFActionOutput implements
         final OVXPort inPort = sw.getPort(match.getInputPort());	//스위치에서 인풋포트를 불러온다.
 
         // TODO: handle TABLE output port here
-
+        this.log.info("\n{}\n",match.toString());
         final LinkedList<OVXPort> outPortList = this.fillPortList(		//아웃풀포트리스트를 생성한다.
                 match.getInputPort(), this.getPort(), sw);
         final OVXNetwork vnet;
