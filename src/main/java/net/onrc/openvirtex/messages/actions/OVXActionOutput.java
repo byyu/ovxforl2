@@ -286,12 +286,12 @@ public class OVXActionOutput extends OFActionOutput implements
                     dstPort.getParentSwitch().sendMsg(
                             new OVXPacketIn(match.getPktData(),
                                     dstPort.getPortNumber()), sw);
-                    this.log.info(
-                            "Generate a packetIn from OVX Port {}/{}, physicalPort {}/{}",
-                            dstPort.getParentSwitch().getSwitchName(),
-                            dstPort.getPortNumber(), dstPort.getPhysicalPort()
-                                    .getParentSwitch().getSwitchName(),
-                            dstPort.getPhysicalPortNumber());
+//                    this.log.info(
+//                            "Generate a packetIn from OVX Port {}/{}, physicalPort {}/{}",
+//                            dstPort.getParentSwitch().getSwitchName(),
+//                            dstPort.getPortNumber(), dstPort.getPhysicalPort()
+//                                    .getParentSwitch().getSwitchName(),
+//                            dstPort.getPhysicalPortNumber());
                 } else if (sw instanceof OVXBigSwitch) {
                     /**
                      * Big-switch management. Generate a packetOut to the
@@ -324,9 +324,9 @@ public class OVXActionOutput extends OFActionOutput implements
                     approvedActions.add(new OFActionOutput(outPort
                             .getPhysicalPortNumber()));
 
-                    this.log.info(
-                            "Physical ports are on the same physical switch, rewrite only outPort to {}",
-                            outPort.getPhysicalPortNumber());
+//                    this.log.info(
+//                            "Physical ports are on the same physical switch, rewrite only outPort to {}",
+//                            outPort.getPhysicalPortNumber());
                     
                 }
             }

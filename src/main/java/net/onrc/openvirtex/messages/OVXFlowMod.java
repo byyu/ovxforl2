@@ -167,7 +167,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         boolean duflag=false;
         this.match.setWildcards((~OFMatch.OFPFW_IN_PORT) & (~OFMatch.OFPFW_DL_DST));//coreForceSetWcd());
 
-//        this.hardTimeout = 1000;
+        this.hardTimeout = 1000;
         
         try {
             if (inPort.isEdge()) {
@@ -207,7 +207,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
                         	duflag = false;
                         }else{
                         	duflag = phyFlowEntry.checkduplicate(this);
-                        	this.log.info("DuFlag is {}\n\n", duflag);
+//                        	this.log.info("DuFlag is {}\n\n", duflag);
                         }
                     }
                 }
