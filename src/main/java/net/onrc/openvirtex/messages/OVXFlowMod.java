@@ -165,7 +165,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
 		}
         boolean edgeOut=true;
         boolean duflag=false;
-        this.match.setWildcards((~OFMatch.OFPFW_IN_PORT) & (~OFMatch.OFPFW_DL_DST));//coreForceSetWcd());
+        this.match.setWildcards(3145970 & (~OFMatch.OFPFW_IN_PORT) & (~OFMatch.OFPFW_DL_DST));//coreForceSetWcd());
         this.log.info("\nwildcard : {}\n",this.match.getWildcards());
 //        this.hardTimeout = 1000;
         
