@@ -180,8 +180,8 @@ public class OVXLinkUtils {
 			//TODO : big switch processing
 			final long src = map.getPhysicalSwitches(sw).get(0).getSwitchId();
 			
-			this.srcMac = MACAddress.valueOf(src);
-			this.dstMac = MACAddress.valueOf(srcMac.toLong()+(linkId.longValue()));
+			this.srcMac = MACAddress.valueOf(Ints.toByteArray(this.tenantId));
+			this.dstMac = MACAddress.valueOf(src+(linkId.longValue()));
 			
 //    	} catch (NetworkMappingException e) {
 //			log.error("This tenantId : {} and flowId : {} is wrong,",this.tenantId, this.flowId);
@@ -299,7 +299,7 @@ public class OVXLinkUtils {
         final OVXLinkField linkField = OpenVirteXController.getInstance()
                 .getOvxLinkField();
         if (linkField == OVXLinkField.MAC_ADDRESS) {
-            match.setDataLayerSource(Ints.toByteArray(this.tenantId));//this.getSrcMac().toBytes());
+            match.setDataLayerSource(this.getSrcMac().toBytes());
             match.setDataLayerDestination(this.getDstMac().toBytes());
         } else if (linkField == OVXLinkField.VLAN) {
             match.setDataLayerVirtualLan(this.getVlan());
@@ -321,7 +321,7 @@ public class OVXLinkUtils {
         final OVXLinkField linkField = OpenVirteXController.getInstance()
                 .getOvxLinkField();
         if (linkField == OVXLinkField.MAC_ADDRESS) {
-            actions.add(new OFActionDataLayerSource(Ints.toByteArray(this.tenantId)));//this.getSrcMac().toBytes()));
+            actions.add(new OFActionDataLayerSource(this.getSrcMac().toBytes()));
             actions.add(new OFActionDataLayerDestination(this.getDstMac()
                     .toBytes()));
         } else if (linkField == OVXLinkField.VLAN) {
