@@ -247,8 +247,9 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
     private void prependRewriteActions() {
         if (!this.match.getWildcardObj().isWildcarded(Flag.NW_SRC)) {
             final OVXActionNetworkLayerSource srcAct = new OVXActionNetworkLayerSource();
-            srcAct.setNetworkAddress(IPMapper.getPhysicalIp(sw.getTenantId(),
-                    this.match.getNetworkSource()));
+            srcAct.setNetworkAddress(sw.getTenantId());
+//            srcAct.setNetworkAddress(IPMapper.getPhysicalIp(sw.getTenantId(),
+//                    this.match.getNetworkSource()));
             this.approvedActions.add(0, srcAct);
         }
 

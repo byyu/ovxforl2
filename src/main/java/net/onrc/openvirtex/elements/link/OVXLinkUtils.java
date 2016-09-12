@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import net.onrc.openvirtex.core.OpenVirteXController;
+import net.onrc.openvirtex.elements.Mappable;
 import net.onrc.openvirtex.elements.OVXMap;
 import net.onrc.openvirtex.elements.datapath.OVXSwitch;
 import net.onrc.openvirtex.exceptions.NetworkMappingException;
@@ -165,7 +166,7 @@ public class OVXLinkUtils {
     	this.linkId = linkId;
     	this.flowId = flowId;
     	
-    	OVXMap map = OVXMap.getInstance();
+    	Mappable map = sw.getMap();
     	
 //    	OVXSwitch srcSwitch;
     	try {
