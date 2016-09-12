@@ -95,7 +95,7 @@ public class OVXActionOutput extends OFActionOutput implements
 //            this.log.info("Get cookie of fm "+fm.getCookie());
             
             for (final OVXPort outPort : outPortList) {
-//            	this.log.info("This port is {} on {}",outPort.getPortNumber(),sw.getName());
+            	this.log.info("This port is {} on {}",outPort.getPortNumber(),sw.getName());
             	
                 Integer linkId = 0;
                 Integer flowId = 0;
