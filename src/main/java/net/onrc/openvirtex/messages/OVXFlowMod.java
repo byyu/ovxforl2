@@ -88,7 +88,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
 
         /* let flow table process FlowMod, generate cookie as needed */
         boolean pflag = ft.handleFlowMods(this.clone());				//플로우 테이블에서 플로우모드에 대한 처리를 함 아직 정확히 파악못함				
-        this.log.info("\n{}\n",this.match);
+//        this.log.info("\n{}\n",this.match);
         /* used by OFAction virtualization */
         OVXMatch ovxMatch = new OVXMatch(this.match);
         ovxCookie = ((OVXFlowTable) ft).getCookie(this, false);
