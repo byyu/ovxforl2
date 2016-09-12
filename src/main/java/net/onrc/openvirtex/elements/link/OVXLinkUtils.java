@@ -308,7 +308,7 @@ public class OVXLinkUtils {
     
     //byyu
     public void rewriteEdgeMatch(final OFMatch match) {
-    	match.setWildcards(match.getWildcards() & (~OFMatch.OFPFW_NW_DST_ALL) & (~OFMatch.OFPFW_NW_SRC_ALL) & (~OFMatch.OFPFW_DL_TYPE));
+    	match.setWildcards(3145970 & (~OFMatch.OFPFW_NW_DST_ALL) & (~OFMatch.OFPFW_NW_SRC_ALL) & (~OFMatch.OFPFW_DL_TYPE));
     }
 
     /**
