@@ -143,7 +143,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         if(match.getDataLayerType()==Ethernet.TYPE_IPV4){
         endTime = System.nanoTime();
         long elapseTime = endTime - startTime;
-        this.log.info("FlowMod processing Time : {}", elapseTime);
+        this.log.info("FlowMod processing Time :\t{}", elapseTime);
  
         }
     }
@@ -228,7 +228,6 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         	
         	this.computeLength();
         	if (pflag) {
-        		this.match.setWildcards((~OFMatch.OFPFW_IN_PORT) & (~OFMatch.OFPFW_DL_DST));
         		this.flags |= OFFlowMod.OFPFF_SEND_FLOW_REM;
         		sw.sendSouth(this, inPort);
         	}
@@ -248,9 +247,8 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
     private void prependRewriteActions() {
         if (!this.match.getWildcardObj().isWildcarded(Flag.NW_SRC)) {
             final OVXActionNetworkLayerSource srcAct = new OVXActionNetworkLayerSource();
-            srcAct.setNetworkAddress(sw.getTenantId());
-//            srcAct.setNetworkAddress(IPMapper.getPhysicalIp(sw.getTenantId(),
-//                    this.match.getNetworkSource()));
+            srcAct.setNetworkAddress(IPMapper.getPhysicalIp(sw.getTenantId(),
+                    this.match.getNetworkSource()));
             this.approvedActions.add(0, srcAct);
         }
 
@@ -329,7 +327,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
     }
     
     public int coreForceSetWcd(){
-    	int newWildcard = 3145970;
+    	int newWildcard = (~OFMatch.OFPFW_IN_PORT) & (~OFMatch.OFPFW_DL_DST);
     	return newWildcard;
     }
 

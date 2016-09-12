@@ -74,8 +74,7 @@ public final class IPMapper {
     }
 
     public static void rewriteMatch(final Integer tenantId, final OFMatch match) {
-        match.setNetworkSource(tenantId);
-    	//match.setNetworkSource(getPhysicalIp(tenantId, match.getNetworkSource()));
+    	match.setNetworkSource(getPhysicalIp(tenantId, match.getNetworkSource()));
         match.setNetworkDestination(getPhysicalIp(tenantId,
                 match.getNetworkDestination()));
     }

@@ -15,6 +15,7 @@
  ******************************************************************************/
 package net.onrc.openvirtex.elements.link;
 
+import java.math.BigInteger;
 import java.util.BitSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -34,6 +35,8 @@ import org.openflow.protocol.action.OFAction;
 import org.openflow.protocol.action.OFActionDataLayerDestination;
 import org.openflow.protocol.action.OFActionDataLayerSource;
 import org.openflow.protocol.action.OFActionVirtualLanIdentifier;
+
+import com.google.common.primitives.Ints;
 
 /**
  * This class provides some useful methods to encapsulate/decapsulate the
@@ -296,7 +299,7 @@ public class OVXLinkUtils {
         final OVXLinkField linkField = OpenVirteXController.getInstance()
                 .getOvxLinkField();
         if (linkField == OVXLinkField.MAC_ADDRESS) {
-            match.setDataLayerSource(this.getSrcMac().toBytes());
+            match.setDataLayerSource(Ints.toByteArray(this.tenantId));//this.getSrcMac().toBytes());
             match.setDataLayerDestination(this.getDstMac().toBytes());
         } else if (linkField == OVXLinkField.VLAN) {
             match.setDataLayerVirtualLan(this.getVlan());
@@ -318,7 +321,7 @@ public class OVXLinkUtils {
         final OVXLinkField linkField = OpenVirteXController.getInstance()
                 .getOvxLinkField();
         if (linkField == OVXLinkField.MAC_ADDRESS) {
-            actions.add(new OFActionDataLayerSource(this.getSrcMac().toBytes()));
+            actions.add(new OFActionDataLayerSource(Ints.toByteArray(this.tenantId)));//this.getSrcMac().toBytes()));
             actions.add(new OFActionDataLayerDestination(this.getDstMac()
                     .toBytes()));
         } else if (linkField == OVXLinkField.VLAN) {
