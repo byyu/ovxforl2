@@ -76,7 +76,7 @@ public class PhysicalFlowEntry {
 			oldoutport = entity.getAction().getPort();
 			log.info("Compare condition : \nold : {}\nnew : {}", oldMatch.toString(), match.toString());
 			if(Arrays.equals(oldMatch.getDataLayerDestination(), match.getDataLayerDestination())
-					&& Arrays.equals(oldMatch.getDataLayerSource(), match.getDataLayerSource())){
+					&& (oldMatch.getInputPort() == match.getInputPort())){
 
 				if(outport == oldoutport){
 					if(oldMatch.getWildcards() == newWcd){
