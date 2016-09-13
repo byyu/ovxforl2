@@ -81,6 +81,7 @@ public class PhysicalFlowEntry {
 				if(outport == oldoutport){
 					log.info("compare wildcard : \nold : {}\nnew : {}",oldMatch.getWildcards(), newWcd);
 					if(oldMatch.getWildcards() == newWcd){
+						log.info("compare info : \n{}\nold : {}\nnew : {}", oldMatch.getWildcardObj().isWildcarded(Flag.NW_DST), oldMatch.getNetworkDestination(), match.getNetworkDestination());
 						if(oldMatch.getWildcardObj().isWildcarded(Flag.NW_DST)){
 							if(oldMatch.getNetworkDestination()==match.getNetworkDestination()){
 								entity.addCookie(match.getCookie());
