@@ -105,6 +105,7 @@ public class PhysicalFlowEntry {
 												& (~OFMatch.OFPFW_NW_DST_ALL)
 												& (~OFMatch.OFPFW_NW_SRC_ALL)
 												& (~OFMatch.OFPFW_DL_TYPE));
+					log.info("match's ip address : {}", match.getNetworkDestination());
 					short prio = fm.getPriority();
 					fm.setPriority(++prio);
 					fm.setMatch(match);
