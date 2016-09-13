@@ -99,9 +99,7 @@ public class PhysicalFlowEntry {
 					}
 				}else{
 					log.info("Need to change wcd");
-					match.setWildcards((~OFMatch.OFPFW_DL_DST)
-												& (~OFMatch.OFPFW_DL_SRC)
-												& (~OFMatch.OFPFW_IN_PORT)
+					match.setWildcards(3145970
 												& (~OFMatch.OFPFW_NW_DST_ALL)
 												& (~OFMatch.OFPFW_NW_SRC_ALL)
 												& (~OFMatch.OFPFW_DL_TYPE));
