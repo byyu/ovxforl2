@@ -74,11 +74,12 @@ public class PhysicalFlowEntry {
 		for(EntryPair entity : entry){
 			oldMatch = entity.getMatch();
 			oldoutport = entity.getAction().getPort();
-			log.info("Compare condition : \nold : {}\nnew : {}", oldMatch.toString(), match.toString());
+			log.info("Compare condition : \nold : {}\t{}\nnew : {}\t{}", oldMatch.toString(), oldoutport, match.toString(), outport);
 			if(Arrays.equals(oldMatch.getDataLayerDestination(), match.getDataLayerDestination())
 					&& (oldMatch.getInputPort() == match.getInputPort())){
 
 				if(outport == oldoutport){
+					log.info("compare wildcard : \nold : {}\nnew : {}",oldMatch.getWildcards(), newWcd);
 					if(oldMatch.getWildcards() == newWcd){
 						if(oldMatch.getWildcardObj().isWildcarded(Flag.NW_DST)){
 							if(oldMatch.getNetworkDestination()==match.getNetworkDestination()){
