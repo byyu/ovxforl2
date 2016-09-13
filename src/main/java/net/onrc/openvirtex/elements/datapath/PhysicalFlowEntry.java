@@ -99,8 +99,8 @@ public class PhysicalFlowEntry {
 					}
 				}else{
 					log.info("Need to change wcd");
-					match.setWildcards(~OFMatch.OFPFW_ALL & ~OFMatch.OFPFW_DL_VLAN & ~OFMatch.OFPFW_DL_VLAN_PCP
-							& ~OFMatch.OFPFW_NW_PROTO & ~OFMatch.OFPFW_NW_TOS);
+					match.setWildcards(~OFMatch.OFPFW_ALL & OFMatch.OFPFW_DL_VLAN & OFMatch.OFPFW_DL_VLAN_PCP
+							& OFMatch.OFPFW_NW_PROTO & OFMatch.OFPFW_NW_TOS);
 //					match.setWildcards(newWcd & (~OFMatch.OFPFW_NW_DST_ALL)
 //												& (~OFMatch.OFPFW_NW_SRC_ALL)
 //												& (~OFMatch.OFPFW_DL_TYPE));
