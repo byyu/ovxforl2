@@ -53,7 +53,7 @@ public class PhysicalFlowEntry {
 
 	
 	public boolean checkduplicate(OVXFlowMod fm){
-		log.debug("Start checking duplicate");
+		log.info("Start checking duplicate");
 		OVXMatch match = new OVXMatch(fm.getMatch());
 		match.setCookie(fm.getCookie());
 		int newWcd = match.getWildcards();
@@ -105,7 +105,7 @@ public class PhysicalFlowEntry {
 					fm.setMatch(match);
 
 					addEntry(match,outaction);
-//					log.info("All condition is equal but action is't equal\n{}\n{}\t{}\n{}\t{}",newWcd, match.getDataLayerSource(),match.getDataLayerDestination(), outport, oldoutport);
+					log.info("All condition is equal but action is't equal\n{}\n{}\t{}\n{}\t{}",newWcd, match.getDataLayerSource(),match.getDataLayerDestination(), outport, oldoutport);
 					return false;
 				}
 			}

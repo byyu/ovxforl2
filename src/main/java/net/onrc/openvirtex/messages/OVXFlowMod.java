@@ -144,7 +144,6 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         endTime = System.nanoTime();
         long elapseTime = endTime - startTime;
         this.log.info("FlowMod processing Time :\t{}", elapseTime);
- 
         }
     }
     private void prepAndSendSouth(OVXPort inPort, boolean pflag) {
@@ -207,7 +206,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
                         	duflag = false;
                         }else{
                         	duflag = phyFlowEntry.checkduplicate(this);
-//                        	this.log.info("DuFlag is {}\n\n", duflag);
+                        	this.log.info("DuFlag is {}\n\n", duflag);
                         }
                     }
                 }
@@ -223,7 +222,6 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         }
         
         if(!duflag){
-        	
         	this.computeLength();
         	if (pflag) {
         		this.flags |= OFFlowMod.OFPFF_SEND_FLOW_REM;
