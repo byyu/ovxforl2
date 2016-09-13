@@ -155,13 +155,14 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         }
         this.getMatch().setInputPort(inPort.getPhysicalPortNumber());
         OVXMessageUtil.translateXid(this, inPort);
-        PhysicalFlowEntry phyFlowEntry = null;
-		try {
-			phyFlowEntry = OVXMap.getInstance().getPhysicalSwitches(sw).get(0).getEntrytabe();
-		} catch (SwitchMappingException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+        PhysicalFlowEntry phyFlowEntry = this.sw.getPhysicalFlowEntry();
+//        PhysicalFlowEntry phyFlowEntry = null;
+//		try {
+//			phyFlowEntry = OVXMap.getInstance().getPhysicalSwitches(sw).get(0).getEntrytabe();
+//		} catch (SwitchMappingException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
         boolean edgeOut=true;
         boolean duflag=false;
         this.match.setWildcards((~OFMatch.OFPFW_IN_PORT) & (~OFMatch.OFPFW_DL_DST));//coreForceSetWcd());
