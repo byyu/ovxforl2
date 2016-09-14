@@ -172,10 +172,10 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         try {
             if (inPort.isEdge()) {
             	match.setWildcards(3145970 & (~OFMatch.OFPFW_DL_TYPE));
-                this.prependRewriteActions();
+//                this.prependRewriteActions();
                 
             } else {
-                IPMapper.rewriteMatch(sw.getTenantId(), this.match);
+//                IPMapper.rewriteMatch(sw.getTenantId(), this.match);
                 // TODO: Verify why we have two send points... and if this is
                 // the right place for the match rewriting
                 if (inPort != null
