@@ -73,6 +73,7 @@ public final class OVXMap implements Mappable {
   //byyu
     private ConcurrentHashMap<MACAddress, Host> macHostMap;
     private ConcurrentHashMap<Long, Integer> linktenantMap;
+    private ConcurrentHashMap<Long, OVXLink> linkidMap;
 
     /**
      * Creates a new map instance, by initializing all mapping data structures.
@@ -94,6 +95,7 @@ public final class OVXMap implements Mappable {
       //byyu
         this.macHostMap = new ConcurrentHashMap<MACAddress, Host>();
         this.linktenantMap = new ConcurrentHashMap<Long, Integer>();
+        this.linkidMap = new ConcurrentHashMap<Long, OVXLink>();
     }
 
     /**
@@ -728,6 +730,18 @@ public final class OVXMap implements Mappable {
     	if(linktenantMap.contains(linkId))
     		return linktenantMap.get(linkId);
 		return 0;
+    }
+    
+    public void addLinkid(long linkId, OVXLink ovxLink){
+    	linkidMap.put(linkId, ovxLink);
+    }
+    
+    public OVXLink getLinkbyid(long linkId){
+    	return linkidMap.get(linkId);
+    }
+    
+    public void removeLinkidbyid(long linkId){
+    	linkidMap.remove(linkId);
     }
     
     /**

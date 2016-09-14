@@ -15,13 +15,11 @@
  ******************************************************************************/
 package net.onrc.openvirtex.elements.link;
 
-import java.math.BigInteger;
 import java.util.BitSet;
 import java.util.LinkedList;
 import java.util.List;
 
 import net.onrc.openvirtex.core.OpenVirteXController;
-import net.onrc.openvirtex.elements.Mappable;
 import net.onrc.openvirtex.elements.OVXMap;
 import net.onrc.openvirtex.elements.datapath.OVXSwitch;
 import net.onrc.openvirtex.exceptions.NetworkMappingException;
@@ -35,8 +33,6 @@ import org.openflow.protocol.action.OFAction;
 import org.openflow.protocol.action.OFActionDataLayerDestination;
 import org.openflow.protocol.action.OFActionDataLayerSource;
 import org.openflow.protocol.action.OFActionVirtualLanIdentifier;
-
-import com.google.common.primitives.Ints;
 
 /**
  * This class provides some useful methods to encapsulate/decapsulate the
@@ -169,7 +165,7 @@ public class OVXLinkUtils {
     	this.linkId = linkId;
     	this.flowId = flowId;
     	
-    	Mappable map = sw.getMap();
+    	OVXMap map = OVXMap.getInstance();
     	
 //    	OVXSwitch srcSwitch;
     	try {
@@ -178,10 +174,17 @@ public class OVXLinkUtils {
 //			srcSwitch = map.getHostbyMAC(dualmac.get(0)).getPort().getParentSwitch();
 			//dstSwitch = map.getHostbyMAC(dualmac.get(1)).getPort().getParentSwitch();
 			//TODO : big switch processing
-			final long src = map.getPhysicalSwitches(sw).get(0).getSwitchId();
+//    		final long src = map.getPhysicalSwitches(sw).get(0).getSwitchId();
+    		final long dst;
+			OVXLink ovxLink = map.getLinkbyid(linkId);
+			if(ovxLink.getSrcSwitch().equals(sw)){
+				dst = map.getPhysicalSwitches(ovxLink.getDstSwitch()).get(0).getSwitchId();
+			}else{
+				dst = map.getPhysicalSwitches(ovxLink.getSrcSwitch()).get(0).getSwitchId();
+			}
 			
 			this.srcMac = MACAddress.valueOf(this.tenantId);
-			this.dstMac = MACAddress.valueOf(src+(linkId.longValue()));
+			this.dstMac = MACAddress.valueOf(dst);
 			
 //    	} catch (NetworkMappingException e) {
 //			log.error("This tenantId : {} and flowId : {} is wrong,",this.tenantId, this.flowId);

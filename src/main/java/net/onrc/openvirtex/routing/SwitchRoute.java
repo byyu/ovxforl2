@@ -463,8 +463,6 @@ public class SwitchRoute extends Link<OVXPort, PhysicalSwitch> implements
                             .getFlowManager()
                             .getFlowId(fm.getMatch().getDataLayerSource(),
                                     fm.getMatch().getDataLayerDestination());
-                    this.log.info("set flowId :"+flowId,this);
-                    
                 } catch (NetworkMappingException e) {
                     SwitchRoute.log.warn(
                             "Error retrieving the network with id {} for flowMod {}. Dropping packet...",

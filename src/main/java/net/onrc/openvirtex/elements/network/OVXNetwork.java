@@ -444,6 +444,7 @@ public class OVXNetwork extends Network<OVXSwitch, OVXPort, OVXLink> implements
         srcPort.boot();
         dstPort.boot();
         OVXMap.getInstance().addLinkTenant((long)linkId, this.tenantId);
+        OVXMap.getInstance().addLinkid(linkId, link);
         return link;
     }
 
