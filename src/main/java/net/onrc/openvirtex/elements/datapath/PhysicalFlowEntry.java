@@ -103,7 +103,14 @@ public class PhysicalFlowEntry {
 							return true;
 						}
 					}else{
-						
+						log.info("Need to change wcd");
+						match.setWildcards(3145954);
+						log.info("match's ip address : {}", match.getNetworkDestination());
+						short prio = fm.getPriority();
+						fm.setPriority(++prio);
+						fm.setMatch(match);
+
+						addEntry(match,outaction);
 						return false;
 					}
 				}else{
