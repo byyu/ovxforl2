@@ -88,7 +88,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
 
         /* let flow table process FlowMod, generate cookie as needed */
         boolean pflag = ft.handleFlowMods(this.clone());				//플로우 테이블에서 플로우모드에 대한 처리를 함 아직 정확히 파악못함				
-//        this.log.info("\n{}\n",this.match);
+
         /* used by OFAction virtualization */
         OVXMatch ovxMatch = new OVXMatch(this.match);
         ovxCookie = ((OVXFlowTable) ft).getCookie(this, false);
@@ -97,8 +97,6 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         
         for (final OFAction act : this.getActions()) {
             try {
-//            	this.log.info("this actiong of the flowmod is "+act.getType().toString());
-            	
                 ((VirtualizableAction) act).virtualize(sw,
                         this.approvedActions, ovxMatch);
             } catch (final ActionVirtualizationDenied e) {
@@ -114,8 +112,6 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
                 return;
             }
         }
-        
-//        this.log.info("after add action : {}",this.toString());
 
         final OVXPort ovxInPort = sw.getPort(inport);
         this.setBufferId(bufferId);
@@ -204,7 +200,6 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
                         edgeOut = isEdgeOutport();
                         if(edgeOut){
                         	lUtils.rewriteEdgeMatch(this.getMatch());
-                        	duflag = false;
                         }else{
                         	duflag = phyFlowEntry.checkduplicate(this);
                         	this.log.info("DuFlag is {}\n\n", duflag);

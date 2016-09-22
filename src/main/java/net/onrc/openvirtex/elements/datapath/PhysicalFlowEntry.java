@@ -21,8 +21,8 @@ public class PhysicalFlowEntry {
 	private static Logger log = LogManager.getLogger(PhysicalFlowEntry.class
             .getName());
 	private Set<EntryPair> entry = new HashSet<EntryPair>();
-	OVXSwitch sw;
-	PhysicalSwitch physw;
+	private OVXSwitch sw;
+	private PhysicalSwitch physw;
 	public PhysicalFlowEntry(){
 		
 	}
@@ -47,11 +47,9 @@ public class PhysicalFlowEntry {
 				return cookieList;
 			}
 		}
-		
 		return null;
 	}
 
-	
 	public boolean checkduplicate(OVXFlowMod fm){
 		log.info("Start checking duplicate");
 		OVXMatch match = new OVXMatch(fm.getMatch());
@@ -69,6 +67,7 @@ public class PhysicalFlowEntry {
 		if(outport==0){
 			return false;
 		}
+		
 		OVXMatch oldMatch;
 		short oldoutport;
 		for(EntryPair entity : entry){
@@ -99,10 +98,7 @@ public class PhysicalFlowEntry {
 					}
 				}else{
 					log.info("Need to change wcd");
-					match.setWildcards(3145970
-												& (~OFMatch.OFPFW_NW_DST_ALL)
-												& (~OFMatch.OFPFW_NW_SRC_ALL)
-												& (~OFMatch.OFPFW_DL_TYPE));
+					match.setWildcards(3145954);
 					log.info("match's ip address : {}", match.getNetworkDestination());
 					short prio = fm.getPriority();
 					fm.setPriority(++prio);
@@ -117,6 +113,10 @@ public class PhysicalFlowEntry {
 		
 		addEntry(match,outaction);
 		return false;
+	}
+	
+	public PhysicalSwitch getPhysicalSwitch(){
+		return this.physw;
 	}
 }
 

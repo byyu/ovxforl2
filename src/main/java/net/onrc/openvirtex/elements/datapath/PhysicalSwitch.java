@@ -53,7 +53,7 @@ public class PhysicalSwitch extends Switch<PhysicalPort> {
     private AtomicReference<Map<Integer, List<OVXFlowStatisticsReply>>> flowStats;
 
     //byyu
-//    private PhysicalFlowEntry phyFlowentry;
+    private PhysicalFlowEntry phyFlowentry;
     /**
      * Unregisters OVXSwitches and associated virtual elements mapped to this
      * PhysicalSwitch. Called by unregister() when the PhysicalSwitch is torn
@@ -102,7 +102,7 @@ public class PhysicalSwitch extends Switch<PhysicalPort> {
         this.portStats = new AtomicReference<Map<Short, OVXPortStatisticsReply>>();
         this.flowStats = new AtomicReference<Map<Integer, List<OVXFlowStatisticsReply>>>();
         this.statsMan = new StatisticsManager(this);
-//        this.phyFlowentry = new PhysicalFlowEntry(this);
+        this.phyFlowentry = new PhysicalFlowEntry(this);
     }
 
     /**
@@ -260,9 +260,11 @@ public class PhysicalSwitch extends Switch<PhysicalPort> {
         return false;
     }
 
-//    public PhysicalFlowEntry getEntrytabe(){
-//    	return this.phyFlowentry;
-//    }
+    //byyu
+    public PhysicalFlowEntry getEntrytabe(){
+    	return this.phyFlowentry;
+    }
+    
     public int translate(final OFMessage ofm, final OVXSwitch sw) {
         return this.translator.translate(ofm.getXid(), sw);
     }
