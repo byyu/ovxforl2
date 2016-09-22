@@ -72,12 +72,8 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
             return;
         }
 
-//        this.log.info("FlowMod devirtualize \n srcMac : {},\n dstMac : {}",this.match.getDataLayerSource(),this.match.getDataLayerDestination());
-        
         this.sw = sw;
         FlowTable ft = this.sw.getFlowTable();
-        
-//        this.log.info("FlowMod message is sented"+this.sw.getSwitchName(),this);
 
         int bufferId = OVXPacketOut.BUFFER_ID_NONE;
         if (sw.getFromBufferMap(this.bufferId) != null) {
@@ -151,22 +147,25 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         }
         this.getMatch().setInputPort(inPort.getPhysicalPortNumber());
         OVXMessageUtil.translateXid(this, inPort);
-        PhysicalFlowEntry phyFlowEntry = this.sw.getPhysicalFlowEntry();
-//        PhysicalFlowEntry phyFlowEntry = null;
-//		try {
-//			phyFlowEntry = OVXMap.getInstance().getPhysicalSwitches(sw).get(0).getEntrytabe();
-//		} catch (SwitchMappingException e1) {
-//			// TODO Auto-generated catch block
-//			e1.printStackTrace();
-//		}
+        //byyu
+//        PhysicalFlowEntry phyFlowEntry = this.sw.getPhysicalFlowEntry();
+        PhysicalFlowEntry phyFlowEntry = null;
+		try {
+			phyFlowEntry = OVXMap.getInstance().getPhysicalSwitches(sw).get(0).getEntrytable();
+		} catch (SwitchMappingException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
         boolean edgeOut=true;
         boolean duflag=false;
         this.match.setWildcards((~OFMatch.OFPFW_IN_PORT) & (~OFMatch.OFPFW_DL_DST));//coreForceSetWcd());
 
         this.hardTimeout = 1000;
         
+        
         try {
             if (inPort.isEdge()) {
+            	//byyu
             	match.setWildcards(3145970 & (~OFMatch.OFPFW_DL_TYPE));
 //                this.prependRewriteActions();
                 
@@ -197,6 +196,8 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
                         OVXLinkUtils lUtils = new OVXLinkUtils(
                                 sw.getTenantId(), link.getLinkId(), flowId, link.getSrcSwitch());
                         lUtils.rewriteMatch(this.getMatch());
+                        
+                        //byyu
                         edgeOut = isEdgeOutport();
                         if(edgeOut){
                         	lUtils.rewriteEdgeMatch(this.getMatch());
@@ -204,6 +205,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
                         	duflag = phyFlowEntry.checkduplicate(this);
                         	this.log.info("DuFlag is {}\n\n", duflag);
                         }
+                        
                     }
                 }
             }
@@ -217,12 +219,15 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
                     this.sw.getTenantId(), this);
         }
         
+        //byyu
         if(!duflag){
+        	
         	this.computeLength();
         	if (pflag) {
         		this.flags |= OFFlowMod.OFPFF_SEND_FLOW_REM;
         		sw.sendSouth(this, inPort);
         	}
+        	
         }
 
      }

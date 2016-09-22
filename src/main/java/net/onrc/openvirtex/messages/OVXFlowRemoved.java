@@ -46,8 +46,10 @@ public class OVXFlowRemoved extends OFFlowRemoved implements Virtualizable {
         }
         try {
             OVXSwitch vsw = sw.getMap().getVirtualSwitch(sw, tid);
-            PhysicalFlowEntry phyFlowEntry = vsw.getPhysicalFlowEntry();
-//            PhysicalFlowEntry phyFlowEntry = sw.getEntrytable();
+            
+            //byyu
+//            PhysicalFlowEntry phyFlowEntry = vsw.getPhysicalFlowEntry();
+            PhysicalFlowEntry phyFlowEntry = sw.getEntrytable();
             
             /*
              * If we are a Big Switch we might receive multiple same-cookie FR's
@@ -60,6 +62,8 @@ public class OVXFlowRemoved extends OFFlowRemoved implements Virtualizable {
                  * send north ONLY if tenant controller wanted a FlowRemoved for
                  * the FlowMod
                  */
+                
+                //byyu
                 OVXActionOutput outact = null;
                 for(final OFAction act : fm.getActions()){
         	    	if(act.getType()==OFActionType.OUTPUT){
@@ -68,6 +72,8 @@ public class OVXFlowRemoved extends OFFlowRemoved implements Virtualizable {
         	    }
 //                this.log.info("compare match : {},{}",this.getMatch().toString(),fm.getMatch().toString());
                 List<Long> cookieSet = phyFlowEntry.removeEntry(new OVXMatch(this.getMatch()), outact);
+                
+                
                 if(cookieSet!=null){
                 for(Long cookies : cookieSet){
                 	if(vsw.getFlowTable().hasFlowMod(cookies)){

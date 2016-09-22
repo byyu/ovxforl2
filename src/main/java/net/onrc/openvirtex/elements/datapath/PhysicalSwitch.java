@@ -261,7 +261,7 @@ public class PhysicalSwitch extends Switch<PhysicalPort> {
     }
 
     //byyu
-    public PhysicalFlowEntry getEntrytabe(){
+    public PhysicalFlowEntry getEntrytable(){
     	return this.phyFlowentry;
     }
     
