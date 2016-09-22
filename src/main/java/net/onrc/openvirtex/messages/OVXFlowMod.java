@@ -317,10 +317,5 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
 		else
 			return false;
     }
-    
-    public int coreForceSetWcd(){
-    	int newWildcard = (~OFMatch.OFPFW_IN_PORT) & (~OFMatch.OFPFW_DL_DST);
-    	return newWildcard;
-    }
 
 }

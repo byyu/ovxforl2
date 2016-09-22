@@ -70,6 +70,7 @@ public class PhysicalFlowEntry {
 		
 		OVXMatch oldMatch;
 		short oldoutport;
+		
 		for(EntryPair entity : entry){
 			oldMatch = entity.getMatch();
 			oldoutport = entity.getAction().getPort();
@@ -86,6 +87,14 @@ public class PhysicalFlowEntry {
 								entity.addCookie(match.getCookie());
 								return true;
 							}else{
+								log.info("Need to change wcd");
+								match.setWildcards(3145954);
+								log.info("match's ip address : {}", match.getNetworkDestination());
+								short prio = fm.getPriority();
+								fm.setPriority(++prio);
+								fm.setMatch(match);
+
+								addEntry(match,outaction);
 								return false;
 							}
 						}else{
@@ -94,6 +103,7 @@ public class PhysicalFlowEntry {
 							return true;
 						}
 					}else{
+						
 						return false;
 					}
 				}else{
