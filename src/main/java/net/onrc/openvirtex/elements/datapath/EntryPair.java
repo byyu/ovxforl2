@@ -59,7 +59,7 @@ public class EntryPair {
 	
 	public boolean equals(EntryPair entity){
 		if(Arrays.equals(this.ovxmatch.getDataLayerDestination(), entity.ovxmatch.getDataLayerDestination())
-				&& Arrays.equals(this.ovxmatch.getDataLayerSource(), entity.ovxmatch.getDataLayerSource())
+				&& (this.ovxmatch.getInputPort() == entity.ovxmatch.getInputPort())
 				&& (this.ovxaction.getPort() == entity.ovxaction.getPort())){
 			return true;
 		}else
@@ -72,7 +72,7 @@ public class EntryPair {
 		for(Long c : cookieSet){
 			ret += c + "\t";
 		}
-		ret += "\nMAC Source Address : "+ MACAddress.valueOf(this.ovxmatch.getDataLayerSource()).toString()
+		ret += "\nInport : "+ this.ovxmatch.getInputPort()
 				+ "\nMAC Destination Addresse: "+ MACAddress.valueOf(this.ovxmatch.getDataLayerDestination()).toString()
 				+ "\nOutput port : " + this.ovxaction.getPort()
 				+"\n";
