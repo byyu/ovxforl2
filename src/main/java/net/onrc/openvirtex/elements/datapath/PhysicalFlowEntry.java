@@ -7,7 +7,6 @@ import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openflow.protocol.OFMatch;
 import org.openflow.protocol.Wildcards.Flag;
 import org.openflow.protocol.action.OFAction;
 import org.openflow.protocol.action.OFActionType;
@@ -22,7 +21,6 @@ public class PhysicalFlowEntry {
 	private static Logger log = LogManager.getLogger(PhysicalFlowEntry.class
             .getName());
 	private Set<EntryPair> entry = new HashSet<EntryPair>();
-	private OVXSwitch sw;
 	private PhysicalSwitch physw;
 	public PhysicalFlowEntry(){
 		
@@ -30,9 +28,7 @@ public class PhysicalFlowEntry {
 	public PhysicalFlowEntry(PhysicalSwitch sw){
 		this.physw = sw;
 	}
-	public PhysicalFlowEntry(OVXSwitch sw){
-		this.sw = sw;
-	}
+
 	
 	public void addEntry(OVXMatch match, OVXActionOutput action){
 		EntryPair entity = new EntryPair(match, action, match.getCookie());

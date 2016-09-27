@@ -30,16 +30,12 @@ import org.apache.logging.log4j.Logger;
 import org.openflow.protocol.OFFlowMod;
 import org.openflow.protocol.OFMatch;
 import org.openflow.protocol.OFPort;
-import org.openflow.protocol.action.OFAction;
-import org.openflow.protocol.action.OFActionType;
 import org.openflow.protocol.OFError.OFFlowModFailedCode;
 
 import net.onrc.openvirtex.exceptions.MappingException;
 import net.onrc.openvirtex.exceptions.SwitchMappingException;
 import net.onrc.openvirtex.messages.OVXFlowMod;
 import net.onrc.openvirtex.messages.OVXMessageUtil;
-import net.onrc.openvirtex.messages.actions.OVXActionOutput;
-import net.onrc.openvirtex.protocol.OVXMatch;
 
 /**
  * Virtualized version of the switch flow table.

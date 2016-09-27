@@ -13,7 +13,7 @@ import net.onrc.openvirtex.protocol.OVXMatch;
 //byyu
 public class EntryPair {
 	
-	private static Logger log = LogManager.getLogger(EntryPair.class
+	private Logger log = LogManager.getLogger(EntryPair.class
             .getName());
 	private OVXMatch ovxmatch;
 	private OVXActionOutput ovxaction;
@@ -63,7 +63,21 @@ public class EntryPair {
 			return true;
 		}else
 			return false;
-		
+	}
+	
+	public void tostring(){
+		String ret = "";
+		ret +="Cookie : ";
+		for(Long c : cookieSet){
+			ret += c + "\t";
+		}
+		ret += "MAC Source Address : "+ this.ovxmatch.getDataLayerSource().toString()
+				+ "\nMAC Destination Addresse: "+this.ovxmatch.getDataLayerDestination().toString()
+				+ "\nOutput port : " + this.ovxaction.getPort()
+				+"\n";
+
+        this.log.info("OVXFlowTable \n========================\n" + ret
+                + "========================\n");
 	}
 	
 }
