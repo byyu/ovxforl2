@@ -42,6 +42,8 @@ public class OVXFlowRemoved extends OFFlowRemoved implements Virtualizable {
     	
         int tid = (int) (this.cookie >> 32);
         
+        this.log.info(this.getMatch().toString());
+        this.log.info(this.toString());
 
         /* a PhysSwitch can be a OVXLink */
         if (!(sw.getMap().hasVirtualSwitch(sw, tid))) {
@@ -73,8 +75,7 @@ public class OVXFlowRemoved extends OFFlowRemoved implements Virtualizable {
         	    		outact = (OVXActionOutput) act;
         	    	}
         	    }
-                this.getMatch().toString();
-                this.toString();
+                
 //                this.log.info("compare match : {},{}",this.getMatch().toString(),fm.getMatch().toString());
                 List<Long> cookieSet = phyFlowEntry.removeEntry(new OVXMatch(this.getMatch()), outact);
                 
