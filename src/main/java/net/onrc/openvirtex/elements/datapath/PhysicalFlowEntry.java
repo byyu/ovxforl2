@@ -37,9 +37,11 @@ public class PhysicalFlowEntry {
 	
 	public List<Long> removeEntry(OVXMatch match, OVXActionOutput action, long cookie){
 		EntryPair newEntity = new EntryPair(match, action, cookie);
+		newEntity.tostring();
 		for(EntryPair entity : entry){
+			entity.tostring();
 			if(entity.equals(newEntity)){
-				entity.tostring();
+				
 				List<Long> cookieList = entity.getCookieSet();
 				entry.remove(entity);
 				return cookieList;
