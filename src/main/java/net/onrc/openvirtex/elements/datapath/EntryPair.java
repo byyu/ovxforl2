@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 
 import net.onrc.openvirtex.messages.actions.OVXActionOutput;
 import net.onrc.openvirtex.protocol.OVXMatch;
+import net.onrc.openvirtex.util.MACAddress;
 
 //byyu
 public class EntryPair {
@@ -71,12 +72,12 @@ public class EntryPair {
 		for(Long c : cookieSet){
 			ret += c + "\t";
 		}
-		ret += "MAC Source Address : "+ this.ovxmatch.getDataLayerSource().toString()
-				+ "\nMAC Destination Addresse: "+this.ovxmatch.getDataLayerDestination().toString()
+		ret += "\nMAC Source Address : "+ MACAddress.valueOf(this.ovxmatch.getDataLayerSource()).toString()
+				+ "\nMAC Destination Addresse: "+ MACAddress.valueOf(this.ovxmatch.getDataLayerDestination()).toString()
 				+ "\nOutput port : " + this.ovxaction.getPort()
 				+"\n";
 
-        this.log.info("OVXFlowTable \n========================\n" + ret
+        this.log.info("Entry \n========================\n" + ret
                 + "========================\n");
 	}
 	
