@@ -326,7 +326,7 @@ public class SwitchRoute extends Link<OVXPort, PhysicalSwitch> implements
          * last FM to rewrite the MACs - generate the route FMs
          */
         if (this.getDstPort().isEdge()) {
-            outActions.addAll(IPMapper.prependUnRewriteActions(fm.getMatch()));
+//            outActions.addAll(IPMapper.prependUnRewriteActions(fm.getMatch()));
         } else {
             final OVXLink link = this.getDstPort().getLink().getOutLink();
             Integer linkId = link.getLinkId();
@@ -360,8 +360,8 @@ public class SwitchRoute extends Link<OVXPort, PhysicalSwitch> implements
          * 1) change the fields where the physical ips are stored
          */
         if (fm.getMatch().getDataLayerType() == Ethernet.TYPE_IPV4) {
-            IPMapper.rewriteMatch(this.getSrcPort().getTenantId(),
-                    fm.getMatch());
+//            IPMapper.rewriteMatch(this.getSrcPort().getTenantId(),
+//                    fm.getMatch());
         }
 
         /*

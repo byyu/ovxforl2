@@ -18,7 +18,6 @@ public class EntryPair {
             .getName());
 	private OVXMatch ovxmatch;
 	private OVXActionOutput ovxaction;
-	private int count;
 	private List<Long> cookieSet = new ArrayList<Long>();
 	
 	public EntryPair(OVXMatch match,OVXActionOutput action, long cookie){
@@ -26,7 +25,6 @@ public class EntryPair {
 		this.ovxaction = action;
 		this.cookieSet.add(cookie);
 		log.info("This cookie is : {} ", cookie);
-		count=1;
 	}
 	
 	public OVXMatch getMatch(){
@@ -36,18 +34,7 @@ public class EntryPair {
 	public OVXActionOutput getAction(){
 		return this.ovxaction;
 	}
-	
-	public void incCount(){
-		count++;
-	}
-	
-	public void decCount(){
-		count--;
-	}
-	
-	public int getCount(){
-		return count;
-	}
+
 	
 	public void addCookie(long cookie){
 		this.cookieSet.add(cookie);

@@ -325,8 +325,7 @@ public class OVXLinkUtils {
                 .getOvxLinkField();
         if (linkField == OVXLinkField.MAC_ADDRESS) {
             actions.add(new OFActionDataLayerSource(this.getSrcMac().toBytes()));
-            actions.add(new OFActionDataLayerDestination(this.getDstMac()
-                    .toBytes()));
+            actions.add(new OFActionDataLayerDestination(this.getDstMac().toBytes()));
         } else if (linkField == OVXLinkField.VLAN) {
             actions.add(new OFActionVirtualLanIdentifier(this.getVlan()));
         }
