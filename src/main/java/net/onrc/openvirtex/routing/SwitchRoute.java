@@ -330,7 +330,9 @@ public class SwitchRoute extends Link<OVXPort, PhysicalSwitch> implements
         Integer flowId = 0;
         final OVXLink link = this.getDstPort().getLink().getOutLink();
         Integer linkId = link.getLinkId();
+    
         fm.getMatch().setWildcards((~OFMatch.OFPFW_IN_PORT) & (~OFMatch.OFPFW_DL_DST));
+        
         if (this.getDstPort().isEdge()) {
         	fm.getMatch().setWildcards(3145970 & (~OFMatch.OFPFW_NW_DST_ALL) & (~OFMatch.OFPFW_NW_SRC_ALL) & (~OFMatch.OFPFW_DL_TYPE));
 //            outActions.addAll(IPMapper.prependUnRewriteActions(fm.getMatch()));
@@ -399,11 +401,6 @@ public class SwitchRoute extends Link<OVXPort, PhysicalSwitch> implements
             if (outPort != null) {
                 inPort = phyLink.getSrcPort();
                 fm.getMatch().setInputPort(inPort.getPortNumber());
-                //byyu
-                OVXLinkUtils lUtils = new OVXLinkUtils(this.getTenantId(), linkId ,
-                        flowId,sw);
-                lUtils.rewriteMatch(fm.getMatch());
-                outActions.addAll(lUtils.setLinkFields());
                 fm.setLengthU(OFFlowMod.MINIMUM_LENGTH
                         + OFActionOutput.MINIMUM_LENGTH);
                 fm.setActions(Arrays.asList((OFAction) new OFActionOutput(
@@ -425,13 +422,6 @@ public class SwitchRoute extends Link<OVXPort, PhysicalSwitch> implements
                 int actLenght = 0;
                 outActions.add(new OFActionOutput(this.getDstPort()
                         .getPhysicalPortNumber(), (short) 0xffff));
-                //byyu
-                OVXLinkUtils lUtils = new OVXLinkUtils(this.getTenantId(), linkId ,
-                        flowId,sw);
-                lUtils.rewriteMatch(fm.getMatch());
-                outActions.addAll(lUtils.setLinkFields());
-                
-                
                 fm.setActions(outActions);
                 for (final OFAction act : outActions) {
                     actLenght += act.getLengthU();

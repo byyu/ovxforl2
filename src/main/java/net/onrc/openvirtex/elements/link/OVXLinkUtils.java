@@ -168,26 +168,27 @@ public class OVXLinkUtils {
     	this.flowId = flowId;
     	
     	OVXMap map = OVXMap.getInstance();
-
+    	OVXSwitch dstsw;
     	try {
 
 			//TODO : big switch processing
 
     		final long dst;
 			OVXLink ovxLink = map.getLinkbyid(linkId);
+			if(ovxLink.getSrcSwitch().equals(sw)){
+				dstsw = ovxLink.getDstSwitch();
+			}else{
+				dstsw = ovxLink.getSrcSwitch();
+			}
 			
-			if(sw instanceof OVXBigSwitch){
+			if(dstsw instanceof OVXBigSwitch){
 				if(ovxLink.getSrcSwitch().equals(sw)){
 					dst = map.getPhysicalLinks(ovxLink).get(0).getDstPort().getParentSwitch().getSwitchId();
 				}else{
 					dst = map.getPhysicalLinks(ovxLink).get(0).getSrcPort().getParentSwitch().getSwitchId();
 				}
     		}else{
-    			if(ovxLink.getSrcSwitch().equals(sw)){
-					dst = map.getPhysicalSwitches(ovxLink.getDstSwitch()).get(0).getSwitchId();
-				}else{	
-					dst = map.getPhysicalSwitches(ovxLink.getSrcSwitch()).get(0).getSwitchId();
-				}
+					dst = map.getPhysicalSwitches(dstsw).get(0).getSwitchId();
     		}
 			
 			this.srcMac = MACAddress.valueOf(this.tenantId);
@@ -199,6 +200,8 @@ public class OVXLinkUtils {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+    	
+    	
     }
 
     /**
