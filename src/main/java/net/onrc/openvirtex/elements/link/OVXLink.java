@@ -45,11 +45,14 @@ import net.onrc.openvirtex.messages.actions.OVXActionOutput;
 import net.onrc.openvirtex.packet.Ethernet;
 import net.onrc.openvirtex.routing.RoutingAlgorithms;
 import net.onrc.openvirtex.routing.RoutingAlgorithms.RoutingType;
+import net.onrc.openvirtex.util.MACAddress;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openflow.protocol.OFFlowMod;
 import org.openflow.protocol.action.OFAction;
+import org.openflow.protocol.action.OFActionDataLayerDestination;
+import org.openflow.protocol.action.OFActionDataLayerSource;
 import org.openflow.protocol.action.OFActionOutput;
 import org.openflow.protocol.action.OFActionType;
 import org.openflow.util.U8;
@@ -395,6 +398,12 @@ public class OVXLink extends Link<OVXPort, OVXSwitch> {
                         + OVXActionOutput.MINIMUM_LENGTH);
                 fm.setActions(Arrays.asList((OFAction) new OFActionOutput(
                         outPort.getPortNumber(), (short) 0xffff)));
+                //byyu
+                fm.getMatch().setDataLayerSource(MACAddress.valueOf(this.tenantId).toBytes());
+                fm.getMatch().setDataLayerDestination(MACAddress.valueOf(phyLink.getSrcPort().getParentSwitch().getSwitchId()).toBytes());
+                fm.getActions().add(new OFActionDataLayerSource(MACAddress.valueOf(this.tenantId).toBytes()));
+                fm.getActions().add(new OFActionDataLayerDestination(MACAddress.valueOf(phyLink.getDstPort().getParentSwitch().getSwitchId()).toBytes()));
+                
                 phyLink.getSrcPort().getParentSwitch()
                         .sendMsg(fm, phyLink.getSrcPort().getParentSwitch());
                 this.log.info(
