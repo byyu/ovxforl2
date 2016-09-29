@@ -53,6 +53,7 @@ import net.onrc.openvirtex.packet.Ethernet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openflow.protocol.OFFlowMod;
+import org.openflow.protocol.OFMatch;
 import org.openflow.protocol.OFPacketOut;
 import org.openflow.protocol.OFPort;
 import org.openflow.protocol.action.OFAction;
@@ -329,8 +330,9 @@ public class SwitchRoute extends Link<OVXPort, PhysicalSwitch> implements
         Integer flowId = 0;
         final OVXLink link = this.getDstPort().getLink().getOutLink();
         Integer linkId = link.getLinkId();
-        
+        fm.getMatch().setWildcards((~OFMatch.OFPFW_IN_PORT) & (~OFMatch.OFPFW_DL_DST));
         if (this.getDstPort().isEdge()) {
+        	fm.getMatch().setWildcards(3145970 & (~OFMatch.OFPFW_NW_DST_ALL) & (~OFMatch.OFPFW_NW_SRC_ALL) & (~OFMatch.OFPFW_DL_TYPE));
 //            outActions.addAll(IPMapper.prependUnRewriteActions(fm.getMatch()));
         } else {
             
@@ -397,6 +399,11 @@ public class SwitchRoute extends Link<OVXPort, PhysicalSwitch> implements
             if (outPort != null) {
                 inPort = phyLink.getSrcPort();
                 fm.getMatch().setInputPort(inPort.getPortNumber());
+                //byyu
+                OVXLinkUtils lUtils = new OVXLinkUtils(this.getTenantId(), linkId ,
+                        flowId,sw);
+                lUtils.rewriteMatch(fm.getMatch());
+                outActions.addAll(lUtils.setLinkFields());
                 fm.setLengthU(OFFlowMod.MINIMUM_LENGTH
                         + OFActionOutput.MINIMUM_LENGTH);
                 fm.setActions(Arrays.asList((OFAction) new OFActionOutput(
