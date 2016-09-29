@@ -325,12 +325,17 @@ public class SwitchRoute extends Link<OVXPort, PhysicalSwitch> implements
          * retrieve the link - generate the link FMs - configure the route's
          * last FM to rewrite the MACs - generate the route FMs
          */
+        //byyu
+        Integer flowId = 0;
+        final OVXLink link = this.getDstPort().getLink().getOutLink();
+        Integer linkId = link.getLinkId();
+        
         if (this.getDstPort().isEdge()) {
 //            outActions.addAll(IPMapper.prependUnRewriteActions(fm.getMatch()));
         } else {
-            final OVXLink link = this.getDstPort().getLink().getOutLink();
-            Integer linkId = link.getLinkId();
-            Integer flowId = 0;
+            
+            
+//            Integer flowId = 0;
             try {
                 flowId = OVXMap
                         .getInstance()
@@ -409,9 +414,17 @@ public class SwitchRoute extends Link<OVXPort, PhysicalSwitch> implements
                  */
                 fm.getMatch()
                         .setInputPort(phyLink.getSrcPort().getPortNumber());
+
                 int actLenght = 0;
                 outActions.add(new OFActionOutput(this.getDstPort()
                         .getPhysicalPortNumber(), (short) 0xffff));
+                //byyu
+                OVXLinkUtils lUtils = new OVXLinkUtils(this.getTenantId(), linkId ,
+                        flowId,sw);
+                lUtils.rewriteMatch(fm.getMatch());
+                outActions.addAll(lUtils.setLinkFields());
+                
+                
                 fm.setActions(outActions);
                 for (final OFAction act : outActions) {
                     actLenght += act.getLengthU();

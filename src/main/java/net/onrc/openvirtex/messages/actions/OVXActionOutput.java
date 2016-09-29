@@ -133,7 +133,7 @@ public class OVXActionOutput extends OFActionOutput implements
                             OVXLinkUtils lUtils = new OVXLinkUtils(
                                     sw.getTenantId(), link.getLinkId(), flowId, sw);
 //                            approvedActions.addAll(lUtils.unsetLinkFields());
-                            approvedActions.addAll(lUtils.unsetLinkFields());
+                            approvedActions.addAll(lUtils.setLinkFields());
                         } else {
                             this.log.error(
                                     "Cannot retrieve the virtual link between ports {} {}, dropping message",
