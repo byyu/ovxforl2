@@ -80,21 +80,17 @@ public class OVXActionOutput extends OFActionOutput implements
             // Retrieve the flowMod from the virtual flow map
             final OVXFlowMod fm;
             try {
-                fm = sw.getFlowMod(match.getCookie());								//스위치에 플로우모드를 쿠키별로 저장하고 있음
-//                this.log.info("Now Flowmod match is \n"+fm.getMatch().toString());
+                fm = sw.getFlowMod(match.getCookie());
             } catch (MappingException e) {
                 log.warn("FlowMod not found in our FlowTable");
                 return;
             }
-//           this.log.info("Get cookie of fm "+fm.getCookie());
+            
             fm.setCookie(match.getCookie());										//플로우 모드에 쿠키값을 저장해줌.
             // TODO: Check if the FM has been retrieved
-            
-//            this.log.info("Get cookie of fm "+fm.getCookie());
-            
+
             for (final OVXPort outPort : outPortList) {
-//            	this.log.info("This port is {} on {}",outPort.getPortNumber(),sw.getName());
-            	
+
                 Integer linkId = 0;
                 Integer flowId = 0;
 
@@ -136,6 +132,7 @@ public class OVXActionOutput extends OFActionOutput implements
                                     match.getDataLayerDestination());
                             OVXLinkUtils lUtils = new OVXLinkUtils(
                                     sw.getTenantId(), link.getLinkId(), flowId, sw);
+//                            approvedActions.addAll(lUtils.unsetLinkFields());
                             approvedActions.addAll(lUtils.unsetLinkFields());
                         } else {
                             this.log.error(
