@@ -355,12 +355,12 @@ public class OVXLink extends Link<OVXPort, OVXSwitch> {
          */
         final OVXLinkUtils lUtils = new OVXLinkUtils(this.tenantId,
                 this.linkId, flowId,this.getSrcSwitch());
-        lUtils.rewriteMatch(fm.getMatch());								//맷치에 있는 맥주소로 다시 업데이트 함.
-        long cookie = tenantId;											//쿠키를 테넌트 아이디에 32비트 옮겨서 설정함.
+        lUtils.rewriteMatch(fm.getMatch());
+        long cookie = tenantId;
         fm.setCookie(cookie << 32);
 
         if (fm.getMatch().getDataLayerType() == Ethernet.TYPE_IPV4) {
-            IPMapper.rewriteMatch(this.tenantId, fm.getMatch());
+//            IPMapper.rewriteMatch(this.tenantId, fm.getMatch());
         }
 
         /*

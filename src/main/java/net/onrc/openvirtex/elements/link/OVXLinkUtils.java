@@ -21,7 +21,9 @@ import java.util.List;
 
 import net.onrc.openvirtex.core.OpenVirteXController;
 import net.onrc.openvirtex.elements.OVXMap;
+import net.onrc.openvirtex.elements.datapath.OVXBigSwitch;
 import net.onrc.openvirtex.elements.datapath.OVXSwitch;
+import net.onrc.openvirtex.exceptions.LinkMappingException;
 import net.onrc.openvirtex.exceptions.NetworkMappingException;
 import net.onrc.openvirtex.exceptions.SwitchMappingException;
 import net.onrc.openvirtex.util.MACAddress;
@@ -175,13 +177,23 @@ public class OVXLinkUtils {
 			//dstSwitch = map.getHostbyMAC(dualmac.get(1)).getPort().getParentSwitch();
 			//TODO : big switch processing
 //    		final long src = map.getPhysicalSwitches(sw).get(0).getSwitchId();
+    		
     		final long dst;
 			OVXLink ovxLink = map.getLinkbyid(linkId);
-			if(ovxLink.getSrcSwitch().equals(sw)){
-				dst = map.getPhysicalSwitches(ovxLink.getDstSwitch()).get(0).getSwitchId();
-			}else{
-				dst = map.getPhysicalSwitches(ovxLink.getSrcSwitch()).get(0).getSwitchId();
-			}
+			
+			if(sw instanceof OVXBigSwitch){
+				if(ovxLink.getSrcSwitch().equals(sw)){
+					dst = map.getPhysicalLinks(ovxLink).get(0).getDstPort().getParentSwitch().getSwitchId();
+				}else{
+					dst = map.getPhysicalLinks(ovxLink).get(0).getSrcPort().getParentSwitch().getSwitchId();
+				}
+    		}else{
+    			if(ovxLink.getSrcSwitch().equals(sw)){
+					dst = map.getPhysicalSwitches(ovxLink.getDstSwitch()).get(0).getSwitchId();
+				}else{	
+					dst = map.getPhysicalSwitches(ovxLink.getSrcSwitch()).get(0).getSwitchId();
+				}
+    		}
 			
 			this.srcMac = MACAddress.valueOf(this.tenantId);
 			this.dstMac = MACAddress.valueOf(dst);
@@ -190,6 +202,9 @@ public class OVXLinkUtils {
 //			log.error("This tenantId : {} and flowId : {} is wrong,",this.tenantId, this.flowId);
 		} catch (SwitchMappingException e) {
 			log.error("This Switch can't find");
+		} catch (LinkMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
     }
 
