@@ -393,9 +393,9 @@ public class OVXLink extends Link<OVXPort, OVXSwitch> {
         for (final PhysicalLink phyLink : plinks) {
             if (outPort != null) {
                 inPort = phyLink.getSrcPort();
+                int actLenght = 0;
+                
                 fm.getMatch().setInputPort(inPort.getPortNumber());
-                fm.setLengthU(OVXFlowMod.MINIMUM_LENGTH
-                        + OVXActionOutput.MINIMUM_LENGTH);
                 fm.setActions(Arrays.asList((OFAction) new OFActionOutput(
                         outPort.getPortNumber(), (short) 0xffff)));
                 //byyu
@@ -403,6 +403,11 @@ public class OVXLink extends Link<OVXPort, OVXSwitch> {
                 fm.getMatch().setDataLayerDestination(MACAddress.valueOf(phyLink.getSrcPort().getParentSwitch().getSwitchId()).toBytes());
                 fm.getActions().add(new OFActionDataLayerSource(MACAddress.valueOf(this.tenantId).toBytes()));
                 fm.getActions().add(new OFActionDataLayerDestination(MACAddress.valueOf(phyLink.getDstPort().getParentSwitch().getSwitchId()).toBytes()));
+                
+                for (final OFAction act : fm.getActions()) {
+                    actLenght += act.getLengthU();
+                }
+                fm.setLengthU(OFFlowMod.MINIMUM_LENGTH + actLenght);
                 
                 phyLink.getSrcPort().getParentSwitch()
                         .sendMsg(fm, phyLink.getSrcPort().getParentSwitch());
