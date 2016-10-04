@@ -142,7 +142,7 @@ public class OVXActionOutput extends OFActionOutput implements
     							psw = psw.getPort(route.getPathSrcPort().getPortNumber()).getLink().getInLink().getSrcPort().getParentSwitch();
     							approvedActions.add(new OFActionDataLayerSource(MACAddress.valueOf(sw.getTenantId()).toBytes()));
     							approvedActions.add(new OFActionDataLayerDestination(MACAddress.valueOf(psw.getSwitchId()).toBytes()));
- 
+    							this.log.info(fm.getMatch().toString() +"\n");
                         	
 //                            flowId = vnet.getFlowManager().getFlowId(
 //                                    match.getDataLayerSource(),
