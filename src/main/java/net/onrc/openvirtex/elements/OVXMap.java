@@ -326,9 +326,9 @@ public final class OVXMap implements Mappable {
         ArrayList<PhysicalLink> linkList = this.virtualLinkMap.get(virtualLink);
         if (linkList == null) {
             linkList = new ArrayList<PhysicalLink>();
-            this.virtualLinkMap.put(virtualLink, linkList);
         }
         linkList.add(physicalLink);
+        this.virtualLinkMap.put(virtualLink, linkList);
     }
 
     /**
