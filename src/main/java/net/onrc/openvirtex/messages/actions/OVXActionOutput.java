@@ -137,7 +137,7 @@ public class OVXActionOutput extends OFActionOutput implements
                                         .isWildcarded(Flag.DL_SRC))) {
                         	//byyu
                         		fm.getMatch().setDataLayerSource(MACAddress.valueOf(sw.getTenantId()).toBytes());
-    							PhysicalSwitch psw = route.getSrcSwitch();//sw.getMap().getPhysicalLinks(link).get(0).getSrcPort().getParentSwitch();
+    							PhysicalSwitch psw = inPort.getPhysicalPort().getParentSwitch();//route.getSrcSwitch();//sw.getMap().getPhysicalLinks(link).get(0).getSrcPort().getParentSwitch();
     							fm.getMatch().setDataLayerDestination(MACAddress.valueOf(psw.getSwitchId()).toBytes());
     							psw = psw.getPort(route.getPathSrcPort().getPortNumber()).getLink().getInLink().getSrcPort().getParentSwitch();
     							approvedActions.add(new OFActionDataLayerSource(MACAddress.valueOf(sw.getTenantId()).toBytes()));
