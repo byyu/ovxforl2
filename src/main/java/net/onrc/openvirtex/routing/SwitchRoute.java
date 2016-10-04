@@ -343,28 +343,28 @@ public class SwitchRoute extends Link<OVXPort, PhysicalSwitch> implements
             
             
 //            Integer flowId = 0;
-            try {
-                flowId = OVXMap
-                        .getInstance()
-                        .getVirtualNetwork(this.getTenantId())
-                        .getFlowManager()
-                        .storeFlowValues(fm.getMatch().getDataLayerSource(),
-                                fm.getMatch().getDataLayerDestination());
-                
-                //test usecase of flowId
-                System.out.println("FlowID is "+flowId);
-                link.generateLinkFMs(fm.clone(), flowId);
-                outActions.addAll(new OVXLinkUtils(this.getTenantId(), linkId,
-                        flowId,sw).setLinkFields());
-            } catch (IndexOutOfBoundException e) {
-                SwitchRoute.log.error(
-                        "Too many host to generate the flow pairs in this virtual network {}. "
-                                + "Dropping flow-mod {} ", this.getTenantId(),
-                        fm);
-            } catch (NetworkMappingException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+//            try {
+//                flowId = OVXMap
+//                        .getInstance()
+//                        .getVirtualNetwork(this.getTenantId())
+//                        .getFlowManager()
+//                        .storeFlowValues(fm.getMatch().getDataLayerSource(),
+//                                fm.getMatch().getDataLayerDestination());
+//                
+//                //test usecase of flowId
+//                System.out.println("FlowID is "+flowId);
+//                link.generateLinkFMs(fm.clone(), flowId);
+//                outActions.addAll(new OVXLinkUtils(this.getTenantId(), linkId,
+//                        flowId,sw).setLinkFields());
+//            } catch (IndexOutOfBoundException e) {
+//                SwitchRoute.log.error(
+//                        "Too many host to generate the flow pairs in this virtual network {}. "
+//                                + "Dropping flow-mod {} ", this.getTenantId(),
+//                        fm);
+//            } catch (NetworkMappingException e) {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            }
         }
 
         /*
@@ -441,8 +441,8 @@ public class SwitchRoute extends Link<OVXPort, PhysicalSwitch> implements
                 //byyu
                 fm.getMatch().setDataLayerSource(MACAddress.valueOf(this.sw.getTenantId()).toBytes());
                 fm.getMatch().setDataLayerDestination(MACAddress.valueOf(phyLink.getSrcPort().getParentSwitch().getSwitchId()).toBytes());
-//                outActions.add(new OFActionDataLayerSource(MACAddress.valueOf(this.sw.getTenantId()).toBytes()));
-//                outActions.add(new OFActionDataLayerDestination(MACAddress.valueOf(phyLink.getDstPort().getParentSwitch().getSwitchId()).toBytes()));
+                outActions.add(new OFActionDataLayerSource(MACAddress.valueOf(this.sw.getTenantId()).toBytes()));
+                outActions.add(new OFActionDataLayerDestination(MACAddress.valueOf(phyLink.getDstPort().getParentSwitch().getSwitchId()).toBytes()));
                
                 fm.setActions(outActions);
                 for (final OFAction act : outActions) {
