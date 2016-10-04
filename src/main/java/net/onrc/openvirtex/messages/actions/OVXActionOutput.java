@@ -136,18 +136,13 @@ public class OVXActionOutput extends OFActionOutput implements
                                         Flag.DL_DST) || !match.getWildcardObj()
                                         .isWildcarded(Flag.DL_SRC))) {
                         	//byyu
-                        	try {
                         		fm.getMatch().setDataLayerSource(MACAddress.valueOf(sw.getTenantId()).toBytes());
-                        		
-    							PhysicalSwitch psw = sw.getMap().getPhysicalLinks(link).get(0).getSrcPort().getParentSwitch();
+    							PhysicalSwitch psw = route.getSrcSwitch();//sw.getMap().getPhysicalLinks(link).get(0).getSrcPort().getParentSwitch();
     							fm.getMatch().setDataLayerDestination(MACAddress.valueOf(psw.getSwitchId()).toBytes());
     							psw = psw.getPort(route.getPathSrcPort().getPortNumber()).getLink().getInLink().getSrcPort().getParentSwitch();
     							approvedActions.add(new OFActionDataLayerSource(MACAddress.valueOf(sw.getTenantId()).toBytes()));
     							approvedActions.add(new OFActionDataLayerDestination(MACAddress.valueOf(psw.getSwitchId()).toBytes()));
-    						} catch (LinkMappingException e) {
-    							// TODO Auto-generated catch block
-    							e.printStackTrace();
-    						}
+ 
                         	
 //                            flowId = vnet.getFlowManager().getFlowId(
 //                                    match.getDataLayerSource(),
