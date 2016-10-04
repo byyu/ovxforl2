@@ -180,30 +180,14 @@ public class OVXLinkUtils {
 			}else{
 				dstsw = ovxLink.getSrcSwitch();
 			}
-			
-			if(dstsw instanceof OVXBigSwitch){
-				if(ovxLink.getSrcSwitch().equals(sw)){
-					dst = map.getPhysicalLinks(ovxLink).get(0).getDstPort().getParentSwitch().getSwitchId();
-					this.log.info(map.getPhysicalLinks(ovxLink).get(0).toString());
-				}else{
-					dst = map.getPhysicalLinks(ovxLink).get(0).getSrcPort().getParentSwitch().getSwitchId();
-					this.log.info(map.getPhysicalLinks(ovxLink).get(0).toString());
-				}
-    		}else{
-					dst = map.getPhysicalSwitches(dstsw).get(0).getSwitchId();
-    		}
-			
+			dst = map.getPhysicalSwitches(dstsw).get(0).getSwitchId();
 			this.srcMac = MACAddress.valueOf(this.tenantId);
 			this.dstMac = MACAddress.valueOf(dst);
-			
+
 		} catch (SwitchMappingException e) {
 			log.error("This Switch can't find");
-		} catch (LinkMappingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    	
-    	
+		} 
+
     }
 
     /**
