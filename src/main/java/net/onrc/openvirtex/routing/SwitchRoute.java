@@ -402,6 +402,7 @@ public class SwitchRoute extends Link<OVXPort, PhysicalSwitch> implements
 
         for (final PhysicalLink phyLink : reverseLinks) {
             if (outPort != null) {
+            	outActions.clear();
             	int actLenght = 0;
             	
                 inPort = phyLink.getSrcPort();
@@ -413,7 +414,7 @@ public class SwitchRoute extends Link<OVXPort, PhysicalSwitch> implements
                 fm.getMatch().setDataLayerSource(MACAddress.valueOf(this.sw.getTenantId()).toBytes());
                 fm.getMatch().setDataLayerDestination(MACAddress.valueOf(outPort.getParentSwitch().getSwitchId()).toBytes());
                 outActions.add(new OFActionDataLayerSource(MACAddress.valueOf(this.sw.getTenantId()).toBytes()));
-                outActions.add(new OFActionDataLayerDestination(MACAddress.valueOf(phyLink.getDstPort().getParentSwitch().getSwitchId()).toBytes()));
+                outActions.add(new OFActionDataLayerDestination(MACAddress.valueOf(outPort.getLink().getOutLink().getDstSwitch().getSwitchId()).toBytes()));
                 
                 fm.setActions(outActions);
                
@@ -432,6 +433,7 @@ public class SwitchRoute extends Link<OVXPort, PhysicalSwitch> implements
                  * Last fm. Differs from the others because it can apply
                  * additional actions to the flow
                  */
+            	outActions.clear();
                 fm.getMatch()
                         .setInputPort(phyLink.getSrcPort().getPortNumber());
 
@@ -442,7 +444,7 @@ public class SwitchRoute extends Link<OVXPort, PhysicalSwitch> implements
                 fm.getMatch().setDataLayerSource(MACAddress.valueOf(this.sw.getTenantId()).toBytes());
                 fm.getMatch().setDataLayerDestination(MACAddress.valueOf(phyLink.getSrcPort().getParentSwitch().getSwitchId()).toBytes());
                 outActions.add(new OFActionDataLayerSource(MACAddress.valueOf(this.sw.getTenantId()).toBytes()));
-                outActions.add(new OFActionDataLayerDestination(MACAddress.valueOf(phyLink.getDstPort().getParentSwitch().getSwitchId()).toBytes()));
+                outActions.add(new OFActionDataLayerDestination(MACAddress.valueOf(this.getDstPort().getLink().getOutLink().getDstSwitch().getSwitchId()).toBytes()));
                
                 fm.setActions(outActions);
                 for (final OFAction act : outActions) {
