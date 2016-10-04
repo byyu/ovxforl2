@@ -411,7 +411,7 @@ public class SwitchRoute extends Link<OVXPort, PhysicalSwitch> implements
                         outPort.getPortNumber(), (short) 0xffff));
                 //byyu
                 fm.getMatch().setDataLayerSource(MACAddress.valueOf(this.sw.getTenantId()).toBytes());
-                fm.getMatch().setDataLayerDestination(MACAddress.valueOf(phyLink.getSrcPort().getParentSwitch().getSwitchId()).toBytes());
+                fm.getMatch().setDataLayerDestination(MACAddress.valueOf(outPort.getParentSwitch().getSwitchId()).toBytes());
                 outActions.add(new OFActionDataLayerSource(MACAddress.valueOf(this.sw.getTenantId()).toBytes()));
                 outActions.add(new OFActionDataLayerDestination(MACAddress.valueOf(phyLink.getDstPort().getParentSwitch().getSwitchId()).toBytes()));
                 
