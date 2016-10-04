@@ -129,13 +129,19 @@ public class OVXActionOutput extends OFActionOutput implements
                         final OVXLink link = inPort.getLink().getOutLink();
                         this.log.info(link.toString());
                         
+                        route.generateRouteFMs(fm.clone());
+                        
                         if (link != null
                                 && (!match.getWildcardObj().isWildcarded(
                                         Flag.DL_DST) || !match.getWildcardObj()
                                         .isWildcarded(Flag.DL_SRC))) {
                         	//byyu
                         	try {
+                        		fm.getMatch().setDataLayerSource(MACAddress.valueOf(sw.getTenantId()).toBytes());
+                        		
     							PhysicalSwitch psw = sw.getMap().getPhysicalLinks(link).get(0).getSrcPort().getParentSwitch();
+    							fm.getMatch().setDataLayerDestination(MACAddress.valueOf(psw.getSwitchId()).toBytes());
+    							psw = psw.getPort(route.getPathSrcPort().getPortNumber()).getLink().getInLink().getSrcPort().getParentSwitch();
     							approvedActions.add(new OFActionDataLayerSource(MACAddress.valueOf(sw.getTenantId()).toBytes()));
     							approvedActions.add(new OFActionDataLayerDestination(MACAddress.valueOf(psw.getSwitchId()).toBytes()));
     						} catch (LinkMappingException e) {
@@ -159,7 +165,7 @@ public class OVXActionOutput extends OFActionOutput implements
                     }
 
 
-                    route.generateRouteFMs(fm.clone());
+                    
 
 
                     // add the output action with the physical outPort (srcPort
