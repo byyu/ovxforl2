@@ -408,14 +408,15 @@ public class SwitchRoute extends Link<OVXPort, PhysicalSwitch> implements
                 inPort = phyLink.getSrcPort();
                 fm.getMatch().setInputPort(inPort.getPortNumber());
                 
-                outActions.add(new OFActionOutput(
-                        outPort.getPortNumber(), (short) 0xffff));
+                
                 //byyu
                 fm.getMatch().setDataLayerSource(MACAddress.valueOf(this.sw.getTenantId()).toBytes());
                 fm.getMatch().setDataLayerDestination(MACAddress.valueOf(outPort.getParentSwitch().getSwitchId()).toBytes());
                 outActions.add(new OFActionDataLayerSource(MACAddress.valueOf(this.sw.getTenantId()).toBytes()));
                 outActions.add(new OFActionDataLayerDestination(MACAddress.valueOf(outPort.getLink().getOutLink().getDstSwitch().getSwitchId()).toBytes()));
                 
+                outActions.add(new OFActionOutput(
+                        outPort.getPortNumber(), (short) 0xffff));
                 fm.setActions(outActions);
                
                 for (final OFAction act : outActions) {
@@ -438,14 +439,15 @@ public class SwitchRoute extends Link<OVXPort, PhysicalSwitch> implements
                         .setInputPort(phyLink.getSrcPort().getPortNumber());
 
                 int actLenght = 0;
-                outActions.add(new OFActionOutput(this.getDstPort()
-                        .getPhysicalPortNumber(), (short) 0xffff));
+                
                 //byyu
                 fm.getMatch().setDataLayerSource(MACAddress.valueOf(this.sw.getTenantId()).toBytes());
                 fm.getMatch().setDataLayerDestination(MACAddress.valueOf(phyLink.getSrcPort().getParentSwitch().getSwitchId()).toBytes());
                 outActions.add(new OFActionDataLayerSource(MACAddress.valueOf(this.sw.getTenantId()).toBytes()));
                 outActions.add(new OFActionDataLayerDestination(MACAddress.valueOf(phyLink.getSrcSwitch().getPort(this.getDstPort().getPhysicalPortNumber()).getLink().getOutLink().getDstSwitch().getSwitchId()).toBytes()));
-               
+                
+                outActions.add(new OFActionOutput(this.getDstPort()
+                        .getPhysicalPortNumber(), (short) 0xffff));
                 fm.setActions(outActions);
                 for (final OFAction act : outActions) {
                     actLenght += act.getLengthU();

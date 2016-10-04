@@ -183,7 +183,7 @@ public class OVXLinkUtils {
 				dstsw = ovxLink.getSrcSwitch();
 			}
 			
-			this.log.info(dstsw.toString()+"\n"+ dstsw.getPort(ovxLink.dstPort.getPortNumber()).toString());
+			this.log.info(dstsw.toString()+"\n"+sw.toString()+"\n"+ ovxLink.toString());
 			
 			if(dstsw instanceof OVXBigSwitch){
 				dst = dstsw.getPort(ovxLink.dstPort.getPortNumber()).getPhysicalPort().getParentSwitch().getSwitchId();
