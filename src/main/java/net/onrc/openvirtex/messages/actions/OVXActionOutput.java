@@ -22,6 +22,7 @@ import java.util.Map;
 import net.onrc.openvirtex.elements.address.IPMapper;
 import net.onrc.openvirtex.elements.datapath.OVXBigSwitch;
 import net.onrc.openvirtex.elements.datapath.OVXSwitch;
+import net.onrc.openvirtex.elements.datapath.PhysicalSwitch;
 import net.onrc.openvirtex.elements.network.OVXNetwork;
 import net.onrc.openvirtex.elements.link.OVXLink;
 import net.onrc.openvirtex.elements.link.OVXLinkUtils;
@@ -32,17 +33,21 @@ import net.onrc.openvirtex.exceptions.DroppedMessageException;
 import net.onrc.openvirtex.exceptions.MappingException;
 import net.onrc.openvirtex.exceptions.NetworkMappingException;
 import net.onrc.openvirtex.exceptions.IndexOutOfBoundException;
+import net.onrc.openvirtex.exceptions.LinkMappingException;
 import net.onrc.openvirtex.messages.OVXFlowMod;
 import net.onrc.openvirtex.messages.OVXPacketIn;
 import net.onrc.openvirtex.messages.OVXPacketOut;
 import net.onrc.openvirtex.protocol.OVXMatch;
 import net.onrc.openvirtex.routing.SwitchRoute;
+import net.onrc.openvirtex.util.MACAddress;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openflow.protocol.OFPort;
 import org.openflow.protocol.Wildcards.Flag;
 import org.openflow.protocol.action.OFAction;
+import org.openflow.protocol.action.OFActionDataLayerDestination;
+import org.openflow.protocol.action.OFActionDataLayerSource;
 import org.openflow.protocol.action.OFActionOutput;
 import org.openflow.util.U16;
 
@@ -123,17 +128,28 @@ public class OVXActionOutput extends OFActionOutput implements
                        this.log.info(outPort.toString());
                         final OVXLink link = inPort.getLink().getOutLink();
                         this.log.info(link.toString());
+                        
                         if (link != null
                                 && (!match.getWildcardObj().isWildcarded(
                                         Flag.DL_DST) || !match.getWildcardObj()
                                         .isWildcarded(Flag.DL_SRC))) {
-                            flowId = vnet.getFlowManager().getFlowId(
-                                    match.getDataLayerSource(),
-                                    match.getDataLayerDestination());
-                            OVXLinkUtils lUtils = new OVXLinkUtils(
-                                    sw.getTenantId(), link.getLinkId(), flowId, sw);
-//                            approvedActions.addAll(lUtils.unsetLinkFields());
-                            approvedActions.addAll(lUtils.setLinkFields());
+                        	//byyu
+                        	try {
+    							PhysicalSwitch psw = sw.getMap().getPhysicalLinks(link).get(0).getSrcPort().getParentSwitch();
+    							approvedActions.add(new OFActionDataLayerSource(MACAddress.valueOf(sw.getTenantId()).toBytes()));
+    							approvedActions.add(new OFActionDataLayerDestination(MACAddress.valueOf(psw.getSwitchId()).toBytes()));
+    						} catch (LinkMappingException e) {
+    							// TODO Auto-generated catch block
+    							e.printStackTrace();
+    						}
+                        	
+//                            flowId = vnet.getFlowManager().getFlowId(
+//                                    match.getDataLayerSource(),
+//                                    match.getDataLayerDestination());
+//                            OVXLinkUtils lUtils = new OVXLinkUtils(
+//                                    sw.getTenantId(), link.getLinkId(), flowId, sw);
+////                            approvedActions.addAll(lUtils.unsetLinkFields());
+//                            approvedActions.addAll(lUtils.setLinkFields());
                         } else {
                             this.log.error(
                                     "Cannot retrieve the virtual link between ports {} {}, dropping message",
