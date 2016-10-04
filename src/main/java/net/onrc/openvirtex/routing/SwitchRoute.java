@@ -421,7 +421,7 @@ public class SwitchRoute extends Link<OVXPort, PhysicalSwitch> implements
                 fm.setLengthU(OFFlowMod.MINIMUM_LENGTH + actLenght);
                 phyLink.getSrcPort().getParentSwitch()
                         .sendMsg(fm, phyLink.getSrcPort().getParentSwitch());
-                SwitchRoute.log.debug(
+                SwitchRoute.log.info(
                         "Sending big-switch route intermediate fm to sw {}: {}",
                         phyLink.getSrcPort().getParentSwitch().getName(), fm);
 
@@ -449,7 +449,7 @@ public class SwitchRoute extends Link<OVXPort, PhysicalSwitch> implements
                 fm.setLengthU(OFFlowMod.MINIMUM_LENGTH + actLenght);
                 phyLink.getSrcPort().getParentSwitch()
                         .sendMsg(fm, phyLink.getSrcPort().getParentSwitch());
-                SwitchRoute.log.debug("Sending big-switch route last fm to sw {}: {}",
+                SwitchRoute.log.info("Sending big-switch route last fm to sw {}: {}",
                         phyLink.getSrcPort().getParentSwitch().getName(), fm);
             }
             outPort = phyLink.getDstPort();
