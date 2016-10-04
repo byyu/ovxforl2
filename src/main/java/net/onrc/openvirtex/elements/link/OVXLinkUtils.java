@@ -175,12 +175,14 @@ public class OVXLinkUtils {
 
     		final long dst;
 			OVXLink ovxLink = map.getLinkbyid(linkId);
-			if(ovxLink.getSrcSwitch().equals(sw)){
-				dstsw = ovxLink.getDstSwitch();
+			dstsw = ovxLink.getDstSwitch();
+			
+
+			if(dstsw instanceof OVXBigSwitch){
+				dst = dstsw.getPort(ovxLink.dstPort.getPortNumber()).getPhysicalPort().getParentSwitch().getSwitchId();
 			}else{
-				dstsw = ovxLink.getSrcSwitch();
+				dst = map.getPhysicalSwitches(dstsw).get(0).getSwitchId();
 			}
-			dst = map.getPhysicalSwitches(dstsw).get(0).getSwitchId();
 			this.srcMac = MACAddress.valueOf(this.tenantId);
 			this.dstMac = MACAddress.valueOf(dst);
 
