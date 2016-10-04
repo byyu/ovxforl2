@@ -175,7 +175,13 @@ public class OVXLinkUtils {
 
     		final long dst;
 			OVXLink ovxLink = map.getLinkbyid(linkId);
-			dstsw = ovxLink.getDstSwitch();
+			
+			if(ovxLink.getSrcSwitch().equals(sw)){
+				dstsw = ovxLink.getDstSwitch();
+			}
+			else{
+				dstsw = ovxLink.getSrcSwitch();
+			}
 			
 			this.log.info(dstsw.toString()+"\n"+ dstsw.getPort(ovxLink.dstPort.getPortNumber()).toString());
 			
