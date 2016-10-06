@@ -335,8 +335,8 @@ public class SwitchRoute extends Link<OVXPort, PhysicalSwitch> implements
         Integer linkId = link.getLinkId();
     
         fm.getMatch().setWildcards((~OFMatch.OFPFW_IN_PORT) & (~OFMatch.OFPFW_DL_DST));
-        
-        if (this.getDstPort().isEdge()) {
+        boolean edgeOut = this.getDstPort().isEdge();
+        if (edgeOut) {
         	fm.getMatch().setWildcards(3145970 & (~OFMatch.OFPFW_NW_DST_ALL) & (~OFMatch.OFPFW_NW_SRC_ALL) & (~OFMatch.OFPFW_DL_TYPE));
 //            outActions.addAll(IPMapper.prependUnRewriteActions(fm.getMatch()));
         } else {
@@ -418,16 +418,31 @@ public class SwitchRoute extends Link<OVXPort, PhysicalSwitch> implements
                 outActions.add(new OFActionOutput(
                         outPort.getPortNumber(), (short) 0xffff));
                 fm.setActions(outActions);
-               
-                for (final OFAction act : outActions) {
-                    actLenght += act.getLengthU();
+                
+                if(edgeOut){
+                	for (final OFAction act : outActions) {
+            			actLenght += act.getLengthU();
+            		}
+            		fm.setLengthU(OFFlowMod.MINIMUM_LENGTH + actLenght);
+                	phyLink.getSrcPort().getParentSwitch()
+                	.sendMsg(fm, phyLink.getSrcPort().getParentSwitch());
+                	SwitchRoute.log.info(
+                			"Sending big-switch route intermediate fm to sw {}: {}",
+                			phyLink.getSrcPort().getParentSwitch().getName(), fm);
+                }else{
+                	boolean duflag = phyLink.getSrcPort().getParentSwitch().getEntrytable().checkduplicate(fm);
+                	if(!duflag){
+                		for (final OFAction act : outActions) {
+                			actLenght += act.getLengthU();
+                		}
+                		fm.setLengthU(OFFlowMod.MINIMUM_LENGTH + actLenght);
+                    	phyLink.getSrcPort().getParentSwitch()
+                    	.sendMsg(fm, phyLink.getSrcPort().getParentSwitch());
+                    	SwitchRoute.log.info(
+                    			"Sending big-switch route intermediate fm to sw {}: {}",
+                    			phyLink.getSrcPort().getParentSwitch().getName(), fm);
+                	}
                 }
-                fm.setLengthU(OFFlowMod.MINIMUM_LENGTH + actLenght);
-                phyLink.getSrcPort().getParentSwitch()
-                        .sendMsg(fm, phyLink.getSrcPort().getParentSwitch());
-                SwitchRoute.log.info(
-                        "Sending big-switch route intermediate fm to sw {}: {}",
-                        phyLink.getSrcPort().getParentSwitch().getName(), fm);
 
             } else {
                 /*
@@ -449,14 +464,30 @@ public class SwitchRoute extends Link<OVXPort, PhysicalSwitch> implements
                 outActions.add(new OFActionOutput(this.getDstPort()
                         .getPhysicalPortNumber(), (short) 0xffff));
                 fm.setActions(outActions);
-                for (final OFAction act : outActions) {
-                    actLenght += act.getLengthU();
+                
+                if(edgeOut){
+                	for (final OFAction act : outActions) {
+            			actLenght += act.getLengthU();
+            		}
+            		fm.setLengthU(OFFlowMod.MINIMUM_LENGTH + actLenght);
+                	phyLink.getSrcPort().getParentSwitch()
+                	.sendMsg(fm, phyLink.getSrcPort().getParentSwitch());
+                	SwitchRoute.log.info("Sending big-switch route last fm to sw {}: {}",
+                    		phyLink.getSrcPort().getParentSwitch().getName(), fm);
+                }else{
+                	boolean duflag = phyLink.getSrcPort().getParentSwitch().getEntrytable().checkduplicate(fm);
+                	if(!duflag){
+                		for (final OFAction act : outActions) {
+                			actLenght += act.getLengthU();
+                		}
+                		fm.setLengthU(OFFlowMod.MINIMUM_LENGTH + actLenght);
+                    	phyLink.getSrcPort().getParentSwitch()
+                    	.sendMsg(fm, phyLink.getSrcPort().getParentSwitch());
+                    	SwitchRoute.log.info("Sending big-switch route last fm to sw {}: {}",
+                        		phyLink.getSrcPort().getParentSwitch().getName(), fm);
+                	}
                 }
-                fm.setLengthU(OFFlowMod.MINIMUM_LENGTH + actLenght);
-                phyLink.getSrcPort().getParentSwitch()
-                        .sendMsg(fm, phyLink.getSrcPort().getParentSwitch());
-                SwitchRoute.log.info("Sending big-switch route last fm to sw {}: {}",
-                        phyLink.getSrcPort().getParentSwitch().getName(), fm);
+                
             }
             outPort = phyLink.getDstPort();
         }
