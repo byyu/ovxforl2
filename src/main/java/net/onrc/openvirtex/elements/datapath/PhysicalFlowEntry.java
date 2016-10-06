@@ -13,7 +13,6 @@ import org.openflow.protocol.action.OFActionOutput;
 import org.openflow.protocol.action.OFActionType;
 
 import net.onrc.openvirtex.messages.OVXFlowMod;
-import net.onrc.openvirtex.messages.actions.OVXActionOutput;
 import net.onrc.openvirtex.protocol.OVXMatch;
 
 //byyu
@@ -31,12 +30,12 @@ public class PhysicalFlowEntry {
 	}
 
 	
-	public void addEntry(OVXMatch match, OVXActionOutput action){
+	public void addEntry(OVXMatch match, OFActionOutput action){
 		EntryPair entity = new EntryPair(match, action, match.getCookie());
 		entry.add(entity);
 	}
 	
-	public List<Long> removeEntry(OVXMatch match, OVXActionOutput action, long cookie){
+	public List<Long> removeEntry(OVXMatch match, OFActionOutput action, long cookie){
 		EntryPair newEntity = new EntryPair(match, action, cookie);
 		newEntity.tostring();
 		for(EntryPair entity : entry){
@@ -95,7 +94,7 @@ public class PhysicalFlowEntry {
 								fm.setPriority(++prio);
 								fm.setMatch(match);
 
-								addEntry(match,(OVXActionOutput) outaction);
+								addEntry(match, outaction);
 								return false;
 							}
 						}else{
@@ -111,7 +110,7 @@ public class PhysicalFlowEntry {
 						fm.setPriority(++prio);
 						fm.setMatch(match);
 
-						addEntry(match,(OVXActionOutput) outaction);
+						addEntry(match, outaction);
 						return false;
 					}
 				}else{
@@ -122,14 +121,14 @@ public class PhysicalFlowEntry {
 					fm.setPriority(++prio);
 					fm.setMatch(match);
 
-					addEntry(match,(OVXActionOutput)outaction);
+					addEntry(match, outaction);
 					log.info("All condition is equal but action is't equal\n{}\n{}\t{}\n{}\t{}",newWcd, match.getDataLayerSource(),match.getDataLayerDestination(), outport, oldoutport);
 					return false;
 				}
 			}
 		}
 		
-		addEntry(match,(OVXActionOutput)outaction);
+		addEntry(match, outaction);
 		return false;
 	}
 	

@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openflow.protocol.action.OFActionOutput;
 
 import net.onrc.openvirtex.messages.actions.OVXActionOutput;
 import net.onrc.openvirtex.protocol.OVXMatch;
@@ -17,12 +18,12 @@ public class EntryPair {
 	private Logger log = LogManager.getLogger(EntryPair.class
             .getName());
 	private OVXMatch ovxmatch;
-	private OVXActionOutput ovxaction;
+	private OFActionOutput ofaction;
 	private List<Long> cookieSet = new ArrayList<Long>();
 	
-	public EntryPair(OVXMatch match,OVXActionOutput action, long cookie){
+	public EntryPair(OVXMatch match,OFActionOutput action, long cookie){
 		this.ovxmatch = match;
-		this.ovxaction = action;
+		this.ofaction = action;
 		this.cookieSet.add(cookie);
 		log.info("This cookie is : {} ", cookie);
 	}
@@ -31,8 +32,8 @@ public class EntryPair {
 		return this.ovxmatch;
 	}
 	
-	public OVXActionOutput getAction(){
-		return this.ovxaction;
+	public OFActionOutput getAction(){
+		return this.ofaction;
 	}
 
 	
@@ -47,7 +48,7 @@ public class EntryPair {
 	public boolean equals(EntryPair entity){
 		if(Arrays.equals(this.ovxmatch.getDataLayerDestination(), entity.ovxmatch.getDataLayerDestination())
 				&& (this.ovxmatch.getInputPort() == entity.ovxmatch.getInputPort())
-				&& (this.ovxaction.getPort() == entity.ovxaction.getPort())){
+				&& (this.ofaction.getPort() == entity.ofaction.getPort())){
 			return true;
 		}else
 			return false;
@@ -61,7 +62,7 @@ public class EntryPair {
 		}
 		ret += "\nInport : "+ this.ovxmatch.getInputPort()
 				+ "\nMAC Destination Addresse: "+ MACAddress.valueOf(this.ovxmatch.getDataLayerDestination()).toString()
-				+ "\nOutput port : " + this.ovxaction.getPort()
+				+ "\nOutput port : " + this.ofaction.getPort()
 				+"\n";
 
         this.log.info("Entry \n========================\n" + ret
