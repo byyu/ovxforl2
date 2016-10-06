@@ -560,6 +560,7 @@ public abstract class OVXSwitch extends Switch<OVXPort> implements Persistable {
             }
         } catch (final ClassCastException e) {
             OVXSwitch.log.error("Received illegal message: " + msg);
+            e.printStackTrace();
         }
     }
 
