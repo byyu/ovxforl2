@@ -9,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openflow.protocol.Wildcards.Flag;
 import org.openflow.protocol.action.OFAction;
+import org.openflow.protocol.action.OFActionOutput;
 import org.openflow.protocol.action.OFActionType;
 
 import net.onrc.openvirtex.messages.OVXFlowMod;
@@ -55,11 +56,11 @@ public class PhysicalFlowEntry {
 		OVXMatch match = new OVXMatch(fm.getMatch());
 		match.setCookie(fm.getCookie());
 		int newWcd = match.getWildcards();
-		OVXActionOutput outaction = null;
+		OFActionOutput outaction = null;
 		short outport=0;
 		for(OFAction action : fm.getActions()){
 			if(action.getType()==OFActionType.OUTPUT){
-	    		outaction = (OVXActionOutput) action;
+	    		outaction = (OFActionOutput) action;
 	    		outport = outaction.getPort();
 			}
 		}
@@ -94,7 +95,7 @@ public class PhysicalFlowEntry {
 								fm.setPriority(++prio);
 								fm.setMatch(match);
 
-								addEntry(match,outaction);
+								addEntry(match,(OVXActionOutput) outaction);
 								return false;
 							}
 						}else{
@@ -110,7 +111,7 @@ public class PhysicalFlowEntry {
 						fm.setPriority(++prio);
 						fm.setMatch(match);
 
-						addEntry(match,outaction);
+						addEntry(match,(OVXActionOutput) outaction);
 						return false;
 					}
 				}else{
@@ -121,14 +122,14 @@ public class PhysicalFlowEntry {
 					fm.setPriority(++prio);
 					fm.setMatch(match);
 
-					addEntry(match,outaction);
+					addEntry(match,(OVXActionOutput)outaction);
 					log.info("All condition is equal but action is't equal\n{}\n{}\t{}\n{}\t{}",newWcd, match.getDataLayerSource(),match.getDataLayerDestination(), outport, oldoutport);
 					return false;
 				}
 			}
 		}
 		
-		addEntry(match,outaction);
+		addEntry(match,(OVXActionOutput)outaction);
 		return false;
 	}
 	
