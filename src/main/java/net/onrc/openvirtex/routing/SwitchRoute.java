@@ -334,7 +334,7 @@ public class SwitchRoute extends Link<OVXPort, PhysicalSwitch> implements
         final OVXLink link = this.getDstPort().getLink().getOutLink();
         Integer linkId = link.getLinkId();
     
-        fm.getMatch().setWildcards((~OFMatch.OFPFW_IN_PORT) & (~OFMatch.OFPFW_DL_DST));
+        
         boolean edgeOut = this.getDstPort().isEdge();
 //        if (edgeOut) {
 //        	fm.getMatch().setWildcards(3145970 & (~OFMatch.OFPFW_NW_DST_ALL) & (~OFMatch.OFPFW_NW_SRC_ALL) & (~OFMatch.OFPFW_DL_TYPE));
@@ -401,7 +401,8 @@ public class SwitchRoute extends Link<OVXPort, PhysicalSwitch> implements
         Collections.reverse(reverseLinks);
 
         for (final PhysicalLink phyLink : reverseLinks) {
-        	this.log.info("\nThis fm match : {}\nThis phyLink : {}",fm.getMatch().toString(), phyLink.toString());
+        	this.log.info("\nThis fm : {}\nThis phyLink : {}",fm.toString(), phyLink.toString());
+        	fm.getMatch().setWildcards((~OFMatch.OFPFW_IN_PORT) & (~OFMatch.OFPFW_DL_DST));
             if (outPort != null) {
             	outActions.clear();
             	int actLenght = 0;
