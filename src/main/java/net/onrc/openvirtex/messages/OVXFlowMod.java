@@ -71,7 +71,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         if (this.match.getDataLayerType() == Ethernet.TYPE_LLDP || this.match.getDataLayerType() == Ethernet.TYPE_ARP) {
             return;
         }
-
+        this.hardTimeout = 300;
         this.sw = sw;
         FlowTable ft = this.sw.getFlowTable();
 
