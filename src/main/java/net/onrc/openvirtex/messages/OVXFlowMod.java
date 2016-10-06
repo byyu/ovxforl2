@@ -165,7 +165,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
             	//byyu
             	match.setWildcards(3145970 & (~OFMatch.OFPFW_DL_TYPE));
 //                this.prependRewriteActions();
-                
+            	this.computeLength();
             } else {
 //                IPMapper.rewriteMatch(sw.getTenantId(), this.match);
                 // TODO: Verify why we have two send points... and if this is
@@ -196,7 +196,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
                         
                         //byyu
                         edgeOut = isEdgeOutport();
-                        this.computeLength();
+                        
                         if(edgeOut){
                         	lUtils.rewriteEdgeMatch(this.getMatch());
                         }else{
