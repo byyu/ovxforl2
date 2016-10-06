@@ -126,8 +126,8 @@ public class OVXActionOutput extends OFActionOutput implements
                         
                        this.log.info(inPort.toString());
                        this.log.info(outPort.toString());
-                        final OVXLink link = inPort.getLink().getOutLink();
-                        this.log.info(link.toString());
+                       final OVXLink link = inPort.getLink().getOutLink();
+                       this.log.info(link.toString());
                         
                         route.generateRouteFMs(fm.clone());
                         

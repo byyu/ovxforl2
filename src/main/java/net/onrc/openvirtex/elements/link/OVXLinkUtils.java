@@ -174,19 +174,22 @@ public class OVXLinkUtils {
 			//TODO : big switch processing
 
     		final long dst;
+    		final short pnum;
 			OVXLink ovxLink = map.getLinkbyid(linkId);
 			
 			if(ovxLink.getSrcSwitch().equals(sw)){
 				dstsw = ovxLink.getDstSwitch();
+				pnum = ovxLink.dstPort.getPortNumber();
 			}
 			else{
 				dstsw = ovxLink.getSrcSwitch();
+				pnum = ovxLink.srcPort.getPortNumber();
 			}
 			
 			this.log.info(dstsw.toString()+"\n"+sw.toString()+"\n"+ ovxLink.toString());
 			
 			if(dstsw instanceof OVXBigSwitch){
-				dst = dstsw.getPort(ovxLink.dstPort.getPortNumber()).getPhysicalPort().getParentSwitch().getSwitchId();
+				dst = dstsw.getPort(pnum).getPhysicalPort().getParentSwitch().getSwitchId();
 			}else{
 				dst = map.getPhysicalSwitches(dstsw).get(0).getSwitchId();
 			}
