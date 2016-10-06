@@ -165,7 +165,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
             	//byyu
             	match.setWildcards(3145970 & (~OFMatch.OFPFW_DL_TYPE));
 //                this.prependRewriteActions();
-            	this.computeLength();
+            	
             } else {
 //                IPMapper.rewriteMatch(sw.getTenantId(), this.match);
                 // TODO: Verify why we have two send points... and if this is
@@ -196,13 +196,8 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
                         
                         //byyu
                         edgeOut = isEdgeOutport();
-                        
                         if(edgeOut){
                         	lUtils.rewriteEdgeMatch(this.getMatch());
-                        }else{
-                        	
-                        	duflag = phyFlowEntry.checkduplicate(this);
-                        	this.log.info("DuFlag is {}\n\n", duflag);
                         }
                         
                     }
@@ -216,6 +211,13 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
             log.warn(
                     "OVXFlowMod. Error retrieving flowId in network with id {} for flowMod {}. Dropping packet...",
                     this.sw.getTenantId(), this);
+        }
+        
+        this.computeLength();
+        
+        if(!edgeOut){
+        	duflag = phyFlowEntry.checkduplicate(this);
+        	this.log.info("DuFlag is {}\n\n", duflag);
         }
         
         //byyu

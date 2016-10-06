@@ -371,10 +371,10 @@ public class SwitchRoute extends Link<OVXPort, PhysicalSwitch> implements
          * If the packet has L3 fields (e.g. NOT ARP), change the packet match:
          * 1) change the fields where the physical ips are stored
          */
-        if (fm.getMatch().getDataLayerType() == Ethernet.TYPE_IPV4) {
+//        if (fm.getMatch().getDataLayerType() == Ethernet.TYPE_IPV4) {
 //            IPMapper.rewriteMatch(this.getSrcPort().getTenantId(),
 //                    fm.getMatch());
-        }
+//        }
 
         /*
          * Get the list of physical links mapped to this virtual link, in
@@ -401,6 +401,7 @@ public class SwitchRoute extends Link<OVXPort, PhysicalSwitch> implements
         Collections.reverse(reverseLinks);
 
         for (final PhysicalLink phyLink : reverseLinks) {
+        	this.log.info("\nThis fm match : {}\nThis phyLink : {}",fm.getMatch().toString(), phyLink.toString());
             if (outPort != null) {
             	outActions.clear();
             	int actLenght = 0;
