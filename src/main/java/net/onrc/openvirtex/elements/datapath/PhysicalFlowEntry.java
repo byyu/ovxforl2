@@ -32,6 +32,7 @@ public class PhysicalFlowEntry {
 	
 	public void addEntry(OVXMatch match, OFActionOutput action){
 		EntryPair entity = new EntryPair(match, action, match.getCookie());
+		this.log.info("Add Entry to table\nMatch : {}\nAction : {}", match.toString(), action.toString());
 		entry.add(entity);
 	}
 	
