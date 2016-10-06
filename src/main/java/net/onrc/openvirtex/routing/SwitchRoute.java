@@ -336,10 +336,10 @@ public class SwitchRoute extends Link<OVXPort, PhysicalSwitch> implements
     
         fm.getMatch().setWildcards((~OFMatch.OFPFW_IN_PORT) & (~OFMatch.OFPFW_DL_DST));
         boolean edgeOut = this.getDstPort().isEdge();
-        if (edgeOut) {
-        	fm.getMatch().setWildcards(3145970 & (~OFMatch.OFPFW_NW_DST_ALL) & (~OFMatch.OFPFW_NW_SRC_ALL) & (~OFMatch.OFPFW_DL_TYPE));
-//            outActions.addAll(IPMapper.prependUnRewriteActions(fm.getMatch()));
-        } else {
+//        if (edgeOut) {
+//        	fm.getMatch().setWildcards(3145970 & (~OFMatch.OFPFW_NW_DST_ALL) & (~OFMatch.OFPFW_NW_SRC_ALL) & (~OFMatch.OFPFW_DL_TYPE));
+////            outActions.addAll(IPMapper.prependUnRewriteActions(fm.getMatch()));
+//        } else {
             
             
 //            Integer flowId = 0;
@@ -365,7 +365,7 @@ public class SwitchRoute extends Link<OVXPort, PhysicalSwitch> implements
 //                // TODO Auto-generated catch block
 //                e.printStackTrace();
 //            }
-        }
+//        }
 
         /*
          * If the packet has L3 fields (e.g. NOT ARP), change the packet match:
@@ -424,7 +424,7 @@ public class SwitchRoute extends Link<OVXPort, PhysicalSwitch> implements
         		fm.setLengthU(OFFlowMod.MINIMUM_LENGTH + actLenght);
         		
                 if(edgeOut){
-                	
+                	fm.getMatch().setWildcards(3145970 & (~OFMatch.OFPFW_NW_DST_ALL) & (~OFMatch.OFPFW_NW_SRC_ALL) & (~OFMatch.OFPFW_DL_TYPE));
                 	phyLink.getSrcPort().getParentSwitch()
                 	.sendMsg(fm, phyLink.getSrcPort().getParentSwitch());
                 	SwitchRoute.log.info(
@@ -469,7 +469,7 @@ public class SwitchRoute extends Link<OVXPort, PhysicalSwitch> implements
         		fm.setLengthU(OFFlowMod.MINIMUM_LENGTH + actLenght);
         		
                 if(edgeOut){
-                	
+                	fm.getMatch().setWildcards(3145970 & (~OFMatch.OFPFW_NW_DST_ALL) & (~OFMatch.OFPFW_NW_SRC_ALL) & (~OFMatch.OFPFW_DL_TYPE));
                 	phyLink.getSrcPort().getParentSwitch()
                 	.sendMsg(fm, phyLink.getSrcPort().getParentSwitch());
                 	SwitchRoute.log.info("Sending big-switch route last fm to sw {}: {}",
