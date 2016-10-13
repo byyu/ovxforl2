@@ -33,7 +33,6 @@ import net.onrc.openvirtex.exceptions.DroppedMessageException;
 import net.onrc.openvirtex.exceptions.MappingException;
 import net.onrc.openvirtex.exceptions.NetworkMappingException;
 import net.onrc.openvirtex.exceptions.IndexOutOfBoundException;
-import net.onrc.openvirtex.exceptions.LinkMappingException;
 import net.onrc.openvirtex.messages.OVXFlowMod;
 import net.onrc.openvirtex.messages.OVXPacketIn;
 import net.onrc.openvirtex.messages.OVXPacketOut;
@@ -58,15 +57,15 @@ public class OVXActionOutput extends OFActionOutput implements
 
     @Override
     public void virtualize(final OVXSwitch sw,
-           final List<OFAction> approvedActions, final OVXMatch match)
+            final List<OFAction> approvedActions, final OVXMatch match)
             throws ActionVirtualizationDenied, DroppedMessageException {
-        final OVXPort inPort = sw.getPort(match.getInputPort());	//스위치에서 인풋포트를 불러온다.
+        final OVXPort inPort = sw.getPort(match.getInputPort());
 
         // TODO: handle TABLE output port here
-        final LinkedList<OVXPort> outPortList = this.fillPortList(		//아웃풀포트리스트를 생성한다.
+
+        final LinkedList<OVXPort> outPortList = this.fillPortList(
                 match.getInputPort(), this.getPort(), sw);
         final OVXNetwork vnet;
-
         try {
             vnet = sw.getMap().getVirtualNetwork(sw.getTenantId());
         } catch (NetworkMappingException e) {
@@ -74,7 +73,7 @@ public class OVXActionOutput extends OFActionOutput implements
             return;
         }
 
-        if (match.isFlowMod()) {													//아웃풋 액션이 플로우모드에서 불려졌을 때
+        if (match.isFlowMod()) {
             /*
              * FlowMod management Iterate through the output port list. Two main
              * scenarios: - OVXSwitch is BigSwitch and inPort & outPort belongs
@@ -90,12 +89,10 @@ public class OVXActionOutput extends OFActionOutput implements
                 log.warn("FlowMod not found in our FlowTable");
                 return;
             }
-            
-            fm.setCookie(match.getCookie());										//플로우 모드에 쿠키값을 저장해줌.
+            fm.setCookie(match.getCookie());
             // TODO: Check if the FM has been retrieved
 
             for (final OVXPort outPort : outPortList) {
-
                 Integer linkId = 0;
                 Integer flowId = 0;
 
@@ -103,7 +100,7 @@ public class OVXActionOutput extends OFActionOutput implements
                  * OVXSwitch is BigSwitch and inPort & outPort belongs to
                  * different physical switches
                  */
-                if (sw instanceof OVXBigSwitch											//빅스위치이면서 인포트와 아웃포트가 다른 피지컬 스위치에 있을 때 
+                if (sw instanceof OVXBigSwitch
                         && inPort.getPhysicalPort().getParentSwitch() != outPort
                                 .getPhysicalPort().getParentSwitch()) {
                     // Retrieve the route between the two OVXPorts
@@ -120,48 +117,32 @@ public class OVXActionOutput extends OFActionOutput implements
                     }
 
                     // If the inPort belongs to an OVXLink, add rewrite actions
-                    // to unset the packet link fields
+                    // to set physical switch address
                     if (inPort.isLink()) {
-                        final OVXPort dstPort = vnet.getNeighborPort(inPort);
-                        
-                       this.log.info(inPort.toString());
-                       this.log.info(outPort.toString());
+                       final OVXPort dstPort = vnet.getNeighborPort(inPort);
                        final OVXLink link = inPort.getLink().getOutLink();
-                       this.log.info(link.toString());
                         
-                        route.generateRouteFMs(fm.clone());
+                       route.generateRouteFMs(fm.clone());
                         
-                        if (link != null
-                                && (!match.getWildcardObj().isWildcarded(
-                                        Flag.DL_DST) || !match.getWildcardObj()
-                                        .isWildcarded(Flag.DL_SRC))) {
+                       if (link != null
+                    		   && (!match.getWildcardObj().isWildcarded(
+                    				   Flag.DL_DST) || !match.getWildcardObj()
+                    				   .isWildcarded(Flag.DL_SRC))) {
                         	//byyu
-                        		fm.getMatch().setDataLayerSource(MACAddress.valueOf(sw.getTenantId()).toBytes());
-    							PhysicalSwitch psw = inPort.getPhysicalPort().getParentSwitch();//route.getSrcSwitch();//sw.getMap().getPhysicalLinks(link).get(0).getSrcPort().getParentSwitch();
-    							fm.getMatch().setDataLayerDestination(MACAddress.valueOf(psw.getSwitchId()).toBytes());
-    							psw = psw.getPort(route.getPathSrcPort().getPortNumber()).getLink().getInLink().getSrcPort().getParentSwitch();
-    							approvedActions.add(new OFActionDataLayerSource(MACAddress.valueOf(sw.getTenantId()).toBytes()));
-    							approvedActions.add(new OFActionDataLayerDestination(MACAddress.valueOf(psw.getSwitchId()).toBytes()));
-    							this.log.info(fm.getMatch().toString() +"\n");
-                        	
-//                            flowId = vnet.getFlowManager().getFlowId(
-//                                    match.getDataLayerSource(),
-//                                    match.getDataLayerDestination());
-//                            OVXLinkUtils lUtils = new OVXLinkUtils(
-//                                    sw.getTenantId(), link.getLinkId(), flowId, sw);
-////                            approvedActions.addAll(lUtils.unsetLinkFields());
-//                            approvedActions.addAll(lUtils.setLinkFields());
-                        } else {
-                            this.log.error(
-                                    "Cannot retrieve the virtual link between ports {} {}, dropping message",
-                                    dstPort, inPort);
-                            return;
-                        }
+                    	   fm.getMatch().setDataLayerSource(MACAddress.valueOf(sw.getTenantId()).toBytes());
+                    	   PhysicalSwitch psw = inPort.getPhysicalPort().getParentSwitch();
+                    	   fm.getMatch().setDataLayerDestination(MACAddress.valueOf(psw.getSwitchId()).toBytes());
+                    	   psw = psw.getPort(route.getPathSrcPort().getPortNumber()).getLink().getInLink().getSrcPort().getParentSwitch();
+                    	   approvedActions.add(new OFActionDataLayerSource(MACAddress.valueOf(sw.getTenantId()).toBytes()));
+                    	   approvedActions.add(new OFActionDataLayerDestination(MACAddress.valueOf(psw.getSwitchId()).toBytes()));
+
+                       } else {
+                    	   this.log.error(
+                    			   "Cannot retrieve the virtual link between ports {} {}, dropping message",
+                    			   dstPort, inPort);
+                    	   return;
+                       }
                     }
-
-
-                    
-
 
                     // add the output action with the physical outPort (srcPort
                     // of the route)
@@ -178,28 +159,27 @@ public class OVXActionOutput extends OFActionOutput implements
                      * SingleSwitch and BigSwitch with inPort & outPort
                      * belonging to the same physical switch
                      */
-                    if (inPort.isEdge()) {									//인포트가 엣지일때 
-                        if (outPort.isEdge()) {										//아웃포트가 엣지 일때 
+                    if (inPort.isEdge()) {
+                        if (outPort.isEdge()) {
                             // TODO: this is logically incorrect, i have to do
                             // this because we always add the rewriting actions
                             // in the flowMod. Change it.
                             approvedActions.addAll(IPMapper
                                     .prependUnRewriteActions(match));
-                        } else {													//아웃포트가 엣지가 아닐때 
+                        } else {
                             /*
                              * If inPort is edge and outPort is link: - retrieve
                              * link - generate the link's FMs - add actions to
                              * current FM to write packet fields related to the
                              * link
                              */
-                            final OVXLink link = outPort.getLink().getOutLink();	//아웃포트에 있는 링크를 가져온다.
-//                            this.log.info("Link information : {}",link.toString());
+                            final OVXLink link = outPort.getLink().getOutLink();
                             linkId = link.getLinkId();
                             try {
-                                flowId = vnet.getFlowManager().storeFlowValues(			//플로우아이디를 불러온다. 
+                                flowId = vnet.getFlowManager().storeFlowValues(
                                         match.getDataLayerSource(),
                                         match.getDataLayerDestination());
-                                link.generateLinkFMs(fm.clone(), flowId);				
+                                link.generateLinkFMs(fm.clone(), flowId);
                                 approvedActions.addAll(new OVXLinkUtils(sw
                                         .getTenantId(), linkId, flowId,sw)
                                         .setLinkFields());
@@ -219,7 +199,7 @@ public class OVXActionOutput extends OFActionOutput implements
                              * restore original IPs - add actions to current FM
                              * to restore packet fields related to the link
                              */
-                        	approvedActions.addAll(IPMapper
+                            approvedActions.addAll(IPMapper
                                     .prependUnRewriteActions(match));
                             // rewrite the OFMatch with the values of the link
                             final OVXPort dstPort = vnet
@@ -299,12 +279,12 @@ public class OVXActionOutput extends OFActionOutput implements
                     dstPort.getParentSwitch().sendMsg(
                             new OVXPacketIn(match.getPktData(),
                                     dstPort.getPortNumber()), sw);
-//                    this.log.info(
-//                            "Generate a packetIn from OVX Port {}/{}, physicalPort {}/{}",
-//                            dstPort.getParentSwitch().getSwitchName(),
-//                            dstPort.getPortNumber(), dstPort.getPhysicalPort()
-//                                    .getParentSwitch().getSwitchName(),
-//                            dstPort.getPhysicalPortNumber());
+                    this.log.debug(
+                            "Generate a packetIn from OVX Port {}/{}, physicalPort {}/{}",
+                            dstPort.getParentSwitch().getSwitchName(),
+                            dstPort.getPortNumber(), dstPort.getPhysicalPort()
+                                    .getParentSwitch().getSwitchName(),
+                            dstPort.getPhysicalPortNumber());
                 } else if (sw instanceof OVXBigSwitch) {
                     /**
                      * Big-switch management. Generate a packetOut to the
@@ -319,7 +299,7 @@ public class OVXActionOutput extends OFActionOutput implements
                                 new OVXPacketOut(match.getPktData(),
                                         OFPort.OFPP_NONE.getValue(),
                                         dstPort.getPortNumber()), sw);
-                        this.log.info("PacketOut for a bigSwitch port, "
+                        this.log.debug("PacketOut for a bigSwitch port, "
                                 + "generate a packet from Physical Port {}/{}",
                                 dstPort.getParentSwitch().getSwitchName(),
                                 dstPort.getPortNumber());
@@ -331,16 +311,13 @@ public class OVXActionOutput extends OFActionOutput implements
                      *
                      */
                     throwException = false;
-
                     approvedActions.addAll(IPMapper
                             .prependUnRewriteActions(match));
                     approvedActions.add(new OFActionOutput(outPort
                             .getPhysicalPortNumber()));
-
-//                    this.log.info(
-//                            "Physical ports are on the same physical switch, rewrite only outPort to {}",
-//                            outPort.getPhysicalPortNumber());
-                    
+                    this.log.debug(
+                            "Physical ports are on the same physical switch, rewrite only outPort to {}",
+                            outPort.getPhysicalPortNumber());
                 }
             }
             if (throwException) {
@@ -383,7 +360,6 @@ public class OVXActionOutput extends OFActionOutput implements
             throw new DroppedMessageException(
                     "No output ports defined; dropping");
         }
-
         return outPortList;
     }
 

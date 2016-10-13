@@ -382,5 +382,5 @@ public class OVXFlowTable implements FlowTable {
     public Collection<OVXFlowMod> getFlowTable() {
         return Collections.unmodifiableCollection(this.flowmodMap.values());
     }
-    
+
 }

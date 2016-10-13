@@ -51,10 +51,9 @@ public class OVXPacketOut extends OFPacketOut implements Devirtualizable {
     @Override
     public void devirtualize(final OVXSwitch sw) {
 
-//    	this.log.info("{}", this);
         final OVXPort inport = sw.getPort(this.getInPort());
         OVXMatch ovxMatch = null;
-        //this.log.info("PacketOut devirtualize \n srcMac : {} \n dstMac : {}", this.match.getDataLayerSource(), this.match.getDataLayerDestination());
+
         if (this.getBufferId() == OVXPacketOut.BUFFER_ID_NONE) {
             if (this.getPacketData().length <= 14) {
                 this.log.error("PacketOut has no buffer or data {}; dropping",
@@ -67,8 +66,6 @@ public class OVXPacketOut extends OFPacketOut implements Devirtualizable {
                     this.inPort);
             ovxMatch = new OVXMatch(match);
             ovxMatch.setPktData(this.packetData);
-            
-            
         } else {
             final OVXPacketIn cause = sw.getFromBufferMap(this.bufferId);
             if (cause == null) {
@@ -83,7 +80,6 @@ public class OVXPacketOut extends OFPacketOut implements Devirtualizable {
             this.setBufferId(cause.getBufferId());
             ovxMatch = new OVXMatch(match);
             ovxMatch.setPktData(cause.getPacketData());
-
             if (cause.getBufferId() == OVXPacketOut.BUFFER_ID_NONE) {
                 this.setPacketData(cause.getPacketData());
                 this.setLengthU(this.getLengthU() + this.packetData.length);
@@ -109,9 +105,7 @@ public class OVXPacketOut extends OFPacketOut implements Devirtualizable {
         if (U16.f(this.getInPort()) < U16.f(OFPort.OFPP_MAX.getValue())) {
             this.setInPort(inport.getPhysicalPortNumber());
         }
-
         this.prependRewriteActions(sw);
-
         this.setActions(this.approvedActions);
         this.setActionsLength((short) 0);
         this.setLengthU(OVXPacketOut.MINIMUM_LENGTH + this.packetData.length);
@@ -126,13 +120,11 @@ public class OVXPacketOut extends OFPacketOut implements Devirtualizable {
         if (U16.f(this.getInPort()) < U16.f(OFPort.OFPP_MAX.getValue())) {
             OVXMessageUtil.translateXid(this, inport);
         }
-//        this.log.info("Sending packet-out to sw {}: {}", sw.getName(), this);
-
+        this.log.debug("Sending packet-out to sw {}: {}", sw.getName(), this);
         sw.sendSouth(this, inport);
     }
 
     private void prependRewriteActions(final OVXSwitch sw) {
-    	if(this.match.getWildcards()!=0){
         if (!this.match.getWildcardObj().isWildcarded(Flag.NW_SRC)) {
             final OVXActionNetworkLayerSource srcAct = new OVXActionNetworkLayerSource();
             srcAct.setNetworkAddress(IPMapper.getPhysicalIp(sw.getTenantId(),
@@ -146,7 +138,6 @@ public class OVXPacketOut extends OFPacketOut implements Devirtualizable {
                     this.match.getNetworkDestination()));
             this.approvedActions.add(0, dstAct);
         }
-    	}
     }
 
     public OVXPacketOut(final OVXPacketOut pktOut) {

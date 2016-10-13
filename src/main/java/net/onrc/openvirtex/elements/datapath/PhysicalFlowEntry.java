@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openflow.protocol.OFMatch;
 import org.openflow.protocol.Wildcards.Flag;
 import org.openflow.protocol.action.OFAction;
 import org.openflow.protocol.action.OFActionOutput;
@@ -18,31 +19,36 @@ import net.onrc.openvirtex.protocol.OVXMatch;
 //byyu
 public class PhysicalFlowEntry {
 	
-	private static Logger log = LogManager.getLogger(PhysicalFlowEntry.class
-            .getName());
+	private static Logger log = LogManager.getLogger(PhysicalFlowEntry.class.getName());
 	private Set<EntryPair> entry = new HashSet<EntryPair>();
 	private PhysicalSwitch physw;
-	public PhysicalFlowEntry(){
-		
-	}
+	
 	public PhysicalFlowEntry(PhysicalSwitch sw){
 		this.physw = sw;
 	}
 
-	
-	public void addEntry(OVXMatch match, OFActionOutput action){
+	private void addEntry(OVXMatch match, OFActionOutput action){
 		EntryPair entity = new EntryPair(match, action, match.getCookie());
-		this.log.info("Add Entry to table\nMatch : {}\nAction : {}", match.toString(), action.toString());
 		entry.add(entity);
+	}
+	
+	private void addEntry(OVXFlowMod fm, OVXMatch match, OFActionOutput action){
+		short prio = fm.getPriority();
+		fm.setPriority(++prio);
+		match.setWildcards((OFMatch.OFPFW_ALL) & (~OFMatch.OFPFW_IN_PORT)
+								& (~OFMatch.OFPFW_DL_SRC)
+								& (~OFMatch.OFPFW_DL_DST)
+								& (~OFMatch.OFPFW_DL_TYPE)
+								& (~OFMatch.OFPFW_NW_DST_MASK)
+								& (~OFMatch.OFPFW_NW_SRC_MASK));
+		fm.setMatch(match);
+		addEntry(match, action);
 	}
 	
 	public List<Long> removeEntry(OVXMatch match, OFActionOutput action, long cookie){
 		EntryPair newEntity = new EntryPair(match, action, cookie);
-		newEntity.tostring();
 		for(EntryPair entity : entry){
-			entity.tostring();
 			if(entity.equals(newEntity)){
-				
 				List<Long> cookieList = entity.getCookieSet();
 				entry.remove(entity);
 				return cookieList;
@@ -54,10 +60,13 @@ public class PhysicalFlowEntry {
 	public boolean checkduplicate(OVXFlowMod fm){
 		log.info("Start checking duplicate at {}", this.physw.toString());
 		OVXMatch match = new OVXMatch(fm.getMatch());
-		match.setCookie(fm.getCookie());
-		int newWcd = match.getWildcards();
 		OFActionOutput outaction = null;
-		short outport=0;
+		match.setCookie(fm.getCookie());
+		OVXMatch oldMatch;
+		
+		int newWcd = match.getWildcards();
+		short oldoutport, outport=0;
+		
 		for(OFAction action : fm.getActions()){
 			if(action.getType()==OFActionType.OUTPUT){
 	    		outaction = (OFActionOutput) action;
@@ -69,72 +78,32 @@ public class PhysicalFlowEntry {
 			return false;
 		}
 		
-		OVXMatch oldMatch;
-		short oldoutport;
+		
 		
 		for(EntryPair entity : entry){
 			oldMatch = entity.getMatch();
 			oldoutport = entity.getAction().getPort();
-			log.info("Compare condition : \nold : {}\t{}\nnew : {}\t{}", oldMatch.toString(), oldoutport, match.toString(), outport);
 			if(Arrays.equals(oldMatch.getDataLayerDestination(), match.getDataLayerDestination())
 					&& (oldMatch.getInputPort() == match.getInputPort())){
 
-				if(outport == oldoutport){
-					log.info("compare wildcard : \nold : {}\nnew : {}",oldMatch.getWildcards(), newWcd);
-					if(oldMatch.getWildcards() == newWcd){
-						log.info("compare info : \n{}\nold : {}\nnew : {}", oldMatch.getWildcardObj().isWildcarded(Flag.NW_DST), oldMatch.getNetworkDestination(), match.getNetworkDestination());
-						if(!oldMatch.getWildcardObj().isWildcarded(Flag.NW_DST)){
-							if(oldMatch.getNetworkDestination()==match.getNetworkDestination()){
-								entity.addCookie(match.getCookie());
-								return true;
-							}else{
-								log.info("Need to change wcd");
-								match.setWildcards(3145954);
-								log.info("match's ip address : {}", match.getNetworkDestination());
-								short prio = fm.getPriority();
-								fm.setPriority(++prio);
-								fm.setMatch(match);
-
-								addEntry(match, outaction);
-								return false;
-							}
-						}else{
-							log.info("All condition is equal\n{}\n{}\t{}\n{}",newWcd, match.getDataLayerSource(),match.getDataLayerDestination(), outport);
+				if(outport == oldoutport && oldMatch.getWildcards() == newWcd){
+					if(!oldMatch.getWildcardObj().isWildcarded(Flag.NW_DST)){
+						if(oldMatch.getNetworkDestination()==match.getNetworkDestination()){
 							entity.addCookie(match.getCookie());
 							return true;
 						}
 					}else{
-						log.info("Need to change wcd");
-						match.setWildcards(3145954);
-						log.info("match's ip address : {}", match.getNetworkDestination());
-						short prio = fm.getPriority();
-						fm.setPriority(++prio);
-						fm.setMatch(match);
-
-						addEntry(match, outaction);
-						return false;
+						entity.addCookie(match.getCookie());
+						return true;
 					}
-				}else{
-					log.info("Need to change wcd");
-					match.setWildcards(3145954);
-					log.info("match's ip address : {}", match.getNetworkDestination());
-					short prio = fm.getPriority();
-					fm.setPriority(++prio);
-					fm.setMatch(match);
-
-					addEntry(match, outaction);
-					log.info("All condition is equal but action is't equal\n{}\n{}\t{}\n{}\t{}",newWcd, match.getDataLayerSource(),match.getDataLayerDestination(), outport, oldoutport);
-					return false;
 				}
+				addEntry(fm, match, outaction);
+				return false;
 			}
 		}
 		
 		addEntry(match, outaction);
 		return false;
-	}
-	
-	public PhysicalSwitch getPhysicalSwitch(){
-		return this.physw;
 	}
 }
 

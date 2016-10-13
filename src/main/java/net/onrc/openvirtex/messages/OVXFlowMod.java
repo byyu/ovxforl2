@@ -21,25 +21,24 @@ import java.util.List;
 import java.util.Map;
 
 import net.onrc.openvirtex.elements.OVXMap;
-import net.onrc.openvirtex.elements.address.IPMapper;
+import net.onrc.openvirtex.elements.address.IPAddress;
 import net.onrc.openvirtex.elements.datapath.FlowTable;
 import net.onrc.openvirtex.elements.datapath.OVXFlowTable;
 import net.onrc.openvirtex.elements.datapath.OVXSwitch;
 import net.onrc.openvirtex.elements.datapath.PhysicalFlowEntry;
+import net.onrc.openvirtex.elements.host.Host;
 import net.onrc.openvirtex.elements.link.OVXLink;
 import net.onrc.openvirtex.elements.link.OVXLinkUtils;
 import net.onrc.openvirtex.elements.port.OVXPort;
 import net.onrc.openvirtex.exceptions.ActionVirtualizationDenied;
 import net.onrc.openvirtex.exceptions.DroppedMessageException;
 import net.onrc.openvirtex.exceptions.NetworkMappingException;
-import net.onrc.openvirtex.exceptions.SwitchMappingException;
 import net.onrc.openvirtex.exceptions.UnknownActionException;
-import net.onrc.openvirtex.messages.actions.OVXActionNetworkLayerDestination;
-import net.onrc.openvirtex.messages.actions.OVXActionNetworkLayerSource;
 import net.onrc.openvirtex.messages.actions.OVXActionOutput;
 import net.onrc.openvirtex.messages.actions.VirtualizableAction;
 import net.onrc.openvirtex.packet.Ethernet;
 import net.onrc.openvirtex.protocol.OVXMatch;
+import net.onrc.openvirtex.util.MACAddress;
 import net.onrc.openvirtex.util.OVXUtil;
 
 import org.apache.logging.log4j.LogManager;
@@ -68,7 +67,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
     	
     	startTime = System.nanoTime();
         /* Drop LLDP-matching messages sent by some applications */
-        if (this.match.getDataLayerType() == Ethernet.TYPE_LLDP || this.match.getDataLayerType() == Ethernet.TYPE_ARP) {
+        if (this.match.getDataLayerType() == Ethernet.TYPE_LLDP) {
             return;
         }
         this.hardTimeout = 300;
@@ -77,19 +76,28 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
 
         int bufferId = OVXPacketOut.BUFFER_ID_NONE;
         if (sw.getFromBufferMap(this.bufferId) != null) {
-            bufferId = sw.getFromBufferMap(this.bufferId).getBufferId();	//스위치의 버퍼에 있는 패킷인 메시지에서 버퍼아이디를 가져온다.
+            bufferId = sw.getFromBufferMap(this.bufferId).getBufferId();
         }
-        
-        final short inport = this.getMatch().getInputPort();			//맷치에서 포트를 얻어옴 
+        final short inport = this.getMatch().getInputPort();
 
         /* let flow table process FlowMod, generate cookie as needed */
-        boolean pflag = ft.handleFlowMods(this.clone());				//플로우 테이블에서 플로우모드에 대한 처리를 함 아직 정확히 파악못함				
+        boolean pflag = ft.handleFlowMods(this.clone());
 
         /* used by OFAction virtualization */
         OVXMatch ovxMatch = new OVXMatch(this.match);
         ovxCookie = ((OVXFlowTable) ft).getCookie(this, false);
         ovxMatch.setCookie(ovxCookie);
         this.setCookie(ovxMatch.getCookie());
+        
+        /*If match received by controller has only mac address, write ip address on match */
+        if(ovxMatch.getNetworkSource()==0 || ovxMatch.getNetworkDestination()==0){
+        	IPAddress srcIP = getHostIP(getHostbyMACAddress(ovxMatch.getDataLayerSource()));
+        	IPAddress dstIP = getHostIP(getHostbyMACAddress(ovxMatch.getDataLayerDestination()));
+        	if(srcIP != null && dstIP != null){
+        		ovxMatch.setNetworkSource(srcIP.getIp());
+        		ovxMatch.setNetworkDestination(dstIP.getIp());
+        	}
+        }
         
         for (final OFAction act : this.getActions()) {
             try {
@@ -132,12 +140,15 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         } else {
             prepAndSendSouth(ovxInPort, pflag);
         }
+        
+        /* Measure processing flowmod time */
         if(match.getDataLayerType()==Ethernet.TYPE_IPV4){
-        endTime = System.nanoTime();
-        long elapseTime = endTime - startTime;
-        this.log.info("FlowMod processing Time :\t{}", elapseTime);
+        	endTime = System.nanoTime();
+        	long elapseTime = endTime - startTime;
+        	this.log.info("FlowMod processing Time :\t{}", elapseTime);
         }
     }
+
     private void prepAndSendSouth(OVXPort inPort, boolean pflag) {
         if (!inPort.isActive()) {
             log.warn("Virtual network {}: port {} on switch {} is down.",
@@ -147,25 +158,26 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         }
         this.getMatch().setInputPort(inPort.getPhysicalPortNumber());
         OVXMessageUtil.translateXid(this, inPort);
+        
         //byyu
-//        PhysicalFlowEntry phyFlowEntry = this.sw.getPhysicalFlowEntry();
-        PhysicalFlowEntry phyFlowEntry = null;
+        PhysicalFlowEntry phyFlowEntry  = inPort.getPhysicalPort().getParentSwitch().getEntrytable();
 
-		phyFlowEntry = inPort.getPhysicalPort().getParentSwitch().getEntrytable();
-
-        boolean edgeOut=true;
+        boolean isedgeOut=true;
         boolean duflag=false;
         
         //this.idleTimeout = 5;
-        this.match.setWildcards((~OFMatch.OFPFW_IN_PORT) & (~OFMatch.OFPFW_DL_DST));//coreForceSetWcd());
+        this.match.setWildcards((~OFMatch.OFPFW_IN_PORT) & (~OFMatch.OFPFW_DL_DST));
       
         
         try {
             if (inPort.isEdge()) {
             	//byyu
-            	match.setWildcards(3145970 & (~OFMatch.OFPFW_DL_TYPE));
-//                this.prependRewriteActions();
-            	
+            	match.setWildcards((OFMatch.OFPFW_ALL) & (~OFMatch.OFPFW_IN_PORT)
+            						& (~OFMatch.OFPFW_DL_SRC)
+            						& (~OFMatch.OFPFW_DL_DST)
+            						& (~OFMatch.OFPFW_DL_TYPE)
+            						& (~OFMatch.OFPFW_NW_DST_MASK)
+            						& (~OFMatch.OFPFW_NW_SRC_MASK));
             } else {
 //                IPMapper.rewriteMatch(sw.getTenantId(), this.match);
                 // TODO: Verify why we have two send points... and if this is
@@ -182,7 +194,6 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
                     OVXLink link = sw.getMap()
                             .getVirtualNetwork(sw.getTenantId())
                             .getLink(dstPort, inPort);
-                    
                     if (inPort != null && link != null) {
                         Integer flowId = sw
                                 .getMap()
@@ -195,9 +206,14 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
                         lUtils.rewriteMatch(this.getMatch());
                         
                         //byyu
-                        edgeOut = isEdgeOutport();
-                        if(edgeOut){
-                        	lUtils.rewriteEdgeMatch(this.getMatch());
+                        isedgeOut = isEdgeOutport();
+                        if(isedgeOut){
+                        	match.setWildcards((OFMatch.OFPFW_ALL) & (~OFMatch.OFPFW_IN_PORT)
+            						& (~OFMatch.OFPFW_DL_SRC)
+            						& (~OFMatch.OFPFW_DL_DST)
+            						& (~OFMatch.OFPFW_DL_TYPE)
+            						& (~OFMatch.OFPFW_NW_DST_MASK)
+            						& (~OFMatch.OFPFW_NW_SRC_MASK));
                         }
                         
                     }
@@ -212,10 +228,9 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
                     "OVXFlowMod. Error retrieving flowId in network with id {} for flowMod {}. Dropping packet...",
                     this.sw.getTenantId(), this);
         }
-        
         this.computeLength();
         
-        if(!edgeOut){
+        if(!isedgeOut){
         	duflag = phyFlowEntry.checkduplicate(this);
         	this.log.info("DuFlag is {}\n\n", duflag);
         }
@@ -225,9 +240,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         	this.flags |= OFFlowMod.OFPFF_SEND_FLOW_REM;
         	sw.sendSouth(this, inPort);
         }
-
-     }
-    
+    }
 
     private void computeLength() {
         this.setActions(this.approvedActions);
@@ -237,21 +250,21 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         }
     }
 
-    private void prependRewriteActions() {
-        if (!this.match.getWildcardObj().isWildcarded(Flag.NW_SRC)) {
-            final OVXActionNetworkLayerSource srcAct = new OVXActionNetworkLayerSource();
-            srcAct.setNetworkAddress(IPMapper.getPhysicalIp(sw.getTenantId(),
-                    this.match.getNetworkSource()));
-            this.approvedActions.add(0, srcAct);
-        }
-
-        if (!this.match.getWildcardObj().isWildcarded(Flag.NW_DST)) {
-            final OVXActionNetworkLayerDestination dstAct = new OVXActionNetworkLayerDestination();
-            dstAct.setNetworkAddress(IPMapper.getPhysicalIp(sw.getTenantId(),
-                    this.match.getNetworkDestination()));
-            this.approvedActions.add(0, dstAct);
-        }
-    }
+//    private void prependRewriteActions() {
+//        if (!this.match.getWildcardObj().isWildcarded(Flag.NW_SRC)) {
+//            final OVXActionNetworkLayerSource srcAct = new OVXActionNetworkLayerSource();
+//            srcAct.setNetworkAddress(IPMapper.getPhysicalIp(sw.getTenantId(),
+//                    this.match.getNetworkSource()));
+//            this.approvedActions.add(0, srcAct);
+//        }
+//
+//        if (!this.match.getWildcardObj().isWildcarded(Flag.NW_DST)) {
+//            final OVXActionNetworkLayerDestination dstAct = new OVXActionNetworkLayerDestination();
+//            dstAct.setNetworkAddress(IPMapper.getPhysicalIp(sw.getTenantId(),
+//                    this.match.getNetworkDestination()));
+//            this.approvedActions.add(0, dstAct);
+//        }
+//    }
 
     /**
      * @param flagbit
@@ -297,7 +310,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
     }
 
     //byyu
-    public boolean isEdgeOutport(){
+    private boolean isEdgeOutport(){
     	OVXPort outPort;
     	
 		short outport = 0;
@@ -317,6 +330,24 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
 			return true;
 		else
 			return false;
+    }
+    
+    private IPAddress getHostIP(Host host){
+    	if(host!=null)
+    		return host.getIp();
+    	else
+    		return null;
+    }
+    
+    private Host getHostbyMACAddress(byte[] mac){
+    	OVXMap map = OVXMap.getInstance();
+    	
+    	try {
+			return map.getVirtualNetwork(sw.getTenantId()).getHost(MACAddress.valueOf(mac));
+		} catch (NetworkMappingException e) {
+			log.error(e);
+		}
+    	return null;
     }
 
 }

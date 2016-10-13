@@ -223,6 +223,24 @@ public class OVXNetwork extends Network<OVXSwitch, OVXPort, OVXLink> implements
         }
         return null;
     }
+    
+    public Host getHost(final IPAddress ip) {
+    	for(final Host host : this.hostMap.values()){
+    		if(host.getIp().equals(ip)){
+    			return host;
+    		}
+    	}
+    	return null;
+    }
+    
+    public Host getHost(final MACAddress mac){
+    	for(final Host host : this.hostMap.values()){
+    		if(host.getMac().equals(mac)){
+    			return host;
+    		}
+    	}
+    	return null;
+    }
 
     public void unregister() {
         DBManager.getInstance().removeDoc(this);
@@ -367,8 +385,6 @@ public class OVXNetwork extends Network<OVXSwitch, OVXPort, OVXLink> implements
         final Host host = new Host(mac, port, hostId);
         this.hostMap.put(port, host);
         host.register();
-        //byyu
-        OVXMap.getInstance().addMacHost(mac, host);
         return host;
     }
 
@@ -443,8 +459,6 @@ public class OVXNetwork extends Network<OVXSwitch, OVXPort, OVXLink> implements
         dstPort.setEdge(false);
         srcPort.boot();
         dstPort.boot();
-        OVXMap.getInstance().addLinkTenant((long)linkId, this.tenantId);
-        OVXMap.getInstance().addLinkid(linkId, link);
         return link;
     }
 
@@ -746,8 +760,6 @@ public class OVXNetwork extends Network<OVXSwitch, OVXPort, OVXLink> implements
 
     public void removeHost(final Host host) {
         this.hostMap.remove(host.getPort());
-        //byyu
-        OVXMap.getInstance().removeMacHost(host.getMac());
     }
 
     public void addControllers(ArrayList<String> ctrlUrls) {

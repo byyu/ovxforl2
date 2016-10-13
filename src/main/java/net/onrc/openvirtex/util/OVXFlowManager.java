@@ -39,25 +39,22 @@ public class OVXFlowManager {
     private final Integer tenantId;
     private Collection<Host> hostList;
 
-
     public OVXFlowManager(Integer tenantId, Collection<Host> hostList) {
         this.flowValues = HashBiMap.create();
         this.flowCounter = new BitSetIndex(IndexType.FLOW_COUNTER);
         this.tenantId = tenantId;
         this.hostList = hostList;
-        
     }
 
     public Integer storeFlowValues(final byte[] srcMac, final byte[] dstMac)
             throws IndexOutOfBoundException {
-    	this.log.info("Call storeFlowValues method");
         // TODO: Optimize flow numbers
         final BigInteger dualMac = new BigInteger(ArrayUtils.addAll(srcMac,
                 dstMac));
         Integer flowId = this.flowValues.inverse().get(dualMac);
-        if (flowId == null) {											//소스-데스트 맥에 등록된 플로우아이디가 없으면 새로운 플로우아이디 생성 
+        if (flowId == null) {
             flowId = this.flowCounter.getNewIndex();
-            log.info(
+            log.debug(
                     "virtual net = {}: save flowId = {} that is associated to {} {}",
                     this.tenantId, flowId, MACAddress.valueOf(srcMac)
                             .toString(), MACAddress.valueOf(dstMac).toString());
@@ -85,8 +82,7 @@ public class OVXFlowManager {
                 dstMac));
         final Integer flowId = this.flowValues.inverse().get(dualMac);
         if (flowId != null && flowId != 0) {
-            //log.debug(
-        	this.log.info(
+            log.debug(
                     "virtual net = {}: retrieving flowId {} that is associated to {} {}",
                     this.tenantId, flowId, MACAddress.valueOf(srcMac)
                             .toString(), MACAddress.valueOf(dstMac).toString());

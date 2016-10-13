@@ -90,10 +90,8 @@ public abstract class OVXSwitch extends Switch<OVXPort> implements Persistable {
     private AtomicInteger bufferId = null;
     private final BitSetIndex portCounter;
     protected FlowTable flowTable;
-    protected OVXFlowTable pysflowTable;
     // Used to save which channel the message came in on
     private final XidTranslator<Channel> channelMux;
-//    private PhysicalFlowEntry phyFlowentry;
     /**
      * Role Manager. Saves all role requests coming from each controller. It is
      * also responsible for permitting or denying certain operations based on
@@ -120,10 +118,8 @@ public abstract class OVXSwitch extends Switch<OVXPort> implements Persistable {
         this.portCounter = new BitSetIndex(IndexType.PORT_ID);
         this.bufferId = new AtomicInteger(1);
         this.flowTable = new OVXFlowTable(this);
-        this.pysflowTable = new OVXFlowTable(this);
         this.roleMan = new RoleManager();
         this.channelMux = new XidTranslator<Channel>();
-//        this.phyFlowentry = new PhysicalFlowEntry(this);
 
     }
 
@@ -470,10 +466,6 @@ public abstract class OVXSwitch extends Switch<OVXPort> implements Persistable {
      */
     public FlowTable getFlowTable() {
         return this.flowTable;
-    }
-
-    public OVXFlowTable getpysFlowTable(){
-    	return this.pysflowTable;
     }
     
     @Override

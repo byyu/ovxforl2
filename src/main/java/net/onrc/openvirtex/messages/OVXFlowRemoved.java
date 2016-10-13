@@ -37,12 +37,10 @@ public class OVXFlowRemoved extends OFFlowRemoved implements Virtualizable {
 
     @Override
     public void virtualize(final PhysicalSwitch sw) {
-
+    	//byyu
     	PhysicalFlowEntry phyFlowEntry = sw.getEntrytable();
     	
         int tid = (int) (this.cookie >> 32);
-        
-        this.log.info(this.toString());
 
         /* a PhysSwitch can be a OVXLink */
         if (!(sw.getMap().hasVirtualSwitch(sw, tid))) {
@@ -50,11 +48,6 @@ public class OVXFlowRemoved extends OFFlowRemoved implements Virtualizable {
         }
         try {
             OVXSwitch vsw = sw.getMap().getVirtualSwitch(sw, tid);
-            
-            //byyu
-//            PhysicalFlowEntry phyFlowEntry = vsw.getPhysicalFlowEntry();
-            
-            
             /*
              * If we are a Big Switch we might receive multiple same-cookie FR's
              * from multiple PhysicalSwitches. Only handle if the FR's newly
@@ -74,21 +67,19 @@ public class OVXFlowRemoved extends OFFlowRemoved implements Virtualizable {
         	    		outact = (OVXActionOutput) act;
         	    	}
         	    }
-                
-//                this.log.info("compare match : {},{}",this.getMatch().toString(),fm.getMatch().toString());
+
                 List<Long> cookieSet = phyFlowEntry.removeEntry(new OVXMatch(this.getMatch()), outact, this.cookie);
                 
-
                 if(cookieSet!=null){
-                for(Long cookies : cookieSet){
-                	int temptid = (int)(cookies >> 32);
+                	for(Long cookies : cookieSet){
+                		int temptid = (int)(cookies >> 32);
                 		if(sw.getMap().hasVirtualSwitch(sw, temptid)){
                 			vsw = sw.getMap().getVirtualSwitch(sw, temptid);
                 			
                 			if(vsw.getFlowTable().hasFlowMod(cookies)){
                 				OVXFlowMod fm2 = vsw.getFlowMod(cookies);
-                				vsw.deleteFlowMod(cookies); 		
-               		
+                				vsw.deleteFlowMod(cookies);
+
                 				if (fm2.hasFlag(OFFlowMod.OFPFF_SEND_FLOW_REM)) {
                 					writeFields(fm2);
                 					vsw.sendMsg(this, sw);
@@ -98,7 +89,6 @@ public class OVXFlowRemoved extends OFFlowRemoved implements Virtualizable {
                 	}
                 }
             }
-
         } catch (MappingException e) {
             log.warn("Exception fetching FlowMod from FlowTable: {}", e);
         }

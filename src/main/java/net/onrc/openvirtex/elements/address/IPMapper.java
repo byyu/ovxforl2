@@ -56,7 +56,7 @@ public final class IPMapper {
             } else {
                 pip = new PhysicalIPAddress(map.getVirtualNetwork(tenantId)
                         .nextIP());
-                log.info("Adding IP mapping {} -> {} for tenant {}", vip, pip,
+                log.debug("Adding IP mapping {} -> {} for tenant {}", vip, pip,
                         tenantId);
                 map.addIP(pip, vip);
             }
@@ -74,7 +74,7 @@ public final class IPMapper {
     }
 
     public static void rewriteMatch(final Integer tenantId, final OFMatch match) {
-    	match.setNetworkSource(getPhysicalIp(tenantId, match.getNetworkSource()));
+        match.setNetworkSource(getPhysicalIp(tenantId, match.getNetworkSource()));
         match.setNetworkDestination(getPhysicalIp(tenantId,
                 match.getNetworkDestination()));
     }

@@ -15,7 +15,6 @@
  ******************************************************************************/
 package net.onrc.openvirtex.elements.link;
 
-import java.util.BitSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -23,7 +22,6 @@ import net.onrc.openvirtex.core.OpenVirteXController;
 import net.onrc.openvirtex.elements.OVXMap;
 import net.onrc.openvirtex.elements.datapath.OVXBigSwitch;
 import net.onrc.openvirtex.elements.datapath.OVXSwitch;
-import net.onrc.openvirtex.exceptions.LinkMappingException;
 import net.onrc.openvirtex.exceptions.NetworkMappingException;
 import net.onrc.openvirtex.exceptions.SwitchMappingException;
 import net.onrc.openvirtex.util.MACAddress;
@@ -64,77 +62,66 @@ public class OVXLinkUtils {
         this.vlan = 0;
     }
 
-    /**
-     * Gets the integer value from a given Bitset.
-     *
-     * @param bitSet
-     *            the bitset
-     * @return the integer
-     */
-    private static int bitSetToInt(final BitSet bitSet) {
-        int bitInteger = 0;
-        for (int i = 0; i < 32; i++) {
-            if (bitSet.get(i)) {
-                bitInteger |= 1 << i;
-            }
-        }
-        return bitInteger;
-    }
+//    /**
+//     * Gets the integer value from a given Bitset.
+//     *
+//     * @param bitSet
+//     *            the bitset
+//     * @return the integer
+//     */
+//    private static int bitSetToInt(final BitSet bitSet) {
+//        int bitInteger = 0;
+//        for (int i = 0; i < 32; i++) {
+//            if (bitSet.get(i)) {
+//                bitInteger |= 1 << i;
+//            }
+//        }
+//        return bitInteger;
+//    }
 
-    /**
-     * Instantiates a new link utils instance from the MAC addresses couple.
-     * Automatically decapsulate and set tenantId, linkId and flowId from the
-     * parameters given.
-     *
-     * @param srcMac
-     *            the src mac
-     * @param dstMac
-     *            the dst mac
-     */
-    public OVXLinkUtils(final MACAddress srcMac, final MACAddress dstMac) {
-        this();
-        this.srcMac = srcMac;
-        this.dstMac = dstMac;
-        final int vNets = OpenVirteXController.getInstance()
-                .getNumberVirtualNets();
-        final MACAddress mac = MACAddress
-                .valueOf((srcMac.toLong() & 0xFFFFFF) << 24 | dstMac.toLong()
-                        & 0xFFFFFF);
-        this.tenantId = (int) (mac.toLong() >> 48 - vNets);
-        final BitSet bmask = new BitSet((48 - vNets) / 2);
-        for (int i = bmask.nextClearBit(0); i < (48 - vNets) / 2; i = bmask
-                .nextClearBit(i + 1)) {
-            bmask.set(i);
-        }
-        final int mask = OVXLinkUtils.bitSetToInt(bmask);
-        this.linkId = (int) (mac.toLong() >> (48 - vNets) / 2) & mask;
-        this.flowId = (int) mac.toLong() & mask;
-
-        this.vlan = 0;
-    }
-
-    //byyu
-    public OVXLinkUtils(final Integer tenantId, final Integer flowId, final MACAddress srcMac, final MACAddress dstMac){
-    	this();
-    	this.tenantId = tenantId;
-    	this.flowId = flowId;
-    	this.srcMac = srcMac;
-    	this.dstMac = dstMac;
-    	this.linkId = (int)(dstMac.toLong()-srcMac.toLong());
-    	this.vlan = 0;
-    }
-    /**
-     * Instantiates a new link utils from tenantId, linkId and flowId.
-     * Automatically encapsulate and set these values in the MAC addresses and
-     * in the VLAN.
-     *
-     * @param tenantId
-     *            the tenant id
-     * @param linkId
-     *            the link id
-     * @param flowId
-     *            the flow id
-     */
+//    /**
+//     * Instantiates a new link utils instance from the MAC addresses couple.
+//     * Automatically decapsulate and set tenantId, linkId and flowId from the
+//     * parameters given.
+//     *
+//     * @param srcMac
+//     *            the src mac
+//     * @param dstMac
+//     *            the dst mac
+//     */
+//    public OVXLinkUtils(final MACAddress srcMac, final MACAddress dstMac) {
+//        this();
+//        this.srcMac = srcMac;
+//        this.dstMac = dstMac;
+//        final int vNets = OpenVirteXController.getInstance()
+//                .getNumberVirtualNets();
+//        final MACAddress mac = MACAddress
+//                .valueOf((srcMac.toLong() & 0xFFFFFF) << 24 | dstMac.toLong()
+//                        & 0xFFFFFF);
+//        this.tenantId = (int) (mac.toLong() >> 48 - vNets);
+//        final BitSet bmask = new BitSet((48 - vNets) / 2);
+//        for (int i = bmask.nextClearBit(0); i < (48 - vNets) / 2; i = bmask
+//                .nextClearBit(i + 1)) {
+//            bmask.set(i);
+//        }
+//        final int mask = OVXLinkUtils.bitSetToInt(bmask);
+//        this.linkId = (int) (mac.toLong() >> (48 - vNets) / 2) & mask;
+//        this.flowId = (int) mac.toLong() & mask;
+//        this.vlan = 0;
+//    }
+//
+//    /**
+//     * Instantiates a new link utils from tenantId, linkId and flowId.
+//     * Automatically encapsulate and set these values in the MAC addresses and
+//     * in the VLAN.
+//     *
+//     * @param tenantId
+//     *            the tenant id
+//     * @param linkId
+//     *            the link id
+//     * @param flowId
+//     *            the flow id
+//     */
 //    public OVXLinkUtils(final Integer tenantId, final Integer linkId,
 //            final Integer flowId) {
 //        this();
@@ -161,6 +148,19 @@ public class OVXLinkUtils {
 //    }
     
   //byyu
+    /**
+     *  Instantiates a new link utils from tenantId, linkId, flowId and virtual switch.
+     *  Automatically encapsulate and set these values in the MAC addresses.
+     *  
+     * @param tenantId
+     * 				the tenant id
+     * @param linkId
+     * 				the link id
+     * @param flowId
+     * 				the flow id
+     * @param sw
+     * 				the switch called this link utils
+     */
     public OVXLinkUtils(final Integer tenantId, final Integer linkId, final Integer flowId, final OVXSwitch sw){
     	this();
     	this.tenantId = tenantId;
@@ -170,26 +170,22 @@ public class OVXLinkUtils {
     	OVXMap map = OVXMap.getInstance();
     	OVXSwitch dstsw;
     	try {
-
-			//TODO : big switch processing
-
     		final long dst;
-    		final short pnum;
-			OVXLink ovxLink = map.getLinkbyid(linkId);
+    		final short portNum;
+			
+    		OVXLink ovxLink = map.getVirtualNetwork(tenantId).getLinksById(linkId).get(0);
 			
 			if(ovxLink.getSrcSwitch().equals(sw)){
 				dstsw = ovxLink.getDstSwitch();
-				pnum = ovxLink.dstPort.getPortNumber();
+				portNum = ovxLink.dstPort.getPortNumber();
 			}
 			else{
 				dstsw = ovxLink.getSrcSwitch();
-				pnum = ovxLink.srcPort.getPortNumber();
+				portNum = ovxLink.srcPort.getPortNumber();
 			}
 			
-			this.log.info(dstsw.toString()+"\n"+sw.toString()+"\n"+ ovxLink.toString());
-			
 			if(dstsw instanceof OVXBigSwitch){
-				dst = dstsw.getPort(pnum).getPhysicalPort().getParentSwitch().getSwitchId();
+				dst = dstsw.getPort(portNum).getPhysicalPort().getParentSwitch().getSwitchId();
 			}else{
 				dst = map.getPhysicalSwitches(dstsw).get(0).getSwitchId();
 			}
@@ -198,8 +194,10 @@ public class OVXLinkUtils {
 
 		} catch (SwitchMappingException e) {
 			log.error("This Switch can't find");
+		} catch (NetworkMappingException e) {
+			log.error(e);
 		} 
-
+    	// TODO: encapsulate the values in the vlan too
     }
 
     /**
@@ -210,9 +208,8 @@ public class OVXLinkUtils {
      * @return true if valid, false otherwise
      */
     public boolean isValid() {
-//    	log.info("\ntenantId : {}\nlinkId : {}\nflowId : {}\n",this.tenantId,this.linkId, this.flowId);
-    	if (this.vlan != 0 || this.srcMac != null && this.dstMac != null) {
-    	if (this.tenantId != 0 && this.linkId != 0 && this.flowId != 0) {
+        if (this.tenantId != 0 && this.linkId != 0 && this.flowId != 0) {
+            if (this.vlan != 0 || this.srcMac != null && this.dstMac != null) {
                 return true;
             }
         }
@@ -243,7 +240,6 @@ public class OVXLinkUtils {
      * @return the flow id
      */
     public Integer getFlowId() {
-//    	this.log.info("Called getFlowId");
         return this.flowId;
     }
 
@@ -318,11 +314,6 @@ public class OVXLinkUtils {
         }
     }
     
-    //byyu
-    public void rewriteEdgeMatch(final OFMatch match) {
-    	match.setWildcards(3145970 & (~OFMatch.OFPFW_NW_DST_ALL) & (~OFMatch.OFPFW_NW_SRC_ALL) & (~OFMatch.OFPFW_DL_TYPE));
-    }
-
     /**
      * Gets a list of actions based on the current instance.
      *
@@ -334,7 +325,8 @@ public class OVXLinkUtils {
                 .getOvxLinkField();
         if (linkField == OVXLinkField.MAC_ADDRESS) {
             actions.add(new OFActionDataLayerSource(this.getSrcMac().toBytes()));
-            actions.add(new OFActionDataLayerDestination(this.getDstMac().toBytes()));
+            actions.add(new OFActionDataLayerDestination(this.getDstMac()
+                    .toBytes()));
         } else if (linkField == OVXLinkField.VLAN) {
             actions.add(new OFActionVirtualLanIdentifier(this.getVlan()));
         }

@@ -30,7 +30,6 @@ import net.onrc.openvirtex.api.service.handlers.TenantHandler;
 import net.onrc.openvirtex.db.DBManager;
 import net.onrc.openvirtex.elements.Mappable;
 import net.onrc.openvirtex.elements.OVXMap;
-import net.onrc.openvirtex.elements.address.IPMapper;
 import net.onrc.openvirtex.elements.datapath.OVXFlowTable;
 import net.onrc.openvirtex.elements.datapath.OVXSwitch;
 import net.onrc.openvirtex.elements.port.OVXPort;
@@ -45,14 +44,11 @@ import net.onrc.openvirtex.messages.actions.OVXActionOutput;
 import net.onrc.openvirtex.packet.Ethernet;
 import net.onrc.openvirtex.routing.RoutingAlgorithms;
 import net.onrc.openvirtex.routing.RoutingAlgorithms.RoutingType;
-import net.onrc.openvirtex.util.MACAddress;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openflow.protocol.OFFlowMod;
 import org.openflow.protocol.action.OFAction;
-import org.openflow.protocol.action.OFActionDataLayerDestination;
-import org.openflow.protocol.action.OFActionDataLayerSource;
 import org.openflow.protocol.action.OFActionOutput;
 import org.openflow.protocol.action.OFActionType;
 import org.openflow.util.U8;
@@ -392,24 +388,13 @@ public class OVXLink extends Link<OVXPort, OVXSwitch> {
 
         for (final PhysicalLink phyLink : plinks) {
             if (outPort != null) {
-                inPort = phyLink.getSrcPort();
-//                int actLenght = 0;
-                
+                inPort = phyLink.getSrcPort();   
                 fm.getMatch().setInputPort(inPort.getPortNumber());
                 fm.setActions(Arrays.asList((OFAction) new OFActionOutput(
                         outPort.getPortNumber(), (short) 0xffff)));
-                //byyu
-//                fm.getMatch().setDataLayerSource(MACAddress.valueOf(this.tenantId).toBytes());
-//                fm.getMatch().setDataLayerDestination(MACAddress.valueOf(phyLink.getSrcPort().getParentSwitch().getSwitchId()).toBytes());
-//                fm.getActions().add(new OFActionDataLayerSource(MACAddress.valueOf(this.tenantId).toBytes()));
-//                fm.getActions().add(new OFActionDataLayerDestination(MACAddress.valueOf(phyLink.getDstPort().getParentSwitch().getSwitchId()).toBytes()));
-//                
+
                 fm.setLengthU(OVXFlowMod.MINIMUM_LENGTH + OVXActionOutput.MINIMUM_LENGTH);
-//                for (final OFAction act : fm.getActions()) {
-//                    actLenght += act.getLengthU();
-//                }
-//                fm.setLengthU(OFFlowMod.MINIMUM_LENGTH + actLenght);
-                
+
                 phyLink.getSrcPort().getParentSwitch()
                         .sendMsg(fm, phyLink.getSrcPort().getParentSwitch());
                 this.log.info(

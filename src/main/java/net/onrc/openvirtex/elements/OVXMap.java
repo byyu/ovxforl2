@@ -31,7 +31,6 @@ import net.onrc.openvirtex.elements.address.OVXIPAddress;
 import net.onrc.openvirtex.elements.address.PhysicalIPAddress;
 import net.onrc.openvirtex.elements.datapath.OVXSwitch;
 import net.onrc.openvirtex.elements.datapath.PhysicalSwitch;
-import net.onrc.openvirtex.elements.host.Host;
 import net.onrc.openvirtex.elements.link.OVXLink;
 import net.onrc.openvirtex.elements.link.PhysicalLink;
 import net.onrc.openvirtex.elements.network.OVXNetwork;
@@ -70,10 +69,6 @@ public final class OVXMap implements Mappable {
     private RadixTree<OVXIPAddress> physicalIPMap;
     private RadixTree<ConcurrentHashMap<Integer, PhysicalIPAddress>> virtualIPMap;
     private RadixTree<Integer> macMap;
-  //byyu
-    private ConcurrentHashMap<MACAddress, Host> macHostMap;
-    private ConcurrentHashMap<Long, Integer> linktenantMap;
-    private ConcurrentHashMap<Long, OVXLink> linkidMap;
 
     /**
      * Creates a new map instance, by initializing all mapping data structures.
@@ -92,10 +87,6 @@ public final class OVXMap implements Mappable {
                 new DefaultCharArrayNodeFactory());
         this.macMap = new ConcurrentRadixTree<Integer>(
                 new DefaultCharArrayNodeFactory());
-      //byyu
-        this.macHostMap = new ConcurrentHashMap<MACAddress, Host>();
-        this.linktenantMap = new ConcurrentHashMap<Long, Integer>();
-        this.linkidMap = new ConcurrentHashMap<Long, OVXLink>();
     }
 
     /**
@@ -707,43 +698,6 @@ public final class OVXMap implements Mappable {
         this.routetoPhyLinkMap.remove(route);
     }
 
-    //byyu
-    public void addMacHost(MACAddress mac, Host host){
-    	macHostMap.put(mac, host);
-    	log.debug("Host Mac map addition : Host {} , MACAddress {}",host.toString(),mac.toString());
-    }
-    
-    public Host getHostbyMAC(MACAddress mac){
-    	return macHostMap.get(mac);
-    }
-    
-    public void removeMacHost(MACAddress mac){
-    	macHostMap.remove(mac);
-    }
-    
-    public void addLinkTenant(long linkId, int tenantId){
-    	linktenantMap.put(linkId, tenantId);
-    	
-    }
-    
-    public Integer gettenantIdbyLinkId(long linkId){
-    	if(linktenantMap.contains(linkId))
-    		return linktenantMap.get(linkId);
-		return 0;
-    }
-    
-    public void addLinkid(long linkId, OVXLink ovxLink){
-    	linkidMap.put(linkId, ovxLink);
-    }
-    
-    public OVXLink getLinkbyid(long linkId){
-    	return linkidMap.get(linkId);
-    }
-    
-    public void removeLinkidbyid(long linkId){
-    	linkidMap.remove(linkId);
-    }
-    
     /**
      * Removes the given route that use the given physical link from the map.
      *

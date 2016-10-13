@@ -16,7 +16,6 @@
 package net.onrc.openvirtex.routing;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -44,11 +43,9 @@ import net.onrc.openvirtex.elements.link.PhysicalLink;
 import net.onrc.openvirtex.elements.port.OVXPort;
 import net.onrc.openvirtex.elements.port.PhysicalPort;
 import net.onrc.openvirtex.exceptions.DroppedMessageException;
-import net.onrc.openvirtex.exceptions.IndexOutOfBoundException;
 import net.onrc.openvirtex.exceptions.LinkMappingException;
 import net.onrc.openvirtex.exceptions.NetworkMappingException;
 import net.onrc.openvirtex.messages.OVXFlowMod;
-import net.onrc.openvirtex.packet.Ethernet;
 import net.onrc.openvirtex.util.MACAddress;
 
 import org.apache.logging.log4j.LogManager;
@@ -330,11 +327,10 @@ public class SwitchRoute extends Link<OVXPort, PhysicalSwitch> implements
          * last FM to rewrite the MACs - generate the route FMs
          */
         //byyu
-        Integer flowId = 0;
-        final OVXLink link = this.getDstPort().getLink().getOutLink();
-        Integer linkId = link.getLinkId();
+//        Integer flowId = 0;
+//        final OVXLink link = this.getDstPort().getLink().getOutLink();
+//        Integer linkId = link.getLinkId();
     
-        
         boolean edgeOut = this.getDstPort().isEdge();
 //        if (edgeOut) {
 //        	fm.getMatch().setWildcards(3145970 & (~OFMatch.OFPFW_NW_DST_ALL) & (~OFMatch.OFPFW_NW_SRC_ALL) & (~OFMatch.OFPFW_DL_TYPE));
@@ -401,7 +397,6 @@ public class SwitchRoute extends Link<OVXPort, PhysicalSwitch> implements
         Collections.reverse(reverseLinks);
 
         for (final PhysicalLink phyLink : reverseLinks) {
-        	this.log.info("\nThis fm : {}\nThis phyLink : {}",fm.toString(), phyLink.toString());
         	fm.getMatch().setWildcards((~OFMatch.OFPFW_IN_PORT) & (~OFMatch.OFPFW_DL_DST));
             if (outPort != null) {
             	outActions.clear();
@@ -412,10 +407,14 @@ public class SwitchRoute extends Link<OVXPort, PhysicalSwitch> implements
                 
                 
                 //byyu
-                fm.getMatch().setDataLayerSource(MACAddress.valueOf(this.sw.getTenantId()).toBytes());
-                fm.getMatch().setDataLayerDestination(MACAddress.valueOf(outPort.getParentSwitch().getSwitchId()).toBytes());
-                outActions.add(new OFActionDataLayerSource(MACAddress.valueOf(this.sw.getTenantId()).toBytes()));
-                outActions.add(new OFActionDataLayerDestination(MACAddress.valueOf(outPort.getLink().getOutLink().getDstSwitch().getSwitchId()).toBytes()));
+                fm.getMatch().setDataLayerSource(
+                		MACAddress.valueOf(this.sw.getTenantId()).toBytes());
+                fm.getMatch().setDataLayerDestination(
+                		MACAddress.valueOf(outPort.getParentSwitch().getSwitchId()).toBytes());
+                outActions.add(new OFActionDataLayerSource(
+                		MACAddress.valueOf(this.sw.getTenantId()).toBytes()));
+                outActions.add(new OFActionDataLayerDestination(
+                		MACAddress.valueOf(outPort.getLink().getOutLink().getDstSwitch().getSwitchId()).toBytes()));
                 
                 outActions.add(new OFActionOutput(
                         outPort.getPortNumber(), (short) 0xffff));
@@ -426,7 +425,11 @@ public class SwitchRoute extends Link<OVXPort, PhysicalSwitch> implements
         		fm.setLengthU(OFFlowMod.MINIMUM_LENGTH + actLenght);
         		
                 if(edgeOut){
-                	fm.getMatch().setWildcards(3145970 & (~OFMatch.OFPFW_NW_DST_ALL) & (~OFMatch.OFPFW_NW_SRC_ALL) & (~OFMatch.OFPFW_DL_TYPE));
+                	fm.getMatch().setWildcards(3145970 & 
+                			(~OFMatch.OFPFW_NW_DST_ALL) & 
+                			(~OFMatch.OFPFW_NW_SRC_ALL) & 
+                			(~OFMatch.OFPFW_DL_TYPE));
+                	
                 	phyLink.getSrcPort().getParentSwitch()
                 	.sendMsg(fm, phyLink.getSrcPort().getParentSwitch());
                 	SwitchRoute.log.info(
