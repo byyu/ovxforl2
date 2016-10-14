@@ -151,6 +151,8 @@ public class OVXLinkUtils {
     /**
      *  Instantiates a new link utils from tenantId, linkId, flowId and virtual switch.
      *  Automatically encapsulate and set these values in the MAC addresses.
+     *  This is new address assign techniuqe that Source MAC address is tenantId , Destination MAC address is next Switch Id
+     *  We find next switch by linkId, flowId and current switch.
      *  
      * @param tenantId
      * 				the tenant id
@@ -313,7 +315,7 @@ public class OVXLinkUtils {
             match.setDataLayerVirtualLan(this.getVlan());
         }
     }
-    
+
     /**
      * Gets a list of actions based on the current instance.
      *

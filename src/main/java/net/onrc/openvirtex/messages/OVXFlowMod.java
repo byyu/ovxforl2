@@ -332,6 +332,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
 			return false;
     }
     
+    //byyu
     private IPAddress getHostIP(Host host){
     	if(host!=null)
     		return host.getIp();
@@ -339,6 +340,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
     		return null;
     }
     
+    //byyu
     private Host getHostbyMACAddress(byte[] mac){
     	OVXMap map = OVXMap.getInstance();
     	

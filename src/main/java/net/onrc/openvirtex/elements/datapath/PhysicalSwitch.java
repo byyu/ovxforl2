@@ -52,8 +52,9 @@ public class PhysicalSwitch extends Switch<PhysicalPort> {
     private AtomicReference<Map<Short, OVXPortStatisticsReply>> portStats;
     private AtomicReference<Map<Integer, List<OVXFlowStatisticsReply>>> flowStats;
 
-    //byyu
+    // The Physical Flow Entry Table manage physical flow rule
     private PhysicalFlowEntry phyFlowentry;
+    
     /**
      * Unregisters OVXSwitches and associated virtual elements mapped to this
      * PhysicalSwitch. Called by unregister() when the PhysicalSwitch is torn

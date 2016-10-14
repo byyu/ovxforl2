@@ -467,7 +467,7 @@ public abstract class OVXSwitch extends Switch<OVXPort> implements Persistable {
     public FlowTable getFlowTable() {
         return this.flowTable;
     }
-    
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -552,7 +552,6 @@ public abstract class OVXSwitch extends Switch<OVXPort> implements Persistable {
             }
         } catch (final ClassCastException e) {
             OVXSwitch.log.error("Received illegal message: " + msg);
-            e.printStackTrace();
         }
     }
 
@@ -610,11 +609,6 @@ public abstract class OVXSwitch extends Switch<OVXPort> implements Persistable {
     public OVXFlowMod deleteFlowMod(final Long cookie) {
         return this.flowTable.deleteFlowMod(cookie);
     }
-    
-//    public PhysicalFlowEntry getPhysicalFlowEntry(){
-//    	
-//    	return this.phyFlowentry;
-//    }
 
     /**
      * Extracts the vendor-specific (Nicira) role.
@@ -676,8 +670,6 @@ public abstract class OVXSwitch extends Switch<OVXPort> implements Persistable {
         vendor.setLengthU(OFVendor.MINIMUM_LENGTH + reply.getLength());
         channel.write(Collections.singletonList(vendor));
     }
-    
-   
 
     /**
      * Generates a new XID for messages destined for the physical network.
