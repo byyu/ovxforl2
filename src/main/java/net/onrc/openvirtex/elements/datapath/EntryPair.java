@@ -13,6 +13,8 @@ import net.onrc.openvirtex.util.MACAddress;
 /**
  * This class is to store physical rule set aggregated rule.
  * Rule is matched by Match and Output Number And stored by cookie number.
+ * 
+ * 
  */
 public class EntryPair {
 	

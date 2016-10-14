@@ -269,7 +269,7 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
         }
         return vswitch;
     }
-    
+    //byyu
     private int fetchFlowId(final OFMatch match, final int tenantId,
     		Mappable map){
     	Host srcHost, dstHost;

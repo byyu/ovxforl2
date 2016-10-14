@@ -388,7 +388,7 @@ public class OVXLink extends Link<OVXPort, OVXSwitch> {
 
         for (final PhysicalLink phyLink : plinks) {
             if (outPort != null) {
-                inPort = phyLink.getSrcPort();   
+                inPort = phyLink.getSrcPort();
                 fm.getMatch().setInputPort(inPort.getPortNumber());
                 fm.setActions(Arrays.asList((OFAction) new OFActionOutput(
                         outPort.getPortNumber(), (short) 0xffff)));
@@ -397,7 +397,7 @@ public class OVXLink extends Link<OVXPort, OVXSwitch> {
 
                 phyLink.getSrcPort().getParentSwitch()
                         .sendMsg(fm, phyLink.getSrcPort().getParentSwitch());
-                this.log.info(
+                this.log.debug(
                         "Sending virtual link intermediate fm to sw {}: {}",
                         phyLink.getSrcPort().getParentSwitch().getSwitchName(),
                         fm);
