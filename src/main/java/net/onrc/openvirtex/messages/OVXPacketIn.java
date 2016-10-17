@@ -264,6 +264,7 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
             try {
                 vswitch = map.getVirtualSwitch(psw, this.tenantId);
             } catch (SwitchMappingException e) {
+            	log.warn("TenantId : {}", this.tenantId);
                 log.warn("Cannot fetch non-mapped OVXSwitch: {}", e);
             }
         }
