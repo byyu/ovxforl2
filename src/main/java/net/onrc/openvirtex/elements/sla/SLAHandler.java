@@ -11,12 +11,12 @@ public final class SLAHandler {
     private static AtomicReference<SLAHandler> SLAInstance = new AtomicReference<>();
 
 	private final Map<Integer, Integer> tenantSLAMap;
-    private final Map<Long, Integer> switchSLAMap;
     private final Map<Integer, Integer> flowSLAMap;
+    private final Map<Integer, HashMap<Long, Integer>> tenantSwitchSLAMap;
     
     private SLAHandler(){
     	this.tenantSLAMap = new HashMap<Integer, Integer>();
-    	this.switchSLAMap = new HashMap<Long, Integer>();
+    	this.tenantSwitchSLAMap = new HashMap<Integer, HashMap<Long, Integer>>();
     	this.flowSLAMap = new HashMap<Integer, Integer>();
     }
     
@@ -24,8 +24,13 @@ public final class SLAHandler {
     	this.tenantSLAMap.put(tenantId, sla);
     }
     
-    public void setSwitchSLA(long switchId, int sla){
-    	this.switchSLAMap.put(switchId, sla);
+    public void setSwitchSLA(int tenantId, long switchId, int sla){
+    	HashMap<Long, Integer> switchSLAMap = this.tenantSwitchSLAMap.get(tenantId);
+    	if(switchSLAMap == null){
+    		switchSLAMap = new HashMap<Long, Integer>();
+    	}
+    	switchSLAMap.put(switchId, sla);
+    	this.tenantSwitchSLAMap.put(tenantId, switchSLAMap);
     }
     
     public void setFlowSLA(int flowId, int sla){
@@ -36,8 +41,10 @@ public final class SLAHandler {
     	this.tenantSLAMap.remove(tenantId);
     }
     
-    public void removeSwitchSLA(int switchId){
-    	this.switchSLAMap.remove(switchId);
+    public void removeSwitchSLA(int tenantId, int switchId){
+    	HashMap<Long, Integer> switchSLAMap = this.tenantSwitchSLAMap.get(tenantId);
+    	switchSLAMap.remove(switchId);
+    	this.tenantSwitchSLAMap.put(tenantId, switchSLAMap);
     }
     
     public void removeFlowSLA(int flowId){
@@ -46,9 +53,9 @@ public final class SLAHandler {
     
     public void processSLA(int tenantId, long switchId, int flowId, OFMatch ofmatch){
     	Integer tenantSLA, switchSLA, flowSLA;
-    	tenantSLA = tenantSLAMap.get(tenantId);
-    	switchSLA = switchSLAMap.get(switchId);
-    	flowSLA = flowSLAMap.get(flowId);
+    	tenantSLA = this.tenantSLAMap.get(tenantId);
+    	switchSLA = this.tenantSwitchSLAMap.get(tenantId).get(switchId);
+    	flowSLA = this.flowSLAMap.get(flowId);
     	
     	SLAManager slaManager = new SLAManager();
     	

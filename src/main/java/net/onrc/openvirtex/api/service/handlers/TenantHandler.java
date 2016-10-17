@@ -29,9 +29,12 @@ import net.onrc.openvirtex.api.service.handlers.tenant.DisconnectOVXLink;
 import net.onrc.openvirtex.api.service.handlers.tenant.RemoveOVXNetwork;
 import net.onrc.openvirtex.api.service.handlers.tenant.RemoveOVXPort;
 import net.onrc.openvirtex.api.service.handlers.tenant.RemoveOVXSwitch;
+import net.onrc.openvirtex.api.service.handlers.tenant.SetFlowSLA;
 import net.onrc.openvirtex.api.service.handlers.tenant.DisconnectOVXRoute;
 import net.onrc.openvirtex.api.service.handlers.tenant.SetOVXBigSwitchRouting;
 import net.onrc.openvirtex.api.service.handlers.tenant.SetOVXLinkPath;
+import net.onrc.openvirtex.api.service.handlers.tenant.SetSwitchSLA;
+import net.onrc.openvirtex.api.service.handlers.tenant.SetTenantSLA;
 import net.onrc.openvirtex.api.service.handlers.tenant.StartOVXNetwork;
 import net.onrc.openvirtex.api.service.handlers.tenant.StartOVXPort;
 import net.onrc.openvirtex.api.service.handlers.tenant.StartOVXSwitch;
@@ -144,6 +147,12 @@ public class TenantHandler extends AbstractHandler implements RequestHandler {
      * Keyword for the boot state.
      */
     public static final String IS_BOOTED = "isBooted";
+    
+    //byyu
+    /**
+     * Keyword for the SLA.
+     */
+    public static final String SLA = "sla";
 
     @SuppressWarnings({ "serial", "rawtypes" })
     private HashMap<String, ApiHandler> handlers = new HashMap<String, ApiHandler>() {
@@ -172,6 +181,10 @@ public class TenantHandler extends AbstractHandler implements RequestHandler {
             this.put("stopNetwork", new StopOVXNetwork());
             this.put("stopSwitch", new StopOVXSwitch());
             this.put("stopPort", new StopOVXPort());
+            //byyu
+            this.put("setTenantSLA", new SetTenantSLA());
+            this.put("setSwitchSLA", new SetSwitchSLA());
+            this.put("setFlowSLA", new SetFlowSLA());
         }
     };
 
@@ -181,7 +194,8 @@ public class TenantHandler extends AbstractHandler implements RequestHandler {
         return this.handlers.keySet().toArray(new String[] {});
     }
 
-    @Override
+
+	@Override
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public JSONRPC2Response process(final JSONRPC2Request req,
             final MessageContext ctxt) {

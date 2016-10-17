@@ -48,6 +48,7 @@ import net.onrc.openvirtex.exceptions.InvalidRouteException;
 import net.onrc.openvirtex.exceptions.InvalidTenantIdException;
 import net.onrc.openvirtex.exceptions.MissingRequiredField;
 import net.onrc.openvirtex.exceptions.NetworkMappingException;
+import net.onrc.openvirtex.exceptions.SLAValueException;
 import net.onrc.openvirtex.exceptions.SwitchMappingException;
 import net.onrc.openvirtex.exceptions.VirtualLinkException;
 import net.onrc.openvirtex.routing.SwitchRoute;
@@ -460,6 +461,18 @@ public final class HandlerUtils {
             }
             oldLink = link;
         }
+    }
+    
+    /**
+     * Checks that the SLA value is valid.
+     * @throws SLAValueException 
+     */
+    public static void isValidSLA(final int sla) throws SLAValueException{
+    	int value = sla;
+    	if(value > 3 || value <0 ){
+    		throw new SLAValueException(
+    				"This SLA value is undefined");
+    	}
     }
 
     /**
