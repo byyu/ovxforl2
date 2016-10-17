@@ -30,6 +30,7 @@ import net.onrc.openvirtex.elements.host.Host;
 import net.onrc.openvirtex.elements.link.OVXLink;
 import net.onrc.openvirtex.elements.link.OVXLinkUtils;
 import net.onrc.openvirtex.elements.port.OVXPort;
+import net.onrc.openvirtex.elements.sla.SLAHandler;
 import net.onrc.openvirtex.exceptions.ActionVirtualizationDenied;
 import net.onrc.openvirtex.exceptions.DroppedMessageException;
 import net.onrc.openvirtex.exceptions.NetworkMappingException;
@@ -214,8 +215,10 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
             						& (~OFMatch.OFPFW_DL_TYPE)
             						& (~OFMatch.OFPFW_NW_DST_MASK)
             						& (~OFMatch.OFPFW_NW_SRC_MASK));
+                        }else{
+                        	SLAHandler slaHandler = SLAHandler.getInstance();
+                        	slaHandler.processSLA(sw.getTenantId(), sw.getSwitchId(), flowId, this.match);
                         }
-                        
                     }
                 }
             }
@@ -228,6 +231,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
                     "OVXFlowMod. Error retrieving flowId in network with id {} for flowMod {}. Dropping packet...",
                     this.sw.getTenantId(), this);
         }
+
         this.computeLength();
         
         if(!isedgeOut){

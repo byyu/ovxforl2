@@ -6,17 +6,17 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.openflow.protocol.OFMatch;
 
-public class SLAHandler {
+public final class SLAHandler {
     
     private static AtomicReference<SLAHandler> SLAInstance = new AtomicReference<>();
 
 	private final Map<Integer, Integer> tenantSLAMap;
-    private final Map<Integer, Integer> switchSLAMap;
+    private final Map<Long, Integer> switchSLAMap;
     private final Map<Integer, Integer> flowSLAMap;
     
     private SLAHandler(){
     	this.tenantSLAMap = new HashMap<Integer, Integer>();
-    	this.switchSLAMap = new HashMap<Integer, Integer>();
+    	this.switchSLAMap = new HashMap<Long, Integer>();
     	this.flowSLAMap = new HashMap<Integer, Integer>();
     }
     
@@ -24,7 +24,7 @@ public class SLAHandler {
     	this.tenantSLAMap.put(tenantId, sla);
     }
     
-    public void setSwitchSLA(int switchId, int sla){
+    public void setSwitchSLA(long switchId, int sla){
     	this.switchSLAMap.put(switchId, sla);
     }
     
@@ -44,7 +44,7 @@ public class SLAHandler {
     	this.flowSLAMap.remove(flowId);
     }
     
-    public void processSLA(int tenantId, int switchId, int flowId, OFMatch ofmatch){
+    public void processSLA(int tenantId, long switchId, int flowId, OFMatch ofmatch){
     	Integer tenantSLA, switchSLA, flowSLA;
     	tenantSLA = tenantSLAMap.get(tenantId);
     	switchSLA = switchSLAMap.get(switchId);
