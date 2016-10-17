@@ -60,17 +60,22 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
 
     private long ovxCookie = -1;
 
+	// To measure processing time of FlowMod message
     long startTime, endTime;
     
     @Override
     public void devirtualize(final OVXSwitch sw) {
     	
+    	// To measure processing time of FlowMod message
     	startTime = System.nanoTime();
         /* Drop LLDP-matching messages sent by some applications */
         if (this.match.getDataLayerType() == Ethernet.TYPE_LLDP) {
             return;
         }
+        
+        //To install rule statically
         this.hardTimeout = 300;
+        
         this.sw = sw;
         FlowTable ft = this.sw.getFlowTable();
 
