@@ -58,6 +58,8 @@ import com.thetransactioncompany.jsonrpc2.server.RequestHandler;
  */
 public class TenantHandler extends AbstractHandler implements RequestHandler {
 
+	Logger log = LogManager.getLogger(TenantHandler.class.getName());
+	
     /**
      * Keyword for controller URLs.
      */
@@ -202,7 +204,7 @@ public class TenantHandler extends AbstractHandler implements RequestHandler {
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public JSONRPC2Response process(final JSONRPC2Request req,
             final MessageContext ctxt) {
-
+		this.log.info(req.toJSONString());
         final ApiHandler m = this.handlers.get(req.getMethod());
         if (m != null) {
 
@@ -225,8 +227,7 @@ public class TenantHandler extends AbstractHandler implements RequestHandler {
                 break;
             }
         }
-        Logger log = LogManager.getLogger(TenantHandler.class.getName());
-        log.info(m.toString()+"\n\n"+m.getType().toString());
+
         return new JSONRPC2Response(JSONRPC2Error.METHOD_NOT_FOUND, req.getID());
     }
 }
