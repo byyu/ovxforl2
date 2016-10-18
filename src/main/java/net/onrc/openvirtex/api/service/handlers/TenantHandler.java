@@ -222,7 +222,7 @@ public class TenantHandler extends AbstractHandler implements RequestHandler {
                 break;
             }
         }
-
+        System.out.print(m.getType().toString());
         return new JSONRPC2Response(JSONRPC2Error.METHOD_NOT_FOUND, req.getID());
     }
 }
