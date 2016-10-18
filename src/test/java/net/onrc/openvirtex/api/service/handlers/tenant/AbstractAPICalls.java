@@ -351,6 +351,53 @@ public class AbstractAPICalls extends TestCase {
 
         return sp.process(request);
     }
+    
+    public JSONRPC2Response setTenantSLA(final int tenantId, final int sla){
+    	final SetTenantSLA sts = new SetTenantSLA();
+    	
+    	@SuppressWarnings("serial")
+    	final HashMap<String, Object> request = new HashMap<String, Object>(){
+    		{
+    			this.put(TenantHandler.TENANT, tenantId);
+    			this.put(TenantHandler.SLA, sla);
+    		}
+    	};
+    	
+    	return sts.process(request);
+    }
+    
+    public JSONRPC2Response setSwitchSLA(final int tenantId, final long switchId,final int sla){
+    	final SetSwitchSLA sss = new SetSwitchSLA();
+    	
+    	@SuppressWarnings("serial")
+    	final HashMap<String, Object> request = new HashMap<String, Object>(){
+    		{
+    			this.put(TenantHandler.TENANT, tenantId);
+    			this.put(TenantHandler.VDPID, switchId);
+    			this.put(TenantHandler.SLA, sla);
+    		}
+    	};
+    	
+    	return sss.process(request);
+    }
+    
+    public JSONRPC2Response setFlowSLA(final int tenantId, final int host1Id, final int host2Id, final int sla){
+    	final SetFlowSLA sfs = new SetFlowSLA();
+    	
+    	@SuppressWarnings("serial")
+    	final HashMap<String, Object> request = new HashMap<String, Object>(){
+    		{
+    			this.put(TenantHandler.TENANT, tenantId);
+    			this.put(TenantHandler.HOST, host1Id);
+    			this.put(TenantHandler.HOST, host2Id);
+    			this.put(TenantHandler.SLA, sla);
+    		}
+    	};
+    	
+    	return sfs.process(request);
+    }
+    
+    
 
     public void testPassing() {
         /* Make JUnit happy */
