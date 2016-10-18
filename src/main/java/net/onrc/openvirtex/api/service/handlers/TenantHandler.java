@@ -17,6 +17,9 @@ package net.onrc.openvirtex.api.service.handlers;
 
 import java.util.HashMap;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import net.onrc.openvirtex.api.service.handlers.tenant.AddController;
 import net.onrc.openvirtex.api.service.handlers.tenant.ConnectHost;
 import net.onrc.openvirtex.api.service.handlers.tenant.ConnectOVXLink;
@@ -222,7 +225,8 @@ public class TenantHandler extends AbstractHandler implements RequestHandler {
                 break;
             }
         }
-        System.out.print(m.getType().toString());
+        Logger log = LogManager.getLogger(TenantHandler.class.getName());
+        log.info(m.toString()+"\n\n"+m.getType().toString());
         return new JSONRPC2Response(JSONRPC2Error.METHOD_NOT_FOUND, req.getID());
     }
 }
