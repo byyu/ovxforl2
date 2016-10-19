@@ -158,6 +158,10 @@ public class TenantHandler extends AbstractHandler implements RequestHandler {
      * Keyword for the SLA.
      */
     public static final String SLA = "sla";
+    /**
+     * Keyword for the another host
+     */
+    public static final String HOST1 = "host1Id";
 
     @SuppressWarnings({ "serial", "rawtypes" })
     private HashMap<String, ApiHandler> handlers = new HashMap<String, ApiHandler>() {
