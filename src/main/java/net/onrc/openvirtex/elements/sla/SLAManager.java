@@ -23,11 +23,11 @@ public class SLAManager {
 				}
 				
 			case Host_isolation :
-				ofmatch.setWildcards((~OFMatch.OFPFW_DL_SRC) & (~OFMatch.OFPFW_NW_DST_MASK)
+				ofmatch.setWildcards(wcd.getInt() & (~OFMatch.OFPFW_DL_SRC) & (~OFMatch.OFPFW_NW_DST_MASK)
 						& (~OFMatch.OFPFW_NW_SRC_MASK) & (~OFMatch.OFPFW_DL_TYPE));
 				
 			case Service_isolation :
-				ofmatch.setWildcards((~OFMatch.OFPFW_DL_SRC) & (~OFMatch.OFPFW_DL_TYPE)
+				ofmatch.setWildcards(wcd.getInt() &(~OFMatch.OFPFW_DL_SRC) & (~OFMatch.OFPFW_DL_TYPE)
 						& (~OFMatch.OFPFW_NW_DST_MASK) & (~OFMatch.OFPFW_NW_SRC_MASK) & (~OFMatch.OFPFW_TP_DST)
 						& (~OFMatch.OFPFW_TP_SRC));
 		}
