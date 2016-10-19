@@ -4,10 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openflow.protocol.OFMatch;
 
 public final class SLAHandler {
-    
+	Logger log = LogManager.getLogger(SLAHandler.class.getName());
+	
     private static AtomicReference<SLAHandler> SLAInstance = new AtomicReference<>();
 
 	private final Map<Integer, Integer> tenantSLAMap;
@@ -53,7 +56,10 @@ public final class SLAHandler {
     
     public void processSLA(int tenantId, long switchId, int flowId, OFMatch ofmatch){
     	Integer tenantSLA, switchSLA, flowSLA;
-    	tenantSLA = this.tenantSLAMap.get(tenantId);
+    	
+    	try{
+    		tenantSLA = this.tenantSLAMap.get(tenantId);
+    	
     	switchSLA = this.tenantSwitchSLAMap.get(tenantId).get(switchId);
     	flowSLA = this.flowSLAMap.get(flowId);
     	
@@ -75,6 +81,9 @@ public final class SLAHandler {
     	if(tenantSLA != null){
         	slaManager.SLArewriteMatch(ofmatch, tenantSLA);
         	return;
+    	}
+    	}catch(NullPointerException e){
+    		log.error("Not setted SLA Level");
     	}
 
     	
