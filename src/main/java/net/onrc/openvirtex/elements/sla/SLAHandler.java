@@ -71,7 +71,7 @@ public final class SLAHandler {
     	
     	SLAManager slaManager = new SLAManager();
     	
-    	if(istenantSLA | isSwitchSLA | isflowSLA){
+    	if(!istenantSLA & !isSwitchSLA & !isflowSLA){
     		return ;
     	}
     	
