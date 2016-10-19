@@ -90,7 +90,9 @@ public final class SLAHandler {
     	}
     	if(istenantSLA){
         	tenantSLA = this.tenantSLAMap.get(tenantId);
+        	this.log.info("\norigin wildcard : {}", ofmatch.getWildcards());
         	slaManager.SLArewriteMatch(ofmatch, tenantSLA);
+        	this.log.info("\nprocessed wildcard : {}", ofmatch.getWildcards());
         	this.log.info("tenantSLA setting.. tenantId : {}, sla_level : {}", tenantId, tenantSLA);
         	return;
     	}	
