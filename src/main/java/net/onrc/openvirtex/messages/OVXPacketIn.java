@@ -126,7 +126,7 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
             return;
 		}
            vSwitch = this.fetchOVXSwitch(sw, vSwitch, map);
-           
+           log.info("This packet is : {}, {}", eth.getDestinationMAC().toString(), eth.getSourceMAC().toString());
            int flowId = this.fetchFlowId(match, tenantId, map);
 
             // rewrite the OFMatch with the values of the link
@@ -287,12 +287,14 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
     	try {
 			srcHost = map.getVirtualNetwork(tenantId).getHost(new PhysicalIPAddress(match.getNetworkSource()));
 			dstHost = map.getVirtualNetwork(tenantId).getHost(new PhysicalIPAddress(match.getNetworkDestination()));
-			
 			return map.getVirtualNetwork(tenantId).getFlowManager().getFlowId(srcHost.getMac().toBytes(), dstHost.getMac().toBytes());
 		} catch (NetworkMappingException e) {
 			return 0; // illegal tenant ID
 		} catch (DroppedMessageException e) {
 			return 0; // illegal 
+		} catch (NullPointerException e){
+			this.log.warn("Host of this flow isn't registered");
+			return 0;
 		}
 
     }

@@ -50,8 +50,10 @@ public class SetFlowSLA extends ApiHandler<Map<String, Object>>{
 				int flowId = OVXMap.getInstance().getVirtualNetwork(tenantId.intValue()).getFlowManager().getFlowId(h1.getMac().getAddress(),h2.getMac().getAddress());
 				
 				SLAHandler slaHandler = SLAHandler.getInstance();
-				slaHandler.setFlowSLA(flowId, sla.intValue());
+				slaHandler.setFlowSLA(tenantId.intValue(), flowId, sla.intValue());
 				
+				flowId = OVXMap.getInstance().getVirtualNetwork(tenantId.intValue()).getFlowManager().getFlowId(h2.getMac().getAddress(),h1.getMac().getAddress());
+				slaHandler.setFlowSLA(tenantId.intValue(), flowId, sla.intValue());
 				Map<String, Object> reply = new HashMap<String, Object>();
 				reply.put(TenantHandler.SLA, sla.intValue());
 				reply.put(TenantHandler.HOST, host1.intValue());

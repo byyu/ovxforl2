@@ -14,13 +14,13 @@ public final class SLAHandler {
     private static AtomicReference<SLAHandler> SLAInstance = new AtomicReference<>();
 
 	private final Map<Integer, Integer> tenantSLAMap;
-    private final Map<Integer, Integer> flowSLAMap;
+	private final Map<Integer, HashMap<Integer, Integer>> tenantFlowSLAMap;
     private final Map<Integer, HashMap<Long, Integer>> tenantSwitchSLAMap;
     
     private SLAHandler(){
     	this.tenantSLAMap = new HashMap<Integer, Integer>();
     	this.tenantSwitchSLAMap = new HashMap<Integer, HashMap<Long, Integer>>();
-    	this.flowSLAMap = new HashMap<Integer, Integer>();
+    	this.tenantFlowSLAMap = new HashMap<Integer, HashMap<Integer, Integer>>();
     }
     
     public void setTenantSLA(int tenantId, int sla){
@@ -38,9 +38,14 @@ public final class SLAHandler {
     	this.tenantSwitchSLAMap.put(tenantId, switchSLAMap);
     }
     
-    public void setFlowSLA(int flowId, int sla){
+    public void setFlowSLA(int tenantId, int flowId, int sla){
     	this.log.info("Set flow SLA flowId : {}, SLA_level : {}", flowId, sla);
-    	this.flowSLAMap.put(flowId, sla);
+    	HashMap<Integer, Integer> flowSLAMap = this.tenantFlowSLAMap.get(tenantId);
+    	if(flowSLAMap ==null){
+    		flowSLAMap = new HashMap<Integer, Integer>();
+    	}
+    	flowSLAMap.put(flowId, sla);
+    	this.tenantFlowSLAMap.put(tenantId, flowSLAMap);
     }
     
     public void removeTenantSLA(int tenantId){
@@ -53,8 +58,10 @@ public final class SLAHandler {
     	this.tenantSwitchSLAMap.put(tenantId, switchSLAMap);
     }
     
-    public void removeFlowSLA(int flowId){
-    	this.flowSLAMap.remove(flowId);
+    public void removeFlowSLA(int tenantId, int flowId){
+    	HashMap<Integer, Integer> flowSLAMap = this.tenantFlowSLAMap.get(tenantId);
+    	flowSLAMap.remove(flowId);
+    	this.tenantFlowSLAMap.put(tenantId, flowSLAMap);
     }
     
     public void processSLA(int tenantId, long switchId, int flowId, OFMatch ofmatch){
@@ -67,11 +74,16 @@ public final class SLAHandler {
     	}else{
     		isSwitchSLA = false;
     	}
-    	isflowSLA = this.flowSLAMap.containsKey(flowId);
+    	if(this.tenantFlowSLAMap.containsKey(tenantId)){
+    		isflowSLA = this.tenantFlowSLAMap.get(tenantId).containsKey(flowId);
+    	}else{
+    		isflowSLA = false;
+    	}
     	
     	SLAManager slaManager = new SLAManager();
     	
     	if(!istenantSLA & !isSwitchSLA & !isflowSLA){
+    		ofmatch.setWildcards((~OFMatch.OFPFW_IN_PORT) & (~OFMatch.OFPFW_DL_DST));
     		return ;
     	}
     	
@@ -83,7 +95,7 @@ public final class SLAHandler {
     	}
     	
     	if(isflowSLA){
-    		flowSLA = this.flowSLAMap.get(flowId);
+    		flowSLA = this.tenantFlowSLAMap.get(tenantId).get(flowId);
         	slaManager.SLArewriteMatch(ofmatch, flowSLA);
         	this.log.info("flowSLA setting.. flowId : {}, sla_level : {}", flowId, flowSLA);
         	return;
