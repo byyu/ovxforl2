@@ -36,7 +36,7 @@ public class SetFlowSLA extends ApiHandler<Map<String, Object>>{
 				final Number host1 = HandlerUtils.<Number>fetchField(
 						TenantHandler.HOST, params, true, null);
 				final Number host2 = HandlerUtils.<Number>fetchField(
-						TenantHandler.HOST, params, true, null);
+						TenantHandler.HOST1, params, true, null);
 				final Number sla = HandlerUtils.<Number>fetchField(
 						TenantHandler.SLA, params, true, null);
 				

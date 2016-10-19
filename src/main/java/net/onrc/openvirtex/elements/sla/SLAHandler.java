@@ -24,10 +24,12 @@ public final class SLAHandler {
     }
     
     public void setTenantSLA(int tenantId, int sla){
+    	this.log.info("Set tenant SLA id : {}, sla_level : {}", tenantId, sla);
     	this.tenantSLAMap.put(tenantId, sla);
     }
     
     public void setSwitchSLA(int tenantId, long switchId, int sla){
+    	this.log.info("Set Switch SLA tenantid : {}, switchId : {}, SLA_level : {}", tenantId, switchId, sla );
     	HashMap<Long, Integer> switchSLAMap = this.tenantSwitchSLAMap.get(tenantId);
     	if(switchSLAMap == null){
     		switchSLAMap = new HashMap<Long, Integer>();
@@ -37,6 +39,7 @@ public final class SLAHandler {
     }
     
     public void setFlowSLA(int flowId, int sla){
+    	this.log.info("Set flow SLA flowId : {}, SLA_level : {}", flowId, sla);
     	this.flowSLAMap.put(flowId, sla);
     }
     
@@ -56,39 +59,43 @@ public final class SLAHandler {
     
     public void processSLA(int tenantId, long switchId, int flowId, OFMatch ofmatch){
     	Integer tenantSLA, switchSLA, flowSLA;
-    	
-    	try{
-    		tenantSLA = this.tenantSLAMap.get(tenantId);
-    	
-    	switchSLA = this.tenantSwitchSLAMap.get(tenantId).get(switchId);
-    	flowSLA = this.flowSLAMap.get(flowId);
+    	this.log.info("processSLA.. tenantId : {}, switchId : {}, flowId : {}", tenantId, switchId, flowId);
+    	boolean istenantSLA, isSwitchSLA, isflowSLA;
+    	istenantSLA = this.tenantSLAMap.containsKey(tenantId);
+    	if(this.tenantSwitchSLAMap.containsKey(tenantId)){
+    		isSwitchSLA = this.tenantSwitchSLAMap.get(tenantId).containsKey(switchId);
+    	}else{
+    		isSwitchSLA = false;
+    	}
+    	isflowSLA = this.flowSLAMap.containsKey(flowId);
     	
     	SLAManager slaManager = new SLAManager();
     	
-    	if(tenantSLA == null && switchSLA == null && flowSLA == null){
+    	if(istenantSLA | isSwitchSLA | isflowSLA){
     		return ;
     	}
     	
-    	if(switchSLA !=null){
+    	if(isSwitchSLA){
+    		switchSLA = this.tenantSwitchSLAMap.get(tenantId).get(switchId);
     		slaManager.SLArewriteMatch(ofmatch, switchSLA);
+    		this.log.info("switchSLA setting.. tenantId : {}, switchId : {}, sla_level : {}", tenantId, switchId, switchSLA);
     		return;
     	}
     	
-    	if(flowSLA != null){
+    	if(isflowSLA){
+    		flowSLA = this.flowSLAMap.get(flowId);
         	slaManager.SLArewriteMatch(ofmatch, flowSLA);
+        	this.log.info("flowSLA setting.. flowId : {}, sla_level : {}", flowId, flowSLA);
         	return;
     	}
-    	if(tenantSLA != null){
+    	if(istenantSLA){
+        	tenantSLA = this.tenantSLAMap.get(tenantId);
         	slaManager.SLArewriteMatch(ofmatch, tenantSLA);
+        	this.log.info("tenantSLA setting.. tenantId : {}, sla_level : {}", tenantId, tenantSLA);
         	return;
-    	}
-    	}catch(NullPointerException e){
-    		log.error("Not setted SLA Level");
-    	}
-
-    	
-    	
+    	}	
     }
+    
     public static SLAHandler getInstance() {
         SLAHandler.SLAInstance.compareAndSet(null, new SLAHandler());
         return SLAHandler.SLAInstance.get();
