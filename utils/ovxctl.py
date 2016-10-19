@@ -344,7 +344,7 @@ def do_startSwitch(gopts, opts, args):
         print "Switch (switch_id %s) has been booted in virtual network (tenant_id %s)" % (args[1], args[0])
 
 def pa_startPort(args, cmd):
-    usage = "%s <tenant_id> <virtual_dpid>" % USAGE.format(cmd)
+    usage = "%s <tenant_id> <virtual_dpid> <virtual_port>" % USAGE.format(cmd)
     (sdesc, ldesc) = DESCS[cmd]
     parser = OptionParser(usage=usage, description=ldesc)
     return parser.parse_args(args)    
@@ -358,7 +358,7 @@ def do_startPort(gopts, opts, args):
     tenantId = reply.get('tenantId')
     switchId = reply.get('vdpid')
     portId = reply.get('vport')
-    if tenantId and switchId and hostId:
+    if tenantId and switchId and portId:
         print "Port (port_id %s) has been started in virtual switch (tenant_id %s, switch_id %s)" % (portId, tenantId, switchId)
 
 def pa_stopNetwork(args, cmd):
@@ -392,7 +392,7 @@ def do_stopSwitch(gopts, opts, args):
         print "Switch (switch_id %s) has been shutdown in virtual network (tenant_id %s)" % (args[1], args[0])
 
 def pa_stopPort(args, cmd):
-    usage = "%s <tenant_id> <virtual_dpid>" % USAGE.format(cmd)
+    usage = "%s <tenant_id> <virtual_dpid> <virtual_port>" % USAGE.format(cmd)
     (sdesc, ldesc) = DESCS[cmd]
     parser = OptionParser(usage=usage, description=ldesc)
     return parser.parse_args(args)    
@@ -550,6 +550,48 @@ def do_getVirtualTopology(gopts, opts, args):
     result = connect(gopts, "status", "getVirtualTopology", data=req, passwd=getPasswd(gopts))
     print json.dumps(result)
         
+def pa_setTenantSLA(args, cmd):
+    usage = "%s <tenant_id> <sla>" % USAGE.format(cmd)
+    (sdesc, ldesc) = DESCS[cmd]
+    parser = OptionParser(usage=usage, description=ldesc)
+    return parser.parse_args(args)
+
+def do_setTenantSLA(gopts, opts, args):
+    if len(args) != 2:
+        print "setTenantSLA : Must specify tenant_id and sla level"
+        sys.exit()
+    req = { "tenantId": int(args[0]), "sla" : int(args[1]) }
+    result = connect(gopts, "tenant", "setTenantSLA", data=req, passwd=getPasswd(gopts))
+    print json.dumps(result)
+
+def pa_setSwitchSLA(args, cmd):
+    usage = "%s <tenant_id> <switch_id> <sla>" % USAGE.format(cmd)
+    (sdesc, ldesc) = DESCS[cmd]
+    parser = OptionParser(usage=usage, description=ldesc)
+    return parser.parse_args(args)
+
+def do_setSwitchSLA(gopts, opts, args):
+    if len(args) != 3:
+        print "setSwitchSLA : Must specify tenant_id, switch_id and sla level"
+        sys.exit()
+    req = { "tenantId": int(args[0]), "vdpid" : int(args[1].replace(":", ""), 16), "sla" : int(args[2]) }
+    result = connect(gopts, "tenant", "setSwitchSLA", data=req, passwd=getPasswd(gopts))
+    print json.dumps(result)
+
+def pa_setFlowSLA(args, cmd):
+    usage = "%s <tenant_id> <host_id> <host_id> <sla>" % USAGE.format(cmd)
+    (sdesc, ldesc) = DESCS[cmd]
+    parser = OptionParser(usage=usage, description=ldesc)
+    return parser.parse_args(args)
+
+def do_setFlowSLA(gopts, opts, args):
+    if len(args) != 4:
+        print "setFlowSLA : Must specify tenant_id, host_id, host_id and sla level"
+        sys.exit()
+    req = { "tenantId": int(args[0]), "hostId": int(args[1]), "host1Id": int(args[2]), "sla": int(args[3]) }
+    result = connect(gopts, "tenant", "setFlowSLA", data=req, passwd=getPasswd(gopts))
+    print json.dumps(result)
+
 # Other methods
 
 def translate_path(path_string):
@@ -669,6 +711,9 @@ CMDS = {
     'getVirtualSwitchMapping': (pa_getVirtualSwitchMapping, do_getVirtualSwitchMapping),
     'getVirtualTopology': (pa_getVirtualTopology, do_getVirtualTopology),
     
+    'setTenantSLA': (pa_setTenantSLA, do_setTenantSLA),
+    'setSwitchSLA': (pa_setSwitchSLA, do_setSwitchSLA),
+    'setFlowSLA': (pa_setFlowSLA, do_setFlowSLA),
     'help' : (pa_help, do_help)
 }
 
@@ -776,7 +821,14 @@ DESCS = {
                                "\nExample: getVirtualSwitchMapping 1")),
     'getVirtualTopology' : ("Get the virtual topology",
                                  ("Get the virtual topology. Must specify a tenant_id.",
-                               "\nExample: getVirtualTopology 1"))
+                               "\nExample: getVirtualTopology 1")),
+
+    'setTenantSLA' : ("Set the tenant SLA", ("Set the tenant SLA. Must specify a tenant_id and SLA level.",
+                        "\nExample: setTenantSLA 1 2")),
+    'setSwitchSLA' : ("Set the switch SLA", ("set the switch SLA. Must specify a tenant_id, switch_id and SLA level",
+                        "\nExample: setSwitchSLA 1 00:a4:23:05:00:00:00:01 1")),
+    'setFlowSLA' : ("Set the flow SLA", ("set the flow SLA. Must specify a tenant_id, host_id, host_id and SLA level",
+                        "\nExample: setFlowSLA 1 1 2"))
 }
 
 USAGE="%prog {}"
