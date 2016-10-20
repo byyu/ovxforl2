@@ -549,7 +549,7 @@ def do_getVirtualTopology(gopts, opts, args):
     req = { "tenantId": int(args[0]) }
     result = connect(gopts, "status", "getVirtualTopology", data=req, passwd=getPasswd(gopts))
     print json.dumps(result)
-        
+
 # Other methods
 
 def translate_path(path_string):

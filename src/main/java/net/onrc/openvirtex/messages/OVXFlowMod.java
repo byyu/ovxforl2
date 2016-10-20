@@ -164,19 +164,20 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         this.getMatch().setInputPort(inPort.getPhysicalPortNumber());
         OVXMessageUtil.translateXid(this, inPort);
         
-        //byyu
+        //Get physical flow entry table.
         PhysicalFlowEntry phyFlowEntry  = inPort.getPhysicalPort().getParentSwitch().getEntrytable();
 
         boolean isedgeOut=true;
         boolean duflag=false;
         
         //this.idleTimeout = 5;
+        //Setting default wildcard.
         this.match.setWildcards((~OFMatch.OFPFW_IN_PORT) & (~OFMatch.OFPFW_DL_DST));
       
         
         try {
+        	//When inPort is edge, check all condition contained IPv4 addresses. 
             if (inPort.isEdge()) {
-            	//byyu
             	match.setWildcards((OFMatch.OFPFW_ALL) & (~OFMatch.OFPFW_IN_PORT)
             						& (~OFMatch.OFPFW_DL_SRC)
             						& (~OFMatch.OFPFW_DL_DST)
@@ -210,7 +211,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
                                 sw.getTenantId(), link.getLinkId(), flowId, link.getSrcSwitch());
                         lUtils.rewriteMatch(this.getMatch());
                         
-                        //byyu
+                        //Check out port is edge and when out prot is edge, check all condition.
                         isedgeOut = isEdgeOutport();
                         if(isedgeOut){
                         	match.setWildcards((OFMatch.OFPFW_ALL) & (~OFMatch.OFPFW_IN_PORT)
@@ -235,12 +236,13 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         }
         this.computeLength();
         
+        //In core, check that rule is duplicated.
         if(!isedgeOut){
         	duflag = phyFlowEntry.checkduplicate(this);
         	this.log.info("DuFlag is {}\n\n", duflag);
         }
         
-        //byyu
+        //Rule is not set in switch, then send south.
         if(!duflag && pflag){
         	this.flags |= OFFlowMod.OFPFF_SEND_FLOW_REM;
         	sw.sendSouth(this, inPort);
@@ -314,7 +316,10 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         this.cookie = tmp;
     }
 
-    //byyu
+    /**
+     * Check outport which indicate output action is edge.
+     * @return
+     */
     private boolean isEdgeOutport(){
     	OVXPort outPort;
     	
