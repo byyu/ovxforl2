@@ -31,6 +31,7 @@ import net.onrc.openvirtex.elements.link.OVXLink;
 import net.onrc.openvirtex.elements.link.OVXLinkUtils;
 import net.onrc.openvirtex.elements.port.OVXPort;
 import net.onrc.openvirtex.elements.sla.SLAHandler;
+import net.onrc.openvirtex.elements.sla.SLAManager;
 import net.onrc.openvirtex.exceptions.ActionVirtualizationDenied;
 import net.onrc.openvirtex.exceptions.DroppedMessageException;
 import net.onrc.openvirtex.exceptions.NetworkMappingException;
@@ -49,6 +50,7 @@ import org.openflow.protocol.OFFlowMod;
 import org.openflow.protocol.OFMatch;
 import org.openflow.protocol.Wildcards.Flag;
 import org.openflow.protocol.action.OFAction;
+import org.openflow.protocol.action.OFActionDataLayerSource;
 import org.openflow.protocol.action.OFActionType;
 
 public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
@@ -62,10 +64,10 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
     private long ovxCookie = -1;
 
     long startTime, endTime;
-    
+    int sla_level;
     @Override
     public void devirtualize(final OVXSwitch sw) {
-    	
+    	sla_level = 0;
     	startTime = System.nanoTime();
         /* Drop LLDP-matching messages sent by some applications */
         if (this.match.getDataLayerType() == Ethernet.TYPE_LLDP) {
@@ -100,23 +102,50 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         	}
         }
         
-        for (final OFAction act : this.getActions()) {
-            try {
-                ((VirtualizableAction) act).virtualize(sw,
-                        this.approvedActions, ovxMatch);
-            } catch (final ActionVirtualizationDenied e) {
-                this.log.warn("Action {} could not be virtualized; error: {}",
-                        act, e.getMessage());
-                ft.deleteFlowMod(ovxCookie);
-                sw.sendMsg(OVXMessageUtil.makeError(e.getErrorCode(), this), sw);
-                return;
-            } catch (final DroppedMessageException e) {
-                this.log.warn("Dropping flowmod {}", this);
-                ft.deleteFlowMod(ovxCookie);
-                // TODO perhaps send error message to controller
-                return;
-            }
+        Integer flowId;
+		try {
+			flowId = sw
+			        .getMap()
+			        .getVirtualNetwork(sw.getTenantId())
+			        .getFlowManager()
+			        .getFlowId(this.match.getDataLayerSource(),
+			                this.match.getDataLayerDestination());
+			SLAHandler slaHandler = SLAHandler.getInstance();
+			if(this.match.getTransportDestination()!=0 && this.match.getTransportSource()!=0){
+				this.sla_level = slaHandler.processSLA(sw.getTenantId(), sw.getSwitchId(), flowId, this.match.getTransportSource(), this.match.getTransportDestination(), this.match);
+			}else{
+				this.sla_level = slaHandler.processSLA(sw.getTenantId(), sw.getSwitchId(), flowId, this.match);
+				
+			}
+		} catch (NetworkMappingException e) {
+            log.warn(
+                    "OVXFlowMod. Error retrieving the network with id {} for flowMod {}. Dropping packet...",
+                    this.sw.getTenantId(), this);
+        } catch (DroppedMessageException e) {
+            log.warn(
+                    "OVXFlowMod. Error retrieving flowId in network with id {} for flowMod {}. Dropping packet...",
+                    this.sw.getTenantId(), this);
         }
+        
+    	if(sla_level !=5){
+    		for (final OFAction act : this.getActions()) {
+    			try {
+    				((VirtualizableAction) act).virtualize(sw,
+    						this.approvedActions, ovxMatch);
+    			} catch (final ActionVirtualizationDenied e) {
+    				this.log.warn("Action {} could not be virtualized; error: {}",
+    						act, e.getMessage());
+    				ft.deleteFlowMod(ovxCookie);
+    				sw.sendMsg(OVXMessageUtil.makeError(e.getErrorCode(), this), sw);
+    				return;
+    			} catch (final DroppedMessageException e) {
+    				this.log.warn("Dropping flowmod {}", this);
+    				ft.deleteFlowMod(ovxCookie);
+    				// TODO perhaps send error message to controller
+    				return;
+    			}
+    		}
+    	}
 
         final OVXPort ovxInPort = sw.getPort(inport);
         this.setBufferId(bufferId);
@@ -176,7 +205,13 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
             						& (~OFMatch.OFPFW_DL_DST)
             						& (~OFMatch.OFPFW_DL_TYPE)
             						& (~OFMatch.OFPFW_NW_DST_MASK)
-            						& (~OFMatch.OFPFW_NW_SRC_MASK));
+            						& (~OFMatch.OFPFW_NW_SRC_MASK)
+            						& (~OFMatch.OFPFW_TP_DST)
+            						& (~OFMatch.OFPFW_TP_SRC)
+            						& (~OFMatch.OFPFW_NW_PROTO));
+            	if(sla_level == 5){
+                	this.approvedActions.add(new OFActionDataLayerSource(MACAddress.valueOf(sw.getTenantId()).toBytes()));
+            	}
             } else {
 //                IPMapper.rewriteMatch(sw.getTenantId(), this.match);
                 // TODO: Verify why we have two send points... and if this is
@@ -213,9 +248,16 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
             						& (~OFMatch.OFPFW_DL_TYPE)
             						& (~OFMatch.OFPFW_NW_DST_MASK)
             						& (~OFMatch.OFPFW_NW_SRC_MASK));
+                        	if(sla_level == 5){
+                        		this.match.setDataLayerSource(MACAddress.valueOf(sw.getTenantId()).toBytes());
+                        	}
                         }else{
-                        	SLAHandler slaHandler = SLAHandler.getInstance();
-                        	slaHandler.processSLA(sw.getTenantId(), sw.getSwitchId(), flowId, this.match);
+                        	SLAManager slaManager = new SLAManager();
+                        	slaManager.SLArewriteMatch(this.match, sla_level);
+                        	if(sla_level == 5){
+                            	this.approvedActions.add(new OFActionDataLayerSource(MACAddress.valueOf(sw.getTenantId()).toBytes()));
+                            	
+                        	}
                         }
                     }
                 }

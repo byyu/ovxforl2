@@ -1,7 +1,6 @@
 package net.onrc.openvirtex.elements.sla;
 
 import org.openflow.protocol.OFMatch;
-import org.openflow.protocol.Wildcards;
 import org.openflow.protocol.Wildcards.Flag;
 
 public class SLAManager {
@@ -9,16 +8,18 @@ public class SLAManager {
 	final public static int Hop_isolation = 1;
 	final public static int Host_isolation = 2;
 	final public static int Service_isolation = 3;
+	final public static int isolation = 4;
 	
 	
 	public void SLArewriteMatch(OFMatch ofmatch, int sla_level){
 		switch(sla_level){
 			case Hop_no_isolation :
 		        ofmatch.setWildcards((~OFMatch.OFPFW_IN_PORT) & (~OFMatch.OFPFW_DL_DST));
+		        return ;
 		        
 			case Hop_isolation :
 					ofmatch.setWildcards(OFMatch.OFPFW_ALL & (~OFMatch.OFPFW_DL_DST) & (~OFMatch.OFPFW_IN_PORT) & (~OFMatch.OFPFW_DL_SRC));
-				return;
+				return ;
 				
 			case Host_isolation :
 				ofmatch.setWildcards(OFMatch.OFPFW_ALL & (~OFMatch.OFPFW_DL_DST) & (~OFMatch.OFPFW_IN_PORT) 
@@ -31,6 +32,14 @@ public class SLAManager {
 						& (~OFMatch.OFPFW_NW_DST_MASK) & (~OFMatch.OFPFW_NW_SRC_MASK) & (~OFMatch.OFPFW_TP_DST)
 						& (~OFMatch.OFPFW_TP_SRC));
 				return;
+			case isolation :
+				if(ofmatch.getWildcardObj().isWildcarded(Flag.DL_SRC)){
+	    			ofmatch.setWildcards(ofmatch.getWildcards() & (~OFMatch.OFPFW_DL_SRC));
+	    		}
+	    		if(ofmatch.getWildcardObj().isWildcarded(Flag.IN_PORT)){
+	    			ofmatch.setWildcards(ofmatch.getWildcards() & (~OFMatch.OFPFW_IN_PORT));
+	    		}
+	    		return ;
 			
 		}
 			

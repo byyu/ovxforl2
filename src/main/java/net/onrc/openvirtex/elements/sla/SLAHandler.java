@@ -86,7 +86,7 @@ public final class SLAHandler {
     	this.tenantFlowSLAMap.put(tenantId, flowSLAMap);
     }
     
-    public void processSLA(int tenantId, long switchId, int flowId, OFMatch ofmatch){
+    public int processSLA(int tenantId, long switchId, int flowId, OFMatch ofmatch){
     	Integer tenantSLA, switchSLA, flowSLA;
     	this.log.info("processSLA.. tenantId : {}, switchId : {}, flowId : {}", tenantId, switchId, flowId);
     	boolean istenantSLA, isSwitchSLA, isflowSLA;
@@ -102,38 +102,40 @@ public final class SLAHandler {
     		isflowSLA = false;
     	}
     	
-    	SLAManager slaManager = new SLAManager();
+//    	SLAManager slaManager = new SLAManager();
 
     	if(!istenantSLA && !isSwitchSLA && !isflowSLA){
     		ofmatch.setWildcards((~OFMatch.OFPFW_IN_PORT) & (~OFMatch.OFPFW_DL_DST));
-    		return ;
+    		return 0;
     	}
     	
     	if(isSwitchSLA){
     		switchSLA = this.tenantSwitchSLAMap.get(tenantId).get(switchId);
-    		slaManager.SLArewriteMatch(ofmatch, switchSLA);
+//    		slaManager.SLArewriteMatch(ofmatch, switchSLA);
     		this.log.info("switchSLA setting.. tenantId : {}, switchId : {}, sla_level : {}", tenantId, switchId, switchSLA);
-    		return;
+    		return switchSLA;
     	}
     	
     	if(isflowSLA){
     		flowSLA = this.tenantFlowSLAMap.get(tenantId).get(flowId);
-        	slaManager.SLArewriteMatch(ofmatch, flowSLA);
+//        	slaManager.SLArewriteMatch(ofmatch, flowSLA);
         	this.log.info("flowSLA setting.. flowId : {}, sla_level : {}", flowId, flowSLA);
-        	return;
+        	return flowSLA;
     	}
     	
     	if(istenantSLA){
         	tenantSLA = this.tenantSLAMap.get(tenantId);
         	this.log.info("\norigin wildcard : {}", ofmatch.getWildcards());
-        	slaManager.SLArewriteMatch(ofmatch, tenantSLA);
+//        	slaManager.SLArewriteMatch(ofmatch, tenantSLA);
         	this.log.info("\nprocessed wildcard : {}", ofmatch.getWildcards());
         	this.log.info("tenantSLA setting.. tenantId : {}, sla_level : {}", tenantId, tenantSLA);
-        	return;
+        	return tenantSLA;
     	}	
+    	
+    	return 0;
     }
     
-    public void processSLA(int tenantId, long switchId, int flowId, int srcPort, int dstPort, OFMatch ofmatch){
+    public int processSLA(int tenantId, long switchId, int flowId, int srcPort, int dstPort, OFMatch ofmatch){
     	Integer tenantSLA, switchSLA, flowSLA, serviceSLA;
     	this.log.info("processSLA.. tenantId : {}, switchId : {}, flowId : {}, srcPort : {}, dstPort : {}", tenantId, switchId, flowId, srcPort, dstPort);
     	boolean istenantSLA, isSwitchSLA, isflowSLA, isServiceSLA;
@@ -157,48 +159,50 @@ public final class SLAHandler {
     		isServiceSLA = false;
     	}
     	
-    	SLAManager slaManager = new SLAManager();
+//    	SLAManager slaManager = new SLAManager();
     	
     	if(!istenantSLA && !isSwitchSLA && !isflowSLA && !isServiceSLA){
     		ofmatch.setWildcards((~OFMatch.OFPFW_IN_PORT) & (~OFMatch.OFPFW_DL_DST));
-    		return ;
+    		return 0;
     	}
     	
     	if(isSwitchSLA){
     		switchSLA = this.tenantSwitchSLAMap.get(tenantId).get(switchId);
-    		slaManager.SLArewriteMatch(ofmatch, switchSLA);
+//    		slaManager.SLArewriteMatch(ofmatch, switchSLA);
     		this.log.info("switchSLA setting.. tenantId : {}, switchId : {}, sla_level : {}", tenantId, switchId, switchSLA);
-    		return;
+    		return switchSLA;
     	}
     	
     	if(isflowSLA){
     		if(isServiceSLA){
     			serviceSLA = this.tenantServiceSLAMap.get(tenantId).get(dualPort);
-    			slaManager.SLArewriteMatch(ofmatch, serviceSLA);
+//    			slaManager.SLArewriteMatch(ofmatch, serviceSLA);
             	this.log.info("flowSLA setting.. srcPort : {}, dstPort: {}, sla_level : {}", dualPort.get(0), dualPort.get(1), serviceSLA);
-            	return;
+            	return serviceSLA;
     		}
     		flowSLA = this.tenantFlowSLAMap.get(tenantId).get(flowId);
-        	slaManager.SLArewriteMatch(ofmatch, flowSLA);
+//        	slaManager.SLArewriteMatch(ofmatch, flowSLA);
         	this.log.info("flowSLA setting.. flowId : {}, sla_level : {}", flowId, flowSLA);
-        	return;
+        	return flowSLA;
     	}
     	
     	if(isServiceSLA){
     		serviceSLA = this.tenantServiceSLAMap.get(tenantId).get(dualPort);
-			slaManager.SLArewriteMatch(ofmatch, serviceSLA);
+//			slaManager.SLArewriteMatch(ofmatch, serviceSLA);
         	this.log.info("flowSLA setting.. srcPort : {}, dstPort: {}, sla_level : {}", dualPort.get(0), dualPort.get(1), serviceSLA);
-        	return;
+        	return serviceSLA;
     	}
     	
     	if(istenantSLA){
         	tenantSLA = this.tenantSLAMap.get(tenantId);
         	this.log.info("\norigin wildcard : {}", ofmatch.getWildcards());
-        	slaManager.SLArewriteMatch(ofmatch, tenantSLA);
+//        	slaManager.SLArewriteMatch(ofmatch, tenantSLA);
         	this.log.info("\nprocessed wildcard : {}", ofmatch.getWildcards());
         	this.log.info("tenantSLA setting.. tenantId : {}, sla_level : {}", tenantId, tenantSLA);
-        	return;
-    	}	
+        	return tenantSLA;
+    	}
+    	
+    	return 0;
     }
     
     public static SLAHandler getInstance() {

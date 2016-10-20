@@ -470,7 +470,7 @@ public final class HandlerUtils {
      */
     public static void isValidSLA(final int sla) throws SLAValueException{
     	int value = sla;
-    	if(value > 3 || value <0 ){
+    	if(value > 4 || value <0 ){
     		throw new SLAValueException(
     				"This SLA value is undefined");
     	}
