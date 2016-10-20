@@ -33,6 +33,7 @@ import net.onrc.openvirtex.api.service.handlers.tenant.RemoveOVXNetwork;
 import net.onrc.openvirtex.api.service.handlers.tenant.RemoveOVXPort;
 import net.onrc.openvirtex.api.service.handlers.tenant.RemoveOVXSwitch;
 import net.onrc.openvirtex.api.service.handlers.tenant.SetFlowSLA;
+import net.onrc.openvirtex.api.service.handlers.tenant.SetFlowServiceSLA;
 import net.onrc.openvirtex.api.service.handlers.tenant.DisconnectOVXRoute;
 import net.onrc.openvirtex.api.service.handlers.tenant.SetOVXBigSwitchRouting;
 import net.onrc.openvirtex.api.service.handlers.tenant.SetOVXLinkPath;
@@ -204,6 +205,7 @@ public class TenantHandler extends AbstractHandler implements RequestHandler {
             this.put("setSwitchSLA", new SetSwitchSLA());
             this.put("setFlowSLA", new SetFlowSLA());
             this.put("setServiceSLA", new SetServiceSLA());
+            this.put("setFlowServiceSLA", new SetFlowServiceSLA());
         }
     };
 

@@ -606,6 +606,20 @@ def do_setServiceSLA(gopts, opts, args):
     result = connect(gopts, "tenant", "setServiceSLA", data=req, passwd=getPasswd(gopts))
     print json.dumps(result)
 
+def pa_setFlowServiceSLA(args, cmd):
+    usage = "%s <tenant_id> <host_id> <host_id> <tcp_port> <tcp_port> <sla>" % USAGE.format(cmd)
+    (sdesc, ldesc) = DESCS[cmd]
+    parser = OptionParser(usage=usage, description=ldesc)
+    return parser.parse_args(args)
+
+def do_setFlowServiceSLA(gopts, opts, args):
+    if len(args) != 6:
+        print "setFlowServiceSLA : Must specify tenant_id, host_id, host_id, tcp_port, tcp_port and sla level"
+        sys.exit()
+    req = { "tenantId": int(args[0]), "hostId": int(args[1]), "host1Id": int(args[2]), "tcpPort": int(args[3]), "tcp1Port": int(args[4]), "sla": int(args[5]) }
+    result = connect(gopts, "tenant", "setFlowServiceSLA", data=req, passwd=getPasswd(gopts))
+    print json.dumps(result)
+
 # Other methods
 
 def translate_path(path_string):
@@ -729,6 +743,7 @@ CMDS = {
     'setSwitchSLA': (pa_setSwitchSLA, do_setSwitchSLA),
     'setFlowSLA': (pa_setFlowSLA, do_setFlowSLA),
     'setServiceSLA' : (pa_setServiceSLA, do_setServiceSLA),
+    'setFlowServiceSLA' : (pa_setFlowServiceSLA, do_setFlowServiceSLA),
     'help' : (pa_help, do_help)
 }
 
@@ -838,6 +853,7 @@ DESCS = {
                                  ("Get the virtual topology. Must specify a tenant_id.",
                                "\nExample: getVirtualTopology 1")),
 
+    # About SLA
     'setTenantSLA' : ("Set the tenant SLA", ("Set the tenant SLA. Must specify a tenant_id and SLA level.",
                         "\nExample: setTenantSLA 1 2")),
     'setSwitchSLA' : ("Set the switch SLA", ("set the switch SLA. Must specify a tenant_id, switch_id and SLA level",
@@ -846,6 +862,7 @@ DESCS = {
                         "\nExample: setFlowSLA 1 1 2")),
     'setServiceSLA' : ("Set the Service SLA", ("set the service SLA. Must specify a tenant_id, tcp_port, tcp_port and SLA level",
                                                "\nExample: setServerSLA 1 6633 6633 3"))
+    'setFlowServiceSLA' : ("Set the Flow Service SLA", ("set the flow service SLA. Must specify a tenant_id, host_id, host_id, tcp_port, tcp_port and SLA level", "\nExample: setFlowServiceSLA 1 1 2 5001 5002 3"))
 }
 
 USAGE="%prog {}"

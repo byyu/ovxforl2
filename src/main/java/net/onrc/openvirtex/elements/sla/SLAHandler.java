@@ -18,12 +18,14 @@ public final class SLAHandler {
 	private final Map<Integer, HashMap<Integer, Integer>> tenantFlowSLAMap;
     private final Map<Integer, HashMap<Long, Integer>> tenantSwitchSLAMap;
     private final Map<Integer, HashMap<LinkedList<Integer>, Integer>> tenantServiceSLAMap;
+    private final Map<Integer, HashMap<LinkedList<Integer>, Integer>> tenantFlowServiceSLAMap;
     
     private SLAHandler(){
     	this.tenantSLAMap = new HashMap<Integer, Integer>();
     	this.tenantSwitchSLAMap = new HashMap<Integer, HashMap<Long, Integer>>();
     	this.tenantFlowSLAMap = new HashMap<Integer, HashMap<Integer, Integer>>();
     	this.tenantServiceSLAMap = new HashMap<Integer, HashMap<LinkedList<Integer>, Integer>>();
+    	this.tenantFlowServiceSLAMap = new HashMap<Integer, HashMap<LinkedList<Integer>, Integer>>();
     }
     
     public void setTenantSLA(int tenantId, int sla){
@@ -68,6 +70,27 @@ public final class SLAHandler {
     	dualPort.add(srcPort);
     	serviceSLAMap.put(dualPort, sla);
     	this.tenantServiceSLAMap.put(tenantId, serviceSLAMap);
+    }
+    
+    public void setFlowServiceSLA(int tenantId, int flowId, int srcPort, int dstPort, int sla){
+    	this.log.info("Set Flow Service SLA tenantid : {}, flowId : {}, srcPort : {}, dstPort : {}, SLA_level : {}", tenantId, flowId, srcPort, dstPort, sla);
+    	LinkedList<Integer> flowAndDualPort = new LinkedList<Integer>();
+    	flowAndDualPort.add(flowId);
+    	flowAndDualPort.add(srcPort);
+    	flowAndDualPort.add(dstPort);
+    	
+    	HashMap<LinkedList<Integer>, Integer> serviceSLAMap = this.tenantFlowServiceSLAMap.get(tenantId);
+    	if(serviceSLAMap == null){
+    		serviceSLAMap = new HashMap<LinkedList<Integer>, Integer>();
+    	}
+    	serviceSLAMap.put(flowAndDualPort, sla);
+    	
+    	flowAndDualPort.clear();
+    	flowAndDualPort.add(flowId);
+    	flowAndDualPort.add(dstPort);
+    	flowAndDualPort.add(srcPort);
+    	serviceSLAMap.put(flowAndDualPort, sla);
+    	this.tenantFlowServiceSLAMap.put(tenantId, serviceSLAMap);
     }
     
     public void removeTenantSLA(int tenantId){
@@ -136,9 +159,9 @@ public final class SLAHandler {
     }
     
     public int processSLA(int tenantId, long switchId, int flowId, int srcPort, int dstPort, OFMatch ofmatch){
-    	Integer tenantSLA, switchSLA, flowSLA, serviceSLA;
+    	Integer tenantSLA, switchSLA, flowSLA, serviceSLA, flowServiceSLA;
     	this.log.info("processSLA.. tenantId : {}, switchId : {}, flowId : {}, srcPort : {}, dstPort : {}", tenantId, switchId, flowId, srcPort, dstPort);
-    	boolean istenantSLA, isSwitchSLA, isflowSLA, isServiceSLA;
+    	boolean istenantSLA, isSwitchSLA, isflowSLA, isServiceSLA, isflowServiceSLA;
     	istenantSLA = this.tenantSLAMap.containsKey(tenantId);
     	if(this.tenantSwitchSLAMap.containsKey(tenantId)){
     		isSwitchSLA = this.tenantSwitchSLAMap.get(tenantId).containsKey(switchId);
@@ -159,11 +182,27 @@ public final class SLAHandler {
     		isServiceSLA = false;
     	}
     	
+    	LinkedList<Integer> flowAndDualPort = new LinkedList<Integer>();
+    	flowAndDualPort.add(flowId);
+    	flowAndDualPort.add(srcPort);
+    	flowAndDualPort.add(dstPort);
+    	
+    	if(this.tenantFlowServiceSLAMap.containsKey(tenantId)){
+    		isflowServiceSLA = this.tenantFlowServiceSLAMap.get(tenantId).containsKey(flowAndDualPort);
+    	}else{
+    		isflowServiceSLA = false;
+    	}
 //    	SLAManager slaManager = new SLAManager();
     	
-    	if(!istenantSLA && !isSwitchSLA && !isflowSLA && !isServiceSLA){
+    	if(!istenantSLA && !isSwitchSLA && !isflowSLA && !isServiceSLA && !isflowServiceSLA){
     		ofmatch.setWildcards((~OFMatch.OFPFW_IN_PORT) & (~OFMatch.OFPFW_DL_DST));
     		return 0;
+    	}
+    	
+    	if(isflowServiceSLA){
+    		flowServiceSLA = this.tenantFlowServiceSLAMap.get(tenantId).get(flowAndDualPort);
+    		this.log.info("flowServiceSLA setting.. tenantId : {}, flowId : {}, srcPort : {}, dstPort : {}, sla_level : {}", tenantId, flowId, srcPort, dstPort , flowServiceSLA);
+    		return flowServiceSLA;
     	}
     	
     	if(isSwitchSLA){
@@ -174,12 +213,6 @@ public final class SLAHandler {
     	}
     	
     	if(isflowSLA){
-    		if(isServiceSLA){
-    			serviceSLA = this.tenantServiceSLAMap.get(tenantId).get(dualPort);
-//    			slaManager.SLArewriteMatch(ofmatch, serviceSLA);
-            	this.log.info("flowSLA setting.. srcPort : {}, dstPort: {}, sla_level : {}", dualPort.get(0), dualPort.get(1), serviceSLA);
-            	return serviceSLA;
-    		}
     		flowSLA = this.tenantFlowSLAMap.get(tenantId).get(flowId);
 //        	slaManager.SLArewriteMatch(ofmatch, flowSLA);
         	this.log.info("flowSLA setting.. flowId : {}, sla_level : {}", flowId, flowSLA);

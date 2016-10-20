@@ -389,7 +389,7 @@ public class AbstractAPICalls extends TestCase {
     		{
     			this.put(TenantHandler.TENANT, tenantId);
     			this.put(TenantHandler.HOST, host1Id);
-    			this.put(TenantHandler.HOST, host2Id);
+    			this.put(TenantHandler.HOST1, host2Id);
     			this.put(TenantHandler.SLA, sla);
     		}
     	};
@@ -411,6 +411,24 @@ public class AbstractAPICalls extends TestCase {
     	};
     	
     	return sss.process(request);
+    }
+    
+    public JSONRPC2Response setFlowServiceSLA(final int tenantId, final int host1Id, final int host2Id, final int tcp1Port, final int tcp2Port, final int sla){
+    	final SetFlowServiceSLA sfss = new SetFlowServiceSLA();
+    	
+    	@SuppressWarnings("serial")
+    	final HashMap<String, Object> request = new HashMap<String, Object>(){
+    		{
+    			this.put(TenantHandler.TENANT, tenantId);
+    			this.put(TenantHandler.HOST, host1Id);
+    			this.put(TenantHandler.HOST1, host2Id);
+    			this.put(TenantHandler.TCPPORT, tcp1Port);
+    			this.put(TenantHandler.TCPPORT1, tcp2Port);
+    			this.put(TenantHandler.SLA, sla);
+    		}
+    	};
+    	
+    	return sfss.process(request);
     }
     
     
