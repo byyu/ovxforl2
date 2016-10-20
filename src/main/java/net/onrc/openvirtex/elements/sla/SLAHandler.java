@@ -82,7 +82,8 @@ public final class SLAHandler {
     	
     	SLAManager slaManager = new SLAManager();
     	
-    	if(!istenantSLA & !isSwitchSLA & !isflowSLA){
+
+    	if(!istenantSLA && !isSwitchSLA && !isflowSLA){
     		ofmatch.setWildcards((~OFMatch.OFPFW_IN_PORT) & (~OFMatch.OFPFW_DL_DST));
     		return ;
     	}
