@@ -861,8 +861,9 @@ DESCS = {
     'setFlowSLA' : ("Set the flow SLA", ("set the flow SLA. Must specify a tenant_id, host_id, host_id and SLA level",
                         "\nExample: setFlowSLA 1 1 2")),
     'setServiceSLA' : ("Set the Service SLA", ("set the service SLA. Must specify a tenant_id, tcp_port, tcp_port and SLA level",
-                                               "\nExample: setServerSLA 1 6633 6633 3"))
-    'setFlowServiceSLA' : ("Set the Flow Service SLA", ("set the flow service SLA. Must specify a tenant_id, host_id, host_id, tcp_port, tcp_port and SLA level", "\nExample: setFlowServiceSLA 1 1 2 5001 5002 3"))
+                                               "\nExample: setServerSLA 1 6633 6633 3")),
+    'setFlowServiceSLA' : ("Set the Flow Service SLA", ("set the flow service SLA. Must specify a tenant_id, host_id, host_id, tcp_port, tcp_port and SLA level",
+        "\nExample: setFlowServiceSLA 1 1 2 5001 5002 3"))
 }
 
 USAGE="%prog {}"
