@@ -58,6 +58,7 @@ public class SetFlowSLA extends ApiHandler<Map<String, Object>>{
 				reply.put(TenantHandler.SLA, sla.intValue());
 				reply.put(TenantHandler.HOST, host1.intValue());
 				reply.put(TenantHandler.HOST, host2.intValue());
+				reply.put(TenantHandler.TENANT, tenantId.intValue());
 				resp = new JSONRPC2Response(reply, 0);
 
 			} catch (MissingRequiredField e) {

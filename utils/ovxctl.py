@@ -592,6 +592,20 @@ def do_setFlowSLA(gopts, opts, args):
     result = connect(gopts, "tenant", "setFlowSLA", data=req, passwd=getPasswd(gopts))
     print json.dumps(result)
 
+def pa_setServiceSLA(args, cmd):
+    usage = "%s <tenant_id> <tcp_port> <tcp_port> <sla>" % USAGE.format(cmd)
+    (sdesc, ldesc) = DESCS[cmd]
+    parser = OptionParser(usage=usage, description=ldesc)
+    return parser.parse_args(args)
+
+def do_setServiceSLA(gopts, opts, args):
+    if len(args) != 4:
+        print "setServiceSLA : Must specify tenant_id, tcp_port, tcp_port and sla level"
+        sys.exit()
+    req = { "tenantId": int(args[0]), "tcpPort": int(args[1]), "tcp1Port": int(args[2]), "sla": int(args[3]) }
+    result = connect(gopts, "tenant", "setServiceSLA", data=req, passwd=getPasswd(gopts))
+    print json.dumps(result)
+
 # Other methods
 
 def translate_path(path_string):
@@ -714,6 +728,7 @@ CMDS = {
     'setTenantSLA': (pa_setTenantSLA, do_setTenantSLA),
     'setSwitchSLA': (pa_setSwitchSLA, do_setSwitchSLA),
     'setFlowSLA': (pa_setFlowSLA, do_setFlowSLA),
+    'setServiceSLA' : (pa_setServiceSLA, do_setServiceSLA),
     'help' : (pa_help, do_help)
 }
 
@@ -828,7 +843,9 @@ DESCS = {
     'setSwitchSLA' : ("Set the switch SLA", ("set the switch SLA. Must specify a tenant_id, switch_id and SLA level",
                         "\nExample: setSwitchSLA 1 00:a4:23:05:00:00:00:01 1")),
     'setFlowSLA' : ("Set the flow SLA", ("set the flow SLA. Must specify a tenant_id, host_id, host_id and SLA level",
-                        "\nExample: setFlowSLA 1 1 2"))
+                        "\nExample: setFlowSLA 1 1 2")),
+    'setServiceSLA' : ("Set the Service SLA", ("set the service SLA. Must specify a tenant_id, tcp_port, tcp_port and SLA level",
+                                               "\nExample: setServerSLA 1 6633 6633 3"))
 }
 
 USAGE="%prog {}"

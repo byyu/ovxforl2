@@ -397,6 +397,22 @@ public class AbstractAPICalls extends TestCase {
     	return sfs.process(request);
     }
     
+    public JSONRPC2Response setServiceSLA(final int tenantId, final int tcpPort, final int tcp1Port, final int sla){
+    	final SetServiceSLA sss = new SetServiceSLA();
+    	
+    	@SuppressWarnings("serial")
+    	final HashMap<String, Object> request = new HashMap<String, Object>(){
+    		{
+    			this.put(TenantHandler.TENANT, tenantId);
+    			this.put(TenantHandler.TCPPORT, tcpPort);
+    			this.put(TenantHandler.TCPPORT1, tcp1Port);
+    			this.put(TenantHandler.SLA, sla);
+    		}
+    	};
+    	
+    	return sss.process(request);
+    }
+    
     
 
     public void testPassing() {

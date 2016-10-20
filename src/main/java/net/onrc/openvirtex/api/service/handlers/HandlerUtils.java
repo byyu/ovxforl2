@@ -50,6 +50,7 @@ import net.onrc.openvirtex.exceptions.MissingRequiredField;
 import net.onrc.openvirtex.exceptions.NetworkMappingException;
 import net.onrc.openvirtex.exceptions.SLAValueException;
 import net.onrc.openvirtex.exceptions.SwitchMappingException;
+import net.onrc.openvirtex.exceptions.TCPPortException;
 import net.onrc.openvirtex.exceptions.VirtualLinkException;
 import net.onrc.openvirtex.routing.SwitchRoute;
 import net.onrc.openvirtex.util.MACAddress;
@@ -473,6 +474,13 @@ public final class HandlerUtils {
     		throw new SLAValueException(
     				"This SLA value is undefined");
     	}
+    }
+    
+    public static void isValidTCPPort(final int port) throws TCPPortException {
+    	int value = port;
+    	if(value<0)
+    		throw new TCPPortException(
+    				"This tcp port value is not reasonable");
     }
 
     /**

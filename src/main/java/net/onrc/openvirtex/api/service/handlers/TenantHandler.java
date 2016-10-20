@@ -36,6 +36,7 @@ import net.onrc.openvirtex.api.service.handlers.tenant.SetFlowSLA;
 import net.onrc.openvirtex.api.service.handlers.tenant.DisconnectOVXRoute;
 import net.onrc.openvirtex.api.service.handlers.tenant.SetOVXBigSwitchRouting;
 import net.onrc.openvirtex.api.service.handlers.tenant.SetOVXLinkPath;
+import net.onrc.openvirtex.api.service.handlers.tenant.SetServiceSLA;
 import net.onrc.openvirtex.api.service.handlers.tenant.SetSwitchSLA;
 import net.onrc.openvirtex.api.service.handlers.tenant.SetTenantSLA;
 import net.onrc.openvirtex.api.service.handlers.tenant.StartOVXNetwork;
@@ -162,6 +163,14 @@ public class TenantHandler extends AbstractHandler implements RequestHandler {
      * Keyword for the another host
      */
     public static final String HOST1 = "host1Id";
+    /**
+     * Keyword for the tcp port
+     */
+    public static final String TCPPORT = "tcpPort";
+    /**
+     * Keyword for the another tcp port
+     */
+    public static final String TCPPORT1 = "tcp1Port";
 
     @SuppressWarnings({ "serial", "rawtypes" })
     private HashMap<String, ApiHandler> handlers = new HashMap<String, ApiHandler>() {
@@ -194,6 +203,7 @@ public class TenantHandler extends AbstractHandler implements RequestHandler {
             this.put("setTenantSLA", new SetTenantSLA());
             this.put("setSwitchSLA", new SetSwitchSLA());
             this.put("setFlowSLA", new SetFlowSLA());
+            this.put("setServiceSLA", new SetServiceSLA());
         }
     };
 
