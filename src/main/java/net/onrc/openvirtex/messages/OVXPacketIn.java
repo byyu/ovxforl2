@@ -114,8 +114,15 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
             eth.deserialize(this.getPacketData(), 0,
                     this.getPacketData().length);
             
-         //byyu
            tenantId = (int) eth.getSourceMAC().toLong();
+           try{
+        	   sw.getMap().getVirtualNetwork(tenantId);
+           }catch(NetworkMappingException e1){
+        	   log.warn("PacketIn {} does not belong to any virtual network; "+"dropping and installing a temporary drop rule", this);
+        	   this.installDropRule(sw, match);
+        	   return;
+           }
+           
            vSwitch = this.fetchOVXSwitch(sw, vSwitch, map);
            
            int flowId = this.fetchFlowId(match, tenantId, map);
