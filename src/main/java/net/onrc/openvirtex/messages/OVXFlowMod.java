@@ -209,7 +209,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
             						& (~OFMatch.OFPFW_TP_DST)
             						& (~OFMatch.OFPFW_TP_SRC)
             						& (~OFMatch.OFPFW_NW_PROTO));
-            	if(sla_level == 5){
+            	if(sla_level == 4){
                 	this.approvedActions.add(new OFActionDataLayerSource(MACAddress.valueOf(sw.getTenantId()).toBytes()));
             	}
             } else {
@@ -248,13 +248,13 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
             						& (~OFMatch.OFPFW_DL_TYPE)
             						& (~OFMatch.OFPFW_NW_DST_MASK)
             						& (~OFMatch.OFPFW_NW_SRC_MASK));
-                        	if(sla_level == 5){
+                        	if(sla_level == 4){
                         		this.match.setDataLayerSource(MACAddress.valueOf(sw.getTenantId()).toBytes());
                         	}
                         }else{
                         	SLAManager slaManager = new SLAManager();
                         	slaManager.SLArewriteMatch(this.match, sla_level);
-                        	if(sla_level == 5){
+                        	if(sla_level == 4){
                             	this.approvedActions.add(new OFActionDataLayerSource(MACAddress.valueOf(sw.getTenantId()).toBytes()));
                             	
                         	}
