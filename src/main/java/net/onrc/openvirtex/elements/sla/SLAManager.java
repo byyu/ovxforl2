@@ -12,16 +12,12 @@ public class SLAManager {
 	
 	
 	public void SLArewriteMatch(OFMatch ofmatch, int sla_level){
-		OFMatch match = ofmatch;
-		Wildcards wcd = match.getWildcardObj();
 		switch(sla_level){
 			case Hop_no_isolation :
 		        ofmatch.setWildcards((~OFMatch.OFPFW_IN_PORT) & (~OFMatch.OFPFW_DL_DST));
 		        
 			case Hop_isolation :
-				if(!wcd.isWildcarded(Flag.DL_SRC)){
 					ofmatch.setWildcards(OFMatch.OFPFW_ALL & (~OFMatch.OFPFW_DL_DST) & (~OFMatch.OFPFW_IN_PORT) & (~OFMatch.OFPFW_DL_SRC));
-				}
 				return;
 				
 			case Host_isolation :

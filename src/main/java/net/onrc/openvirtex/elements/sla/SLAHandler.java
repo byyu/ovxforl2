@@ -81,7 +81,6 @@ public final class SLAHandler {
     	}
     	
     	SLAManager slaManager = new SLAManager();
-    	
 
     	if(!istenantSLA && !isSwitchSLA && !isflowSLA){
     		ofmatch.setWildcards((~OFMatch.OFPFW_IN_PORT) & (~OFMatch.OFPFW_DL_DST));
@@ -101,6 +100,7 @@ public final class SLAHandler {
         	this.log.info("flowSLA setting.. flowId : {}, sla_level : {}", flowId, flowSLA);
         	return;
     	}
+    	
     	if(istenantSLA){
         	tenantSLA = this.tenantSLAMap.get(tenantId);
         	this.log.info("\norigin wildcard : {}", ofmatch.getWildcards());
