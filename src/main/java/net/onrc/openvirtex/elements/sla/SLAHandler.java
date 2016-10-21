@@ -65,10 +65,10 @@ public final class SLAHandler {
     	}
     	serviceSLAMap.put(dualPort, sla);
     	
-    	dualPort.clear();
-    	dualPort.add(dstPort);
-    	dualPort.add(srcPort);
-    	serviceSLAMap.put(dualPort, sla);
+    	LinkedList<Integer> reverseDualPort = new LinkedList<Integer>();
+    	reverseDualPort.add(dstPort);
+    	reverseDualPort.add(srcPort);
+    	serviceSLAMap.put(reverseDualPort, sla);
     	this.tenantServiceSLAMap.put(tenantId, serviceSLAMap);
     }
     
@@ -85,11 +85,11 @@ public final class SLAHandler {
     	}
     	serviceSLAMap.put(flowAndDualPort, sla);
     	
-    	flowAndDualPort.clear();
-    	flowAndDualPort.add(flowId);
-    	flowAndDualPort.add(dstPort);
-    	flowAndDualPort.add(srcPort);
-    	serviceSLAMap.put(flowAndDualPort, sla);
+    	LinkedList<Integer> reverseflowAndDualPort = new LinkedList<Integer>();
+    	reverseflowAndDualPort.add(flowId);
+    	reverseflowAndDualPort.add(dstPort);
+    	reverseflowAndDualPort.add(srcPort);
+    	serviceSLAMap.put(reverseflowAndDualPort, sla);
     	this.tenantFlowServiceSLAMap.put(tenantId, serviceSLAMap);
     }
     

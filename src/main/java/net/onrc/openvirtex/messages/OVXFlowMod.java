@@ -115,8 +115,9 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
 				this.sla_level = slaHandler.processSLA(sw.getTenantId(), sw.getSwitchId(), flowId, this.match.getTransportSource(), this.match.getTransportDestination(), this.match);
 			}else{
 				this.sla_level = slaHandler.processSLA(sw.getTenantId(), sw.getSwitchId(), flowId, this.match);
-				
 			}
+			
+			this.log.info("Setting sla Level : {}\n", this.sla_level);
 		} catch (NetworkMappingException e) {
             log.warn(
                     "OVXFlowMod. Error retrieving the network with id {} for flowMod {}. Dropping packet...",
@@ -127,8 +128,9 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
                     this.sw.getTenantId(), this);
         }
         
-    	if(sla_level !=5){
+
     		for (final OFAction act : this.getActions()) {
+    			
     			try {
     				((VirtualizableAction) act).virtualize(sw,
     						this.approvedActions, ovxMatch);
@@ -145,7 +147,19 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
     				return;
     			}
     		}
+    	
+    	if(sla_level == SLAManager.isolation){
+    		List<OFAction> outActions = new LinkedList<OFAction>();
+    		for(OFAction act : this.approvedActions){
+    			if(act.getType() == OFActionType.OUTPUT){
+    				outActions.add(act);
+    			}
+    		}
+    		this.approvedActions.clear();
+    		
+    		this.approvedActions.addAll(outActions);
     	}
+    		
 
         final OVXPort ovxInPort = sw.getPort(inport);
         this.setBufferId(bufferId);
@@ -199,6 +213,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         
         try {
             if (inPort.isEdge()) {
+            	if(sla_level != SLAManager.isolation){
             	//byyu
             	match.setWildcards((OFMatch.OFPFW_ALL) & (~OFMatch.OFPFW_IN_PORT)
             						& (~OFMatch.OFPFW_DL_SRC)
@@ -209,9 +224,12 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
             						& (~OFMatch.OFPFW_TP_DST)
             						& (~OFMatch.OFPFW_TP_SRC)
             						& (~OFMatch.OFPFW_NW_PROTO));
-            	if(sla_level == 4){
-                	this.approvedActions.add(new OFActionDataLayerSource(MACAddress.valueOf(sw.getTenantId()).toBytes()));
+            	}else{
+            		this.approvedActions.add(0, new OFActionDataLayerSource(MACAddress.valueOf(sw.getTenantId()).toBytes()));
+            		SLAManager slaManager = new SLAManager();
+                	slaManager.SLArewriteMatch(this.match, sla_level);
             	}
+            	
             } else {
 //                IPMapper.rewriteMatch(sw.getTenantId(), this.match);
                 // TODO: Verify why we have two send points... and if this is
@@ -237,7 +255,12 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
                                         this.match.getDataLayerDestination());
                         OVXLinkUtils lUtils = new OVXLinkUtils(
                                 sw.getTenantId(), link.getLinkId(), flowId, link.getSrcSwitch());
-                        lUtils.rewriteMatch(this.getMatch());
+                        
+                        if(sla_level != SLAManager.isolation){
+                        	lUtils.rewriteMatch(this.getMatch());
+                        }else{
+                        	this.match.setDataLayerSource(MACAddress.valueOf(sw.getTenantId()).toBytes());
+                        }
                         
                         //byyu
                         isedgeOut = isEdgeOutport();
@@ -248,16 +271,15 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
             						& (~OFMatch.OFPFW_DL_TYPE)
             						& (~OFMatch.OFPFW_NW_DST_MASK)
             						& (~OFMatch.OFPFW_NW_SRC_MASK));
-                        	if(sla_level == 4){
+                        	if(sla_level == SLAManager.isolation){
                         		this.match.setDataLayerSource(MACAddress.valueOf(sw.getTenantId()).toBytes());
                         	}
                         }else{
                         	SLAManager slaManager = new SLAManager();
+                        	this.log.info("\n{}\n{}",this.match.toString(),this.match.getWildcards());
                         	slaManager.SLArewriteMatch(this.match, sla_level);
-                        	if(sla_level == 4){
-                            	this.approvedActions.add(new OFActionDataLayerSource(MACAddress.valueOf(sw.getTenantId()).toBytes()));
-                            	
-                        	}
+                        	this.setPriority(slaManager.SLAresettingPriority(this.priority, sla_level));
+                        	this.log.info("\n{}\n{}",this.match.toString(),this.match.getWildcards());
                         }
                     }
                 }
@@ -275,8 +297,13 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         this.computeLength();
         
         if(!isedgeOut){
-        	duflag = phyFlowEntry.checkduplicate(this);
-        	this.log.info("DuFlag is {}\n\n", duflag);
+        	if(sla_level==SLAManager.Hop_isolation || sla_level==SLAManager.Hop_no_isolation){
+        		duflag = phyFlowEntry.checkduplicate(this);
+        		this.log.info("DuFlag is {}\n\n", duflag);
+        	}else{
+        		duflag = false;
+        		this.log.info("SLA level is not need to aggregation...");
+        	}
         }
         
         //byyu

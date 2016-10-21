@@ -25,6 +25,7 @@ public class SLAManager {
 				ofmatch.setWildcards(OFMatch.OFPFW_ALL & (~OFMatch.OFPFW_DL_DST) & (~OFMatch.OFPFW_IN_PORT) 
 						& (~OFMatch.OFPFW_DL_SRC) & (~OFMatch.OFPFW_NW_DST_MASK)
 						& (~OFMatch.OFPFW_NW_SRC_MASK) & (~OFMatch.OFPFW_DL_TYPE));
+				
 				return;
 			case Service_isolation :
 				ofmatch.setWildcards(OFMatch.OFPFW_ALL & (~OFMatch.OFPFW_DL_DST) & (~OFMatch.OFPFW_IN_PORT) 
@@ -43,5 +44,24 @@ public class SLAManager {
 			
 		}
 			
+	}
+	
+	public short SLAresettingPriority(short priority, int sla_level){
+		switch(sla_level){
+		case Hop_no_isolation :
+			return priority;
+		case Hop_isolation :
+			return priority;
+		case Host_isolation :
+			priority = (short) (priority+2);
+			return priority;
+		case Service_isolation :
+			priority = (short) (priority+5);
+			return priority;
+		case isolation :
+			priority = (short) (priority+1);
+			return priority;
+		}
+		return priority;
 	}
 }

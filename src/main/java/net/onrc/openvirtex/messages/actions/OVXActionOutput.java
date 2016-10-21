@@ -327,7 +327,7 @@ public class OVXActionOutput extends OFActionOutput implements
 
     }
 
-    private LinkedList<OVXPort> fillPortList(final Short inPort,
+    public LinkedList<OVXPort> fillPortList(final Short inPort,
             final Short outPort, final OVXSwitch sw)
             throws DroppedMessageException {
         final LinkedList<OVXPort> outPortList = new LinkedList<OVXPort>();
