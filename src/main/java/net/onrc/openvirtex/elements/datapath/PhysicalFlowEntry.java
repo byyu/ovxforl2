@@ -14,16 +14,16 @@ import net.onrc.openvirtex.util.MACAddress;
  * This class is to store physical rule set aggregated rule.
  * Rule is matched by Match and Output Number And stored by cookie number.
  */
-public class EntryPair {
+public class PhysicalFlowEntry {
 	
-	private Logger log = LogManager.getLogger(EntryPair.class
+	private Logger log = LogManager.getLogger(PhysicalFlowEntry.class
             .getName());
 	
 	/* Entry represented by Match and outaction */
 	private OVXMatch ovxmatch;
 	private OFActionOutput ofaction;
 	
-	/* Store all cookie that have same match and outaction */
+	/* Store all cookie that have same match and out-port */
 	private List<Long> cookieSet = new ArrayList<Long>();
 	
     /**
@@ -33,11 +33,11 @@ public class EntryPair {
      * @param action the output action
      * @param cookie the cookie
      */
-	public EntryPair(OVXMatch match,OFActionOutput action, long cookie){
+	public PhysicalFlowEntry(OVXMatch match,OFActionOutput action, long cookie){
 		this.ovxmatch = match;
 		this.ofaction = action;
 		this.cookieSet.add(cookie);
-		log.info("This cookie is : {} ", cookie);
+		log.debug("This cookie is : {} ", cookie);
 	}
 	
 	/**
@@ -59,7 +59,7 @@ public class EntryPair {
 	}
 
 	/**
-	 * Add cookie to cookie set
+	 * Add cookie to the cookie set
 	 * 
 	 * @param cookie
 	 */
@@ -83,7 +83,7 @@ public class EntryPair {
 	 * @param entity
 	 * @return if same condition, return true. otherwise return false.
 	 */
-	public boolean equals(EntryPair entity){
+	public boolean equals(PhysicalFlowEntry entity){
 		
 		if(entity == null)
 			return false;

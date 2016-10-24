@@ -52,8 +52,8 @@ public class PhysicalSwitch extends Switch<PhysicalPort> {
     private AtomicReference<Map<Short, OVXPortStatisticsReply>> portStats;
     private AtomicReference<Map<Integer, List<OVXFlowStatisticsReply>>> flowStats;
 
-    // The Physical Flow Entry Table manage physical flow rule
-    private PhysicalFlowEntry phyFlowentry;
+    // The Physical Flow Entry Table to manage physical flow rule
+    private PhysicalFlowTable phyFlowentry;
     
     /**
      * Unregisters OVXSwitches and associated virtual elements mapped to this
@@ -103,7 +103,7 @@ public class PhysicalSwitch extends Switch<PhysicalPort> {
         this.portStats = new AtomicReference<Map<Short, OVXPortStatisticsReply>>();
         this.flowStats = new AtomicReference<Map<Integer, List<OVXFlowStatisticsReply>>>();
         this.statsMan = new StatisticsManager(this);
-        this.phyFlowentry = new PhysicalFlowEntry(this);
+        this.phyFlowentry = new PhysicalFlowTable(this);
     }
 
     /**
@@ -261,8 +261,11 @@ public class PhysicalSwitch extends Switch<PhysicalPort> {
         return false;
     }
 
-    //byyu
-    public PhysicalFlowEntry getEntrytable(){
+    /**
+     * Gets the physical flow entry table.
+     * @return the physical flow entry table instance
+     */
+    public PhysicalFlowTable getEntrytable(){
     	return this.phyFlowentry;
     }
     

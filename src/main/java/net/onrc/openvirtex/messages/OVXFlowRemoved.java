@@ -16,7 +16,7 @@
 package net.onrc.openvirtex.messages;
 
 import net.onrc.openvirtex.elements.datapath.OVXSwitch;
-import net.onrc.openvirtex.elements.datapath.PhysicalFlowEntry;
+import net.onrc.openvirtex.elements.datapath.PhysicalFlowTable;
 import net.onrc.openvirtex.elements.datapath.PhysicalSwitch;
 import net.onrc.openvirtex.exceptions.MappingException;
 import net.onrc.openvirtex.messages.actions.OVXActionOutput;
@@ -38,7 +38,7 @@ public class OVXFlowRemoved extends OFFlowRemoved implements Virtualizable {
     @Override
     public void virtualize(final PhysicalSwitch sw) {
     	//byyu
-    	PhysicalFlowEntry phyFlowEntry = sw.getEntrytable();
+    	PhysicalFlowTable phyFlowEntry = sw.getEntrytable();
     	
         int tid = (int) (this.cookie >> 32);
 

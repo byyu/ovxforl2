@@ -25,7 +25,7 @@ import net.onrc.openvirtex.elements.address.IPAddress;
 import net.onrc.openvirtex.elements.datapath.FlowTable;
 import net.onrc.openvirtex.elements.datapath.OVXFlowTable;
 import net.onrc.openvirtex.elements.datapath.OVXSwitch;
-import net.onrc.openvirtex.elements.datapath.PhysicalFlowEntry;
+import net.onrc.openvirtex.elements.datapath.PhysicalFlowTable;
 import net.onrc.openvirtex.elements.host.Host;
 import net.onrc.openvirtex.elements.link.OVXLink;
 import net.onrc.openvirtex.elements.link.OVXLinkUtils;
@@ -60,22 +60,13 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
 
     private long ovxCookie = -1;
 
-	// To measure processing time of FlowMod message
-    long startTime, endTime;
-    
     @Override
     public void devirtualize(final OVXSwitch sw) {
-    	
-    	// To measure processing time of FlowMod message
-    	startTime = System.nanoTime();
         /* Drop LLDP-matching messages sent by some applications */
         if (this.match.getDataLayerType() == Ethernet.TYPE_LLDP) {
             return;
         }
-        
-        //To install rule statically
-        this.hardTimeout = 300;
-        
+
         this.sw = sw;
         FlowTable ft = this.sw.getFlowTable();
 
@@ -145,13 +136,6 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         } else {
             prepAndSendSouth(ovxInPort, pflag);
         }
-        
-        /* Measure processing flowmod time */
-        if(match.getDataLayerType()==Ethernet.TYPE_IPV4){
-        	endTime = System.nanoTime();
-        	long elapseTime = endTime - startTime;
-        	this.log.info("FlowMod processing Time :\t{}", elapseTime);
-        }
     }
 
     private void prepAndSendSouth(OVXPort inPort, boolean pflag) {
@@ -165,12 +149,11 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         OVXMessageUtil.translateXid(this, inPort);
         
         //Get physical flow entry table.
-        PhysicalFlowEntry phyFlowEntry  = inPort.getPhysicalPort().getParentSwitch().getEntrytable();
+        PhysicalFlowTable phyFlowEntry  = inPort.getPhysicalPort().getParentSwitch().getEntrytable();
 
         boolean isedgeOut=true;
         boolean duflag=false;
         
-        //this.idleTimeout = 5;
         //Setting default wildcard.
         this.match.setWildcards((~OFMatch.OFPFW_IN_PORT) & (~OFMatch.OFPFW_DL_DST));
       
@@ -185,7 +168,6 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
             						& (~OFMatch.OFPFW_NW_DST_MASK)
             						& (~OFMatch.OFPFW_NW_SRC_MASK));
             } else {
-//                IPMapper.rewriteMatch(sw.getTenantId(), this.match);
                 // TODO: Verify why we have two send points... and if this is
                 // the right place for the match rewriting
                 if (inPort != null
@@ -257,22 +239,6 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         }
     }
 
-//    private void prependRewriteActions() {
-//        if (!this.match.getWildcardObj().isWildcarded(Flag.NW_SRC)) {
-//            final OVXActionNetworkLayerSource srcAct = new OVXActionNetworkLayerSource();
-//            srcAct.setNetworkAddress(IPMapper.getPhysicalIp(sw.getTenantId(),
-//                    this.match.getNetworkSource()));
-//            this.approvedActions.add(0, srcAct);
-//        }
-//
-//        if (!this.match.getWildcardObj().isWildcarded(Flag.NW_DST)) {
-//            final OVXActionNetworkLayerDestination dstAct = new OVXActionNetworkLayerDestination();
-//            dstAct.setNetworkAddress(IPMapper.getPhysicalIp(sw.getTenantId(),
-//                    this.match.getNetworkDestination()));
-//            this.approvedActions.add(0, dstAct);
-//        }
-//    }
-
     /**
      * @param flagbit
      *            The OFFlowMod flag
@@ -318,7 +284,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
 
     /**
      * Check outport which indicate output action is edge.
-     * @return
+     * @return true if out port is edge
      */
     private boolean isEdgeOutport(){
     	OVXPort outPort;
@@ -342,7 +308,11 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
 			return false;
     }
     
-    //byyu
+    /**
+     * Gets host ip.
+     * @param host
+     * @return the host ip address
+     */
     private IPAddress getHostIP(Host host){
     	if(host!=null)
     		return host.getIp();
