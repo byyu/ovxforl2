@@ -2,6 +2,7 @@ package net.onrc.openvirtex.elements.datapath;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -24,8 +25,7 @@ public class PhysicalFlowEntry {
 	private OFActionOutput ofaction;
 	
 	/* Store all cookie that have same match and out-port */
-	private List<Long> cookieSet = new ArrayList<Long>();
-	
+	private List<Long> cookieSet = Collections.synchronizedList(new ArrayList<Long>());
     /**
      * Instantiates a new EntryPair
      *
@@ -77,8 +77,8 @@ public class PhysicalFlowEntry {
 	}
 	
 	/**
-	 * Check entry to this entry
-	 * Compare with ovxmatch and outport of output action
+	 * Check the entry with this existed entry
+	 * Same entry has same ovxmatch and outport of output action
 	 * 
 	 * @param entity
 	 * @return if same condition, return true. otherwise return false.
