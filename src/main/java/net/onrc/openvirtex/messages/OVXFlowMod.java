@@ -48,10 +48,10 @@ import org.openflow.protocol.OFFlowMod;
 import org.openflow.protocol.OFMatch;
 import org.openflow.protocol.Wildcards.Flag;
 import org.openflow.protocol.action.OFAction;
+import org.openflow.protocol.action.OFActionDataLayerSource;
 import org.openflow.protocol.action.OFActionType;
 
 public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
-
 
     private final Logger log = LogManager.getLogger(OVXFlowMod.class.getName());
 
@@ -156,8 +156,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         
         //Setting default wildcard.
         this.match.setWildcards((~OFMatch.OFPFW_IN_PORT) & (~OFMatch.OFPFW_DL_DST));
-      
-        
+   
         try {
         	//When inPort is edge, check all condition contained IPv4 addresses. 
             if (inPort.isEdge()) {
@@ -167,6 +166,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
             						& (~OFMatch.OFPFW_DL_TYPE)
             						& (~OFMatch.OFPFW_NW_DST_MASK)
             						& (~OFMatch.OFPFW_NW_SRC_MASK));
+            	this.approvedActions.add(0, new OFActionDataLayerSource(MACAddress.valueOf(sw.getTenantId()).toBytes()));
             } else {
                 // TODO: Verify why we have two send points... and if this is
                 // the right place for the match rewriting
