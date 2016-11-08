@@ -26,7 +26,7 @@ import net.onrc.openvirtex.protocol.OVXMatch;
 public class PhysicalFlowTable {
 	
 	private static Logger log = LogManager.getLogger(PhysicalFlowTable.class.getName());
-	private Set<PhysicalFlowEntry> entry = new HashSet<PhysicalFlowEntry>();
+	private Set<PhysicalFlowEntry> entry = new HashSet<PhysicalFlowEntry>();
 	private PhysicalSwitch physw;
 	
 	public PhysicalFlowTable(PhysicalSwitch sw){
@@ -34,7 +34,7 @@ public class PhysicalFlowTable {
 	}
 
 	private void addEntry(OVXMatch match, OFActionOutput action){
-		PhysicalFlowEntry entity = new PhysicalFlowEntry(match, action, match.getCookie());
+		PhysicalFlowEntry entity = new PhysicalFlowEntry(match, action, match.getCookie());
 		entry.add(entity);
 	}
 	
@@ -52,8 +52,8 @@ public class PhysicalFlowTable {
 	}
 	
 	public List<Long> removeEntry(OVXMatch match, OFActionOutput action, long cookie){
-		PhysicalFlowEntry newEntity = new PhysicalFlowEntry(match, action, cookie);
-		for(PhysicalFlowEntry entity : entry){
+		PhysicalFlowEntry newEntity = new PhysicalFlowEntry(match, action, cookie);
+		for(PhysicalFlowEntry entity : entry){
 			if(entity.equals(newEntity)){
 				List<Long> cookieList = entity.getCookieSet();
 				entry.remove(entity);
@@ -86,7 +86,7 @@ public class PhysicalFlowTable {
 		
 		
 		
-		for(PhysicalFlowEntry entity : entry){
+		for(PhysicalFlowEntry entity : entry){
 			oldMatch = entity.getMatch();
 			oldoutport = entity.getAction().getPort();
 			if(Arrays.equals(oldMatch.getDataLayerDestination(), match.getDataLayerDestination())
