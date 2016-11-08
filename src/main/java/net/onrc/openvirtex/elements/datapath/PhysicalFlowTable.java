@@ -84,15 +84,11 @@ public class PhysicalFlowTable {
 			return false;
 		}
 		
-		
-		
 		for(PhysicalFlowEntry entity : entry){
 			oldMatch = entity.getMatch();
 			oldoutport = entity.getAction().getPort();
-			if(Arrays.equals(oldMatch.getDataLayerDestination(), match.getDataLayerDestination())
-					&& (oldMatch.getInputPort() == match.getInputPort())){
-
-				if(outport == oldoutport && oldMatch.getWildcards() == newWcd){
+			if((oldMatch.getInputPort() == match.getInputPort()) && (outport == oldoutport)){
+				if(oldMatch.getWildcards() == newWcd){
 					if(!oldMatch.getWildcardObj().isWildcarded(Flag.NW_DST)){
 						if(oldMatch.getNetworkDestination()==match.getNetworkDestination()){
 							entity.addCookie(match.getCookie());
