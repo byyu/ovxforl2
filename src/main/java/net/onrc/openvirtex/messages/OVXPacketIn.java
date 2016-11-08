@@ -284,12 +284,15 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
     	try {
 			srcHost = map.getVirtualNetwork(tenantId).getHost(new PhysicalIPAddress(match.getNetworkSource()));
 			dstHost = map.getVirtualNetwork(tenantId).getHost(new PhysicalIPAddress(match.getNetworkDestination()));
-			
-			return map.getVirtualNetwork(tenantId).getFlowManager().getFlowId(srcHost.getMac().toBytes(), dstHost.getMac().toBytes());
+			int flowId = map.getVirtualNetwork(tenantId).getFlowManager().getFlowId(srcHost.getMac().toBytes(), dstHost.getMac().toBytes());
+			return flowId;
 		} catch (NetworkMappingException e) {
 			return 0; // illegal tenant ID
 		} catch (DroppedMessageException e) {
 			return 0; // illegal 
+		} catch (NullPointerException e){
+			log.error("Failed fetchFlowId, tenantId : {}, srcHostIp : {}, dstHostIp : {}", tenantId, match.getNetworkSource(), match.getNetworkDestination());
+			return 0;
 		}
 
     }
