@@ -102,6 +102,7 @@ public class PhysicalFlowTable {
 				}else{
 					if(oldMatch.getWildcards() == newWcd){
 						addEntry(fm, match, outaction);
+						return false;
 					}
 					
 				}
