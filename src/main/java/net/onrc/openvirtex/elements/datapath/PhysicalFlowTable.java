@@ -99,8 +99,8 @@ public class PhysicalFlowTable {
 						return true;
 					}
 				}
-				addEntry(fm, match, outaction);
-				return false;
+//				addEntry(fm, match, outaction);
+//				return false;
 			}
 		}
 		
