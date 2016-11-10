@@ -98,9 +98,10 @@ public class PhysicalFlowTable {
 						entity.addCookie(match.getCookie());
 						return true;
 					}
+					
+					addEntry(fm, match, outaction);
+					return false;
 				}
-//				addEntry(fm, match, outaction);
-//				return false;
 			}
 		}
 		
