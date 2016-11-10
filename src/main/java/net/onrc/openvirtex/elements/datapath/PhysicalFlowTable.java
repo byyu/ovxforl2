@@ -1,6 +1,5 @@
 package net.onrc.openvirtex.elements.datapath;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -88,21 +87,41 @@ public class PhysicalFlowTable {
 			oldMatch = entity.getMatch();
 			oldoutport = entity.getAction().getPort();
 			if(oldMatch.getInputPort() == match.getInputPort()){
-				if(outport == oldoutport && oldMatch.getWildcards() == newWcd){
-					if(!oldMatch.getWildcardObj().isWildcarded(Flag.NW_DST)){
-						if(oldMatch.getNetworkDestination()==match.getNetworkDestination()){
+				if(outport == oldoutport){
+					if(oldMatch.getWildcards() == newWcd){
+						if(!oldMatch.getWildcardObj().isWildcarded(Flag.NW_DST)){
+							if(oldMatch.getNetworkDestination() == match.getNetworkDestination()){
+								entity.addCookie(match.getCookie());
+								return true;
+							}
+						}else{
 							entity.addCookie(match.getCookie());
 							return true;
 						}
-					}else{
-						entity.addCookie(match.getCookie());
-						return true;
+					}
+				}else{
+					if(oldMatch.getWildcards() == newWcd){
+						addEntry(fm, match, outaction);
 					}
 					
-					addEntry(fm, match, outaction);
-					return false;
 				}
 			}
+			
+//			if(oldMatch.getInputPort() == match.getInputPort()){
+//				if(outport == oldoutport && oldMatch.getWildcards() == newWcd){
+//					if(!oldMatch.getWildcardObj().isWildcarded(Flag.NW_DST)){
+//						if(oldMatch.getNetworkDestination()==match.getNetworkDestination()){
+//							entity.addCookie(match.getCookie());
+//							return true;
+//						}
+//					}else{
+//						entity.addCookie(match.getCookie());
+//						return true;
+//					}
+//				}
+//				addEntry(fm, match, outaction);
+//				return false;
+//			}
 		}
 		
 		addEntry(match, outaction);
