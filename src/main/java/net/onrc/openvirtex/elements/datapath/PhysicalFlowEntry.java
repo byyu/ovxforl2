@@ -1,3 +1,27 @@
+/*******************************************************************************
+ * Copyright 2016 Libera project team in Korea University
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ****************************************************************************
+ * Libera Hypervisor development based OpenVirteX for SDN 2.0
+ *
+ * 	AggFlow, new address virtualization technique, is applied.
+ *
+ * This is updated by Libera Project team in Korea University
+ *
+ * Author: Bongyeol Yu (koreagood13@gmail.com)
+ ******************************************************************************/
+
 package net.onrc.openvirtex.elements.datapath;
 
 import java.util.ArrayList;
@@ -12,7 +36,7 @@ import net.onrc.openvirtex.protocol.OVXMatch;
 import net.onrc.openvirtex.util.MACAddress;
 
 /**
- * This class is to store physical rule set aggregated rule.
+ * This class is to store physical rule set aggregated rule for efficiency.
  * Rule is matched by Match and Output Number And stored by cookie number.
  */
 public class PhysicalFlowEntry {
@@ -20,14 +44,15 @@ public class PhysicalFlowEntry {
 	private Logger log = LogManager.getLogger(PhysicalFlowEntry.class
             .getName());
 	
-	/* Entry represented by Match and outaction */
+	/* Entry is represented by Match and outaction */
 	private OVXMatch ovxmatch;
 	private OFActionOutput ofaction;
 	
 	/* Store all cookie that have same match and out-port */
 	private List<Long> cookieSet = Collections.synchronizedList(new ArrayList<Long>());
-    /**
-     * Instantiates a new EntryPair
+    
+	/**
+     * Instantiates a new EntryPair.
      *
      * @param match the OVXMatch
      * @param action the output action
@@ -41,7 +66,7 @@ public class PhysicalFlowEntry {
 	}
 	
 	/**
-	 * Get the OVXMatch
+	 * Get the OVXMatch of this entry.
 	 * 
 	 * @return the ovxmatch
 	 */
@@ -50,7 +75,7 @@ public class PhysicalFlowEntry {
 	}
 	
 	/**
-	 * Get the output action
+	 * Get the output action of this entry.
 	 * 
 	 * @return the output action
 	 */
@@ -77,7 +102,7 @@ public class PhysicalFlowEntry {
 	}
 	
 	/**
-	 * Check the entry with this existed entry
+	 * Check the entry with the existed entry
 	 * Same entry has same ovxmatch and outport of output action
 	 * 
 	 * @param entity

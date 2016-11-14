@@ -12,6 +12,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * ****************************************************************************
+ * Libera Hypervisor development based OpenVirteX for SDN 2.0
+ *
+ * 	AggFlow, new address virtualization technique, is applied.
+ *
+ * This is updated by Libera Project team in Korea University
+ *
+ * Author: Bongyeol Yu (koreagood13@gmail.com)
  ******************************************************************************/
 package net.onrc.openvirtex.messages;
 
@@ -148,8 +156,8 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         this.getMatch().setInputPort(inPort.getPhysicalPortNumber());
         OVXMessageUtil.translateXid(this, inPort);
         
-        //Get physical flow entry table.
-        PhysicalFlowTable phyFlowEntry  = inPort.getPhysicalPort().getParentSwitch().getEntrytable();
+        //Get the physicalFlowTable.
+        PhysicalFlowTable phyFlowTable  = inPort.getPhysicalPort().getParentSwitch().getEntrytable();
 
         boolean isedgeOut=true;
         boolean duflag=false;
@@ -158,7 +166,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         this.match.setWildcards((~OFMatch.OFPFW_IN_PORT) & (~OFMatch.OFPFW_DL_DST));
    
         try {
-        	//When inPort is edge, check all condition contained IPv4 addresses. 
+        	//When the inPort is edge, check all conditions including the IPv4 addresses fields. 
             if (inPort.isEdge()) {
             	match.setWildcards((OFMatch.OFPFW_ALL) & (~OFMatch.OFPFW_IN_PORT)
             						& (~OFMatch.OFPFW_DL_SRC)
@@ -193,7 +201,8 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
                                 sw.getTenantId(), link.getLinkId(), flowId, link.getSrcSwitch());
                         lUtils.rewriteMatch(this.getMatch());
                         
-                        //Check out port is edge and when out prot is edge, check all condition.
+                        //Check outPort is edge
+                        //When outPort is edge, then check all conditions.
                         isedgeOut = isEdgeOutport();
                         if(isedgeOut){
                         	match.setWildcards((OFMatch.OFPFW_ALL) & (~OFMatch.OFPFW_IN_PORT)
@@ -220,11 +229,11 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         
         //In core, check that rule is duplicated.
         if(!isedgeOut){
-        	duflag = phyFlowEntry.checkduplicate(this);
+        	duflag = phyFlowTable.checkduplicate(this);
         	this.log.info("DuFlag is {}\n\n", duflag);
         }
         
-        //Rule is not set in switch, then send south.
+        //Rule is not installed in physical switch, then send south.
         if(!duflag && pflag){
         	this.flags |= OFFlowMod.OFPFF_SEND_FLOW_REM;
         	sw.sendSouth(this, inPort);
@@ -309,7 +318,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
     }
     
     /**
-     * Gets host ip.
+     * Gets the host ip.
      * @param host
      * @return the host ip address
      */
@@ -320,7 +329,11 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
     		return null;
     }
     
-    //byyu
+    /**
+     * Gets the host instance by MACAddress.
+     * @param mac
+     * @return the host
+     */
     private Host getHostbyMACAddress(byte[] mac){
     	OVXMap map = OVXMap.getInstance();
     	

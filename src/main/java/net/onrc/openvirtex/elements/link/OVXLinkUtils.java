@@ -12,6 +12,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * ****************************************************************************
+ * Libera Hypervisor development based OpenVirteX for SDN 2.0
+ *
+ * 	AggFlow, new address virtualization technique, is applied.
+ *
+ * This is updated by Libera Project team in Korea University
+ *
+ * Author: Bongyeol Yu (koreagood13@gmail.com)
  ******************************************************************************/
 package net.onrc.openvirtex.elements.link;
 
@@ -62,96 +70,10 @@ public class OVXLinkUtils {
         this.vlan = 0;
     }
 
-//    /**
-//     * Gets the integer value from a given Bitset.
-//     *
-//     * @param bitSet
-//     *            the bitset
-//     * @return the integer
-//     */
-//    private static int bitSetToInt(final BitSet bitSet) {
-//        int bitInteger = 0;
-//        for (int i = 0; i < 32; i++) {
-//            if (bitSet.get(i)) {
-//                bitInteger |= 1 << i;
-//            }
-//        }
-//        return bitInteger;
-//    }
-
-//    /**
-//     * Instantiates a new link utils instance from the MAC addresses couple.
-//     * Automatically decapsulate and set tenantId, linkId and flowId from the
-//     * parameters given.
-//     *
-//     * @param srcMac
-//     *            the src mac
-//     * @param dstMac
-//     *            the dst mac
-//     */
-//    public OVXLinkUtils(final MACAddress srcMac, final MACAddress dstMac) {
-//        this();
-//        this.srcMac = srcMac;
-//        this.dstMac = dstMac;
-//        final int vNets = OpenVirteXController.getInstance()
-//                .getNumberVirtualNets();
-//        final MACAddress mac = MACAddress
-//                .valueOf((srcMac.toLong() & 0xFFFFFF) << 24 | dstMac.toLong()
-//                        & 0xFFFFFF);
-//        this.tenantId = (int) (mac.toLong() >> 48 - vNets);
-//        final BitSet bmask = new BitSet((48 - vNets) / 2);
-//        for (int i = bmask.nextClearBit(0); i < (48 - vNets) / 2; i = bmask
-//                .nextClearBit(i + 1)) {
-//            bmask.set(i);
-//        }
-//        final int mask = OVXLinkUtils.bitSetToInt(bmask);
-//        this.linkId = (int) (mac.toLong() >> (48 - vNets) / 2) & mask;
-//        this.flowId = (int) mac.toLong() & mask;
-//        this.vlan = 0;
-//    }
-//
-//    /**
-//     * Instantiates a new link utils from tenantId, linkId and flowId.
-//     * Automatically encapsulate and set these values in the MAC addresses and
-//     * in the VLAN.
-//     *
-//     * @param tenantId
-//     *            the tenant id
-//     * @param linkId
-//     *            the link id
-//     * @param flowId
-//     *            the flow id
-//     */
-//    public OVXLinkUtils(final Integer tenantId, final Integer linkId,
-//            final Integer flowId) {
-//        this();
-//        this.tenantId = tenantId;
-//        this.linkId = linkId;
-//        this.flowId = flowId;
-//
-//        final int vNets = OpenVirteXController.getInstance()
-//                .getNumberVirtualNets();
-//        log.info("tenantId : {}, linkId : {}, flowID : {}, vNet : {}",this.tenantId,this.linkId, this.flowId, vNets);
-//        final MACAddress mac = MACAddress
-//                .valueOf(tenantId.longValue() << 48 - vNets
-//                        | linkId.longValue() << (48 - vNets) / 2
-//                        | flowId.longValue());
-//        log.info("mac vlaue : {} - {}", mac.toLong(), mac.toBytes());
-//        final Long src = mac.toLong() >> 24 & 0xFFFFFF;
-//        final Long dst = mac.toLong() & 0xFFFFFF;
-//        log.info("src value : {} - dst value : {}", src.byteValue(), dst.byteValue());
-//        this.srcMac = MACAddress.valueOf((long) 0xa42305 << 24 | src);
-//        this.dstMac = MACAddress.valueOf((long) 0xa42305 << 24 | dst);
-//        log.info("final src : {} - final dst : {}", this.srcMac.toBytes(), this.dstMac.toBytes());
-//        // TODO: encapsulate the values in the vlan too
-//        this.vlan = 0;
-//    }
-    
-  //byyu
     /**
-     *  Instantiates a new link utils from tenantId, linkId, flowId and virtual switch.
+     *  Instantiates a new LinkUtils from tenantId, linkId, flowId and virtual switch.
      *  Automatically encapsulate and set these values in the MAC addresses.
-     *  This is new address assign techniuqe that Source MAC address is tenantId , Destination MAC address is next Switch Id
+     *  This is new address assign technique that Source MAC address is tenantId , Destination MAC address is next Switch Id
      *  We find next switch by linkId, flowId and current switch.
      *  
      * @param tenantId
@@ -161,7 +83,7 @@ public class OVXLinkUtils {
      * @param flowId
      * 				the flow id
      * @param sw
-     * 				the switch called this link utils
+     * 				the switch called this LinkUtils
      */
     public OVXLinkUtils(final Integer tenantId, final Integer linkId, final Integer flowId, final OVXSwitch sw){
     	this();
@@ -326,7 +248,6 @@ public class OVXLinkUtils {
         final OVXLinkField linkField = OpenVirteXController.getInstance()
                 .getOvxLinkField();
         if (linkField == OVXLinkField.MAC_ADDRESS) {
-//            actions.add(new OFActionDataLayerSource(this.getSrcMac().toBytes()));
             actions.add(new OFActionDataLayerDestination(this.getDstMac()
                     .toBytes()));
         } else if (linkField == OVXLinkField.VLAN) {

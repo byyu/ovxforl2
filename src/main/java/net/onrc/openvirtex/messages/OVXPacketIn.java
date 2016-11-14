@@ -12,6 +12,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * ****************************************************************************
+ * Libera Hypervisor development based OpenVirteX for SDN 2.0
+ *
+ * 	AggFlow, new address virtualization technique, is applied.
+ *
+ * This is updated by Libera Project team in Korea University
+ *
+ * Author: Bongyeol Yu (koreagood13@gmail.com)
  ******************************************************************************/
 package net.onrc.openvirtex.messages;
 
@@ -125,6 +133,7 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
            
            vSwitch = this.fetchOVXSwitch(sw, vSwitch, map);
            
+           //fetch the flowId
            int flowId = this.fetchFlowId(match, tenantId, map);
 
             // rewrite the OFMatch with the values of the link
@@ -276,7 +285,15 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
         }
         return vswitch;
     }
-    //byyu
+    
+    /**
+     * This method brings the flowId through IPAddress of source Host and destination Host belonged the tenant
+     * 
+     * @param match
+     * @param tenantId
+     * @param map
+     * @return the flowId
+     */
     private int fetchFlowId(final OFMatch match, final int tenantId,
     		Mappable map){
     	Host srcHost, dstHost;
@@ -287,11 +304,13 @@ public class OVXPacketIn extends OFPacketIn implements Virtualizable {
 			int flowId = map.getVirtualNetwork(tenantId).getFlowManager().getFlowId(srcHost.getMac().toBytes(), dstHost.getMac().toBytes());
 			return flowId;
 		} catch (NetworkMappingException e) {
-			return 0; // illegal tenant ID
-		} catch (DroppedMessageException e) {
-			return 0; // illegal 
+			log.error("Failed fetchFlowId, tenantId is undefined : {}", tenantId);
+			return 0;
 		} catch (NullPointerException e){
 			log.error("Failed fetchFlowId, tenantId : {}, srcHostIp : {}, dstHostIp : {}", tenantId, match.getNetworkSource(), match.getNetworkDestination());
+			return 0;
+		} catch (DroppedMessageException e) {
+			log.error(e);
 			return 0;
 		}
 

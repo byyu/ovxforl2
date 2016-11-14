@@ -12,6 +12,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * ****************************************************************************
+ * Libera Hypervisor development based OpenVirteX for SDN 2.0
+ *
+ * 	AggFlow, new address virtualization technique, is applied.
+ *
+ * This is updated by Libera Project team in Korea University
+ *
+ * Author: Bongyeol Yu (koreagood13@gmail.com)
  ******************************************************************************/
 package net.onrc.openvirtex.messages.actions;
 
@@ -89,6 +97,7 @@ public class OVXActionOutput extends OFActionOutput implements
                 log.warn("FlowMod not found in our FlowTable");
                 return;
             }
+            
             fm.setCookie(match.getCookie());
             // TODO: Check if the FM has been retrieved
 
@@ -128,7 +137,7 @@ public class OVXActionOutput extends OFActionOutput implements
                     		   && (!match.getWildcardObj().isWildcarded(
                     				   Flag.DL_DST) || !match.getWildcardObj()
                     				   .isWildcarded(Flag.DL_SRC))) {
-                        	//byyu
+                    	   //Set the match and the action according to new address assigning method.
                     	   fm.getMatch().setDataLayerSource(MACAddress.valueOf(sw.getTenantId()).toBytes());
                     	   PhysicalSwitch psw = inPort.getPhysicalPort().getParentSwitch();
                     	   fm.getMatch().setDataLayerDestination(MACAddress.valueOf(psw.getSwitchId()).toBytes());

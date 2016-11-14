@@ -12,6 +12,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * ****************************************************************************
+ * Libera Hypervisor development based OpenVirteX for SDN 2.0
+ *
+ * 	AggFlow, new address virtualization technique, is applied.
+ *
+ * This is updated by Libera Project team in Korea University
+ *
+ * Author: Bongyeol Yu (koreagood13@gmail.com)
  ******************************************************************************/
 package net.onrc.openvirtex.elements.link;
 
@@ -39,7 +47,6 @@ import net.onrc.openvirtex.exceptions.NetworkMappingException;
 import net.onrc.openvirtex.exceptions.PortMappingException;
 import net.onrc.openvirtex.messages.OVXFlowMod;
 import net.onrc.openvirtex.messages.OVXPacketOut;
-import net.onrc.openvirtex.packet.Ethernet;
 import net.onrc.openvirtex.routing.RoutingAlgorithms;
 import net.onrc.openvirtex.routing.RoutingAlgorithms.RoutingType;
 import net.onrc.openvirtex.util.MACAddress;
@@ -362,10 +369,6 @@ public class OVXLink extends Link<OVXPort, OVXSwitch> {
         long cookie = tenantId;
         fm.setCookie(cookie << 32);
 
-        if (fm.getMatch().getDataLayerType() == Ethernet.TYPE_IPV4) {
-//            IPMapper.rewriteMatch(this.tenantId, fm.getMatch());
-        }
-
         /*
          * Get the list of physical links mapped to this virtual link, in
          * REVERSE ORDER
@@ -396,7 +399,7 @@ public class OVXLink extends Link<OVXPort, OVXSwitch> {
             	inPort = phyLink.getSrcPort();
                 fm.getMatch().setInputPort(inPort.getPortNumber());
                 
-                //byyu
+                //Assign a new match and new actions according to new address assigning method.
                 fm.getMatch().setDataLayerSource(
                 		MACAddress.valueOf(this.tenantId).toBytes());
                 fm.getMatch().setDataLayerDestination(
@@ -407,15 +410,13 @@ public class OVXLink extends Link<OVXPort, OVXSwitch> {
                 		MACAddress.valueOf(outPort.getLink().getOutLink().getDstSwitch().getSwitchId()).toBytes()));
                 outActions.add(new OFActionOutput(
                 		outPort.getPortNumber(), (short) 0xffff));
-//                
-//                fm.setActions(Arrays.asList((OFAction) new OFActionOutput(
-//                        outPort.getPortNumber(), (short) 0xffff)));
+
                 fm.setActions(outActions);
                 for(final OFAction act : outActions){
                 	actLength += act.getLengthU();
                 }
                 fm.setLengthU(OFFlowMod.MINIMUM_LENGTH + actLength);
-//                fm.setLengthU(OVXFlowMod.MINIMUM_LENGTH + OVXActionOutput.MINIMUM_LENGTH);
+                //Check the rule is already installed.
                 boolean duflag = phyLink.getSrcPort().getParentSwitch().getEntrytable().checkduplicate(fm);
                 if(!duflag){
                 	phyLink.getSrcPort().getParentSwitch()

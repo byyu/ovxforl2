@@ -12,6 +12,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * ****************************************************************************
+ * Libera Hypervisor development based OpenVirteX for SDN 2.0
+ *
+ * 	AggFlow, new address virtualization technique, is applied.
+ *
+ * This is updated by Libera Project team in Korea University
+ *
+ * Author: Bongyeol Yu (koreagood13@gmail.com)
  ******************************************************************************/
 package net.onrc.openvirtex.messages;
 
@@ -37,8 +45,12 @@ public class OVXFlowRemoved extends OFFlowRemoved implements Virtualizable {
 
     @Override
     public void virtualize(final PhysicalSwitch sw) {
-    	//byyu
-    	PhysicalFlowTable phyFlowEntry = sw.getEntrytable();
+    	
+    	/*
+    	 * Get the physical flow table in this physical switch.
+    	 * If this flow was aggregated, all virtual flow revive and each FlowRevmoved send to each controller.
+    	 */
+    	PhysicalFlowTable phyFlowTable = sw.getEntrytable();
     	
         int tid = (int) (this.cookie >> 32);
 
@@ -60,7 +72,7 @@ public class OVXFlowRemoved extends OFFlowRemoved implements Virtualizable {
                  * the FlowMod
                  */
                 
-                //byyu
+                /* Get the ActionOutput */
                 OVXActionOutput outact = null;
                 for(final OFAction act : fm.getActions()){
         	    	if(act.getType()==OFActionType.OUTPUT){
@@ -68,7 +80,8 @@ public class OVXFlowRemoved extends OFFlowRemoved implements Virtualizable {
         	    	}
         	    }
 
-                List<Long> cookieSet = phyFlowEntry.removeEntry(new OVXMatch(this.getMatch()), outact, this.cookie);
+                /* All cookie which was aggregated to this flow is retrieved */
+                List<Long> cookieSet = phyFlowTable.removeEntry(new OVXMatch(this.getMatch()), outact, this.cookie);
                 
                 if(cookieSet!=null){
                 	for(Long cookies : cookieSet){
