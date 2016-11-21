@@ -230,7 +230,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         //In core, check that rule is duplicated.
         if(!isedgeOut){
         	duflag = phyFlowTable.checkduplicate(this);
-        	this.log.info("DuFlag is {}\n\n", duflag);
+        	this.log.info("DuFlag is {}", duflag);
         }
         
         //Rule is not installed in physical switch, then send south.

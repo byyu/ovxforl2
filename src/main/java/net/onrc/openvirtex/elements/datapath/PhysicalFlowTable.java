@@ -132,10 +132,9 @@ public class PhysicalFlowTable {
 		match.setCookie(fm.getCookie());
 		OVXMatch oldMatch;
 		
-		int newWcd = match.getWildcards();
 		short oldoutport, outport=0;
 		
-		//Get the ActionOutput from the Flowmod.
+		//Gets the ActionOutput from the FlowMod.
 		for(OFAction action : fm.getActions()){
 			if(action.getType()==OFActionType.OUTPUT){
 	    		outaction = (OFActionOutput) action;
@@ -153,7 +152,7 @@ public class PhysicalFlowTable {
 			oldoutport = entity.getAction().getPort();
 			if(oldMatch.getInputPort() == match.getInputPort()){
 				if(outport == oldoutport){
-					if(oldMatch.getWildcards() == newWcd){
+					if(oldMatch.getWildcards() == match.getWildcards()){
 						if(!oldMatch.getWildcardObj().isWildcarded(Flag.NW_DST)){
 							if(oldMatch.getNetworkDestination() == match.getNetworkDestination()){
 								entity.addCookie(match.getCookie());
@@ -165,7 +164,7 @@ public class PhysicalFlowTable {
 						}
 					}
 				}else{
-					if(oldMatch.getWildcards() == newWcd){
+					if(oldMatch.getWildcards() == match.getWildcards()){
 						addEntry(fm, match, outaction);
 						return false;
 					}

@@ -90,11 +90,11 @@ public class OVXFlowRemoved extends OFFlowRemoved implements Virtualizable {
                 			vsw = sw.getMap().getVirtualSwitch(sw, temptid);
                 			
                 			if(vsw.getFlowTable().hasFlowMod(cookies)){
-                				OVXFlowMod fm2 = vsw.getFlowMod(cookies);
+                				OVXFlowMod tempFM = vsw.getFlowMod(cookies);
                 				vsw.deleteFlowMod(cookies);
 
-                				if (fm2.hasFlag(OFFlowMod.OFPFF_SEND_FLOW_REM)) {
-                					writeFields(fm2);
+                				if (tempFM.hasFlag(OFFlowMod.OFPFF_SEND_FLOW_REM)) {
+                					writeFields(tempFM);
                 					vsw.sendMsg(this, sw);
                 				}
                 			}
