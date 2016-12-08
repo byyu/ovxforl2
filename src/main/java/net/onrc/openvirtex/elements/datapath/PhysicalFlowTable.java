@@ -176,5 +176,9 @@ public class PhysicalFlowTable {
 		addEntry(match, outaction);
 		return false;
 	}
+	
+	public Set<PhysicalFlowEntry> getFlowEntry(){
+		return this.entry;
+	}
 }
 

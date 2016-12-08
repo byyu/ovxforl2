@@ -1,5 +1,6 @@
 package net.onrc.openvirtex.elements.datapath.statistics;
 
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -11,8 +12,10 @@ import org.jboss.netty.util.TimerTask;
 
 import net.onrc.openvirtex.core.OpenVirteXController;
 import net.onrc.openvirtex.elements.OVXMap;
+import net.onrc.openvirtex.elements.datapath.PhysicalFlowEntry;
 import net.onrc.openvirtex.elements.datapath.PhysicalSwitch;
 import net.onrc.openvirtex.elements.network.PhysicalNetwork;
+import net.onrc.openvirtex.messages.statistics.OVXFlowStatisticsReply;
 
 public class StatisticRecoveryHandler implements TimerTask{
 
@@ -50,10 +53,18 @@ public class StatisticRecoveryHandler implements TimerTask{
 	public void recoverStatic(){
 		Set<PhysicalSwitch> pswList = PhysicalNetwork.getInstance().getSwitches();
 		Set<Integer> tenantList = OVXMap.getInstance().listVirtualNetworks().keySet();
-		
+		List<OVXFlowStatisticsReply> stats;
+		OVXFlowStatisticsReply reply;
 		for(int tid : tenantList){
 			for(PhysicalSwitch psw : pswList){
-				psw.getFlowStats(tid);
+				stats = psw.getFlowStats(tid);
+				for(OVXFlowStatisticsReply rep : stats){
+					rep.getCookie();
+					Set<PhysicalFlowEntry> setEntry = psw.getEntrytable().getFlowEntry();
+					for(PhysicalFlowEntry fe : setEntry){
+						fe.getCookieSet().contains(rep.getCookie());
+					}
+				}
 				
 			}
 		}
