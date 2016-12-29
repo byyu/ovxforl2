@@ -84,27 +84,27 @@ public class PhysicalFlowEntry {
 			return false;
 		}
 		
-		
-		
 		for(EntryPair entity : entry){
 			oldMatch = entity.getMatch();
 			oldoutport = entity.getAction().getPort();
-			if(Arrays.equals(oldMatch.getDataLayerDestination(), match.getDataLayerDestination())
-					&& (oldMatch.getInputPort() == match.getInputPort())){
-
-				if(outport == oldoutport && oldMatch.getWildcards() == newWcd){
-					if(!oldMatch.getWildcardObj().isWildcarded(Flag.NW_DST)){
-						if(oldMatch.getNetworkDestination()==match.getNetworkDestination()){
+			if(oldMatch.getInputPort() == match.getInputPort()){
+				if(outport == oldoutport){
+					if(oldMatch.getWildcards() == match.getWildcards()){
+						if(!oldMatch.getWildcardObj().isWildcarded(Flag.NW_DST)){
+							if(oldMatch.getNetworkDestination() == match.getNetworkDestination()){
+								entity.addCookie(match.getCookie());
+								return true;
+							}
+						}else{
 							entity.addCookie(match.getCookie());
 							return true;
 						}
-					}else{
-						entity.addCookie(match.getCookie());
-						return true;
+					}
+				}else{
+					if(oldMatch.getWildcards() == match.getWildcards()){
+						addEntry(fm, match, outaction);
 					}
 				}
-				addEntry(fm, match, outaction);
-				return false;
 			}
 		}
 		
