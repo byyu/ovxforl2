@@ -69,8 +69,7 @@ public class PhysicalFlowEntry {
 		OFActionOutput outaction = null;
 		match.setCookie(fm.getCookie());
 		OVXMatch oldMatch;
-		
-		int newWcd = match.getWildcards();
+
 		short oldoutport, outport=0;
 		
 		for(OFAction action : fm.getActions()){

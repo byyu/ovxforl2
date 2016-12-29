@@ -263,6 +263,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         				//byyu
         				isedgeOut = isEdgeOutport();
         				if(isedgeOut){
+        					this.setPriority((short)(this.priority+5));
         					match.setWildcards((OFMatch.OFPFW_ALL) & (~OFMatch.OFPFW_IN_PORT)
         							& (~OFMatch.OFPFW_DL_SRC)
         							& (~OFMatch.OFPFW_DL_DST)
