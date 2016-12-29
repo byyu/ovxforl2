@@ -213,21 +213,29 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         	if (inPort.isEdge()) {
         		if(sla_level != SLAManager.isolation){
         			//byyu
-        			match.setWildcards((OFMatch.OFPFW_ALL) & (~OFMatch.OFPFW_IN_PORT)
-        					& (~OFMatch.OFPFW_DL_SRC)
-        					& (~OFMatch.OFPFW_DL_DST)
-        					& (~OFMatch.OFPFW_DL_TYPE)
-        					& (~OFMatch.OFPFW_NW_DST_MASK)
-        					& (~OFMatch.OFPFW_NW_SRC_MASK)
-        					& (~OFMatch.OFPFW_TP_DST)
-        					& (~OFMatch.OFPFW_TP_SRC)
-        					& (~OFMatch.OFPFW_NW_PROTO));
+        			if(this.match.getNetworkProtocol()==0){
+        				match.setWildcards((OFMatch.OFPFW_ALL) & (~OFMatch.OFPFW_IN_PORT)
+        						& (~OFMatch.OFPFW_DL_SRC)
+        						& (~OFMatch.OFPFW_DL_DST)
+        						& (~OFMatch.OFPFW_DL_TYPE)
+        						& (~OFMatch.OFPFW_NW_DST_MASK)
+        						& (~OFMatch.OFPFW_NW_SRC_MASK));
+        			}else{
+        				match.setWildcards((OFMatch.OFPFW_ALL) & (~OFMatch.OFPFW_IN_PORT)
+        						& (~OFMatch.OFPFW_DL_SRC)
+        						& (~OFMatch.OFPFW_DL_DST)
+        						& (~OFMatch.OFPFW_DL_TYPE)
+        						& (~OFMatch.OFPFW_NW_DST_MASK)
+        						& (~OFMatch.OFPFW_NW_SRC_MASK)
+        						& (~OFMatch.OFPFW_TP_DST)
+        						& (~OFMatch.OFPFW_TP_SRC)
+        						& (~OFMatch.OFPFW_NW_PROTO));
+        			}
         		}else{
         			this.approvedActions.add(0, new OFActionDataLayerSource(MACAddress.valueOf(sw.getTenantId()).toBytes()));
         			SLAManager slaManager = new SLAManager();
         			slaManager.SLArewriteMatch(this.match, sla_level);
         		}
-
         	} else {
         		//                IPMapper.rewriteMatch(sw.getTenantId(), this.match);
         		// TODO: Verify why we have two send points... and if this is
@@ -283,6 +291,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         			}
         		}
         	}
+        	
         } catch (NetworkMappingException e) {
         	log.warn(
         			"OVXFlowMod. Error retrieving the network with id {} for flowMod {}. Dropping packet...",
@@ -296,7 +305,7 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         this.computeLength();
 
         if(!isedgeOut){
-        	if(sla_level==SLAManager.Hop_isolation || sla_level==SLAManager.Hop_no_isolation){
+        	if((sla_level==SLAManager.Hop_isolation) || (sla_level==SLAManager.Hop_no_isolation)){
         		duflag = phyFlowEntry.checkduplicate(this);
         		this.log.info("DuFlag is {}\n\n", duflag);
         	}else{
@@ -305,8 +314,11 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         	}
         }
 
+        this.log.info("duflag and pflag is {}, {}", duflag, pflag);
+
         //byyu
         if(!duflag && pflag){
+        	
         	this.flags |= OFFlowMod.OFPFF_SEND_FLOW_REM;
         	sw.sendSouth(this, inPort);
         }
