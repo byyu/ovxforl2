@@ -211,16 +211,22 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
 
         try {
         	if (inPort.isEdge()) {
-        		if(sla_level != SLAManager.isolation){
-        			//byyu
-        			if(this.match.getNetworkProtocol()==0){
+        		if(sla_level == SLAManager.Hop_no_isolation || sla_level == SLAManager.Hop_isolation){
+        			match.setWildcards((OFMatch.OFPFW_ALL) & (~OFMatch.OFPFW_IN_PORT)
+        						& (~OFMatch.OFPFW_DL_SRC)
+        						& (~OFMatch.OFPFW_DL_DST));
+        		}else if(sla_level == SLAManager.isolation){
+        			SLAManager slaManager = new SLAManager();
+        			slaManager.SLArewriteMatch(this.match, sla_level);
+        		}
+        		else if(sla_level == SLAManager.End){
         				match.setWildcards((OFMatch.OFPFW_ALL) & (~OFMatch.OFPFW_IN_PORT)
         						& (~OFMatch.OFPFW_DL_SRC)
         						& (~OFMatch.OFPFW_DL_DST)
         						& (~OFMatch.OFPFW_DL_TYPE)
         						& (~OFMatch.OFPFW_NW_DST_MASK)
         						& (~OFMatch.OFPFW_NW_SRC_MASK));
-        			}else{
+        		}else if(sla_level == SLAManager.Service){
         				match.setWildcards((OFMatch.OFPFW_ALL) & (~OFMatch.OFPFW_IN_PORT)
         						& (~OFMatch.OFPFW_DL_SRC)
         						& (~OFMatch.OFPFW_DL_DST)
@@ -230,12 +236,9 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         						& (~OFMatch.OFPFW_TP_DST)
         						& (~OFMatch.OFPFW_TP_SRC)
         						& (~OFMatch.OFPFW_NW_PROTO));
-        			}
-        		}else{
-        			this.approvedActions.add(0, new OFActionDataLayerSource(MACAddress.valueOf(sw.getTenantId()).toBytes()));
-        			SLAManager slaManager = new SLAManager();
-        			slaManager.SLArewriteMatch(this.match, sla_level);
         		}
+
+        		this.approvedActions.add(0, new OFActionDataLayerSource(MACAddress.valueOf(sw.getTenantId()).toBytes()));
         	} else {
         		//                IPMapper.rewriteMatch(sw.getTenantId(), this.match);
         		// TODO: Verify why we have two send points... and if this is
@@ -271,14 +274,31 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
         				//byyu
         				isedgeOut = isEdgeOutport();
         				if(isedgeOut){
-        					this.setPriority((short)(this.priority+5));
-        					match.setWildcards((OFMatch.OFPFW_ALL) & (~OFMatch.OFPFW_IN_PORT)
-        							& (~OFMatch.OFPFW_DL_SRC)
-        							& (~OFMatch.OFPFW_DL_DST)
-        							& (~OFMatch.OFPFW_DL_TYPE)
-        							& (~OFMatch.OFPFW_NW_DST_MASK)
-        							& (~OFMatch.OFPFW_NW_SRC_MASK));
-        					if(sla_level == SLAManager.isolation){
+        					this.setPriority((short)(this.priority+10));
+        					
+        					if(sla_level == SLAManager.Hop_no_isolation || sla_level == SLAManager.Hop_isolation){
+        	        			match.setWildcards((OFMatch.OFPFW_ALL) & (~OFMatch.OFPFW_IN_PORT)
+        	        						& (~OFMatch.OFPFW_DL_SRC)
+        	        						& (~OFMatch.OFPFW_DL_TYPE)
+        	        						& (~OFMatch.OFPFW_NW_DST_MASK));
+        	        		}else if(sla_level == SLAManager.End){
+        	        				match.setWildcards((OFMatch.OFPFW_ALL) & (~OFMatch.OFPFW_IN_PORT)
+        	        						& (~OFMatch.OFPFW_DL_SRC)
+        	        						& (~OFMatch.OFPFW_DL_DST)
+        	        						& (~OFMatch.OFPFW_DL_TYPE)
+        	        						& (~OFMatch.OFPFW_NW_DST_MASK)
+        	        						& (~OFMatch.OFPFW_NW_SRC_MASK));
+        	        		}else if(sla_level == SLAManager.Service){
+        	        				match.setWildcards((OFMatch.OFPFW_ALL) & (~OFMatch.OFPFW_IN_PORT)
+        	        						& (~OFMatch.OFPFW_DL_SRC)
+        	        						& (~OFMatch.OFPFW_DL_DST)
+        	        						& (~OFMatch.OFPFW_DL_TYPE)
+        	        						& (~OFMatch.OFPFW_NW_DST_MASK)
+        	        						& (~OFMatch.OFPFW_NW_SRC_MASK)
+        	        						& (~OFMatch.OFPFW_TP_DST)
+        	        						& (~OFMatch.OFPFW_TP_SRC)
+        	        						& (~OFMatch.OFPFW_NW_PROTO));
+        	        		}else if(sla_level == SLAManager.isolation){
         						this.match.setDataLayerSource(MACAddress.valueOf(sw.getTenantId()).toBytes());
         					}
         				}else{
@@ -318,7 +338,6 @@ public class OVXFlowMod extends OFFlowMod implements Devirtualizable {
 
         //byyu
         if(!duflag && pflag){
-        	
         	this.flags |= OFFlowMod.OFPFF_SEND_FLOW_REM;
         	sw.sendSouth(this, inPort);
         }

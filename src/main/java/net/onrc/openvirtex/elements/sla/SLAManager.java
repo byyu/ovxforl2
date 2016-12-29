@@ -6,8 +6,8 @@ import org.openflow.protocol.Wildcards.Flag;
 public class SLAManager {
 	final public static int Hop_no_isolation = 0;
 	final public static int Hop_isolation = 1;
-	final public static int Host_isolation = 2;
-	final public static int Service_isolation = 3;
+	final public static int End = 2;
+	final public static int Service = 3;
 	final public static int isolation = 4;
 	
 	
@@ -18,16 +18,16 @@ public class SLAManager {
 		        return ;
 		        
 			case Hop_isolation :
-					ofmatch.setWildcards(OFMatch.OFPFW_ALL & (~OFMatch.OFPFW_DL_DST) & (~OFMatch.OFPFW_IN_PORT) & (~OFMatch.OFPFW_DL_SRC));
+					ofmatch.setWildcards(OFMatch.OFPFW_ALL & (~OFMatch.OFPFW_IN_PORT) & (~OFMatch.OFPFW_DL_SRC) & (~OFMatch.OFPFW_DL_DST));
 				return ;
 				
-			case Host_isolation :
+			case End :
 				ofmatch.setWildcards(OFMatch.OFPFW_ALL & (~OFMatch.OFPFW_DL_DST) & (~OFMatch.OFPFW_IN_PORT) 
 						& (~OFMatch.OFPFW_DL_SRC) & (~OFMatch.OFPFW_NW_DST_MASK)
 						& (~OFMatch.OFPFW_NW_SRC_MASK) & (~OFMatch.OFPFW_DL_TYPE));
 				
 				return;
-			case Service_isolation :
+			case Service :
 				ofmatch.setWildcards(OFMatch.OFPFW_ALL & (~OFMatch.OFPFW_DL_DST) & (~OFMatch.OFPFW_IN_PORT) 
 						&(~OFMatch.OFPFW_DL_SRC) & (~OFMatch.OFPFW_NW_PROTO) & (~OFMatch.OFPFW_DL_TYPE)
 						& (~OFMatch.OFPFW_NW_DST_MASK) & (~OFMatch.OFPFW_NW_SRC_MASK) & (~OFMatch.OFPFW_TP_DST)
@@ -52,10 +52,10 @@ public class SLAManager {
 			return priority;
 		case Hop_isolation :
 			return priority;
-		case Host_isolation :
+		case End :
 			priority = (short) (priority+2);
 			return priority;
-		case Service_isolation :
+		case Service :
 			priority = (short) (priority+5);
 			return priority;
 		case isolation :
